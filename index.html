@@ -84,6 +84,32 @@
         .animate-fade-in {
             animation: fadeIn 0.5s ease-out;
         }
+        /* ---------- 3-Day Weather (MUJI Style) ---------- */
+        
+        .weather-card {
+            background-color: #faf7f2;
+            border: 1px solid var(--border-soft);
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            min-width: 90px;
+        }
+        
+        .weather-icon {
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .weather-date {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+        
+        .weather-temp {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
     </style>
     <!-- Application Structure Plan:
          1. Hero Section: Title, Dates, and high-level trip stats (Days, Cities).
@@ -188,6 +214,38 @@
                         </div>
                     </div>
                 </div>
+                <!-- 3-Day Weather Forecast -->
+                <section id="weather-3day" class="mt-12">
+                  <h3 class="text-2xl font-semibold text-center mb-6">
+                    📍 所在地區・未來 3 天天氣
+                  </h3>
+
+                  <div class="grid md:grid-cols-3 gap-6">
+                <!-- Current Location -->
+                  <div class="bg-white rounded-2xl p-6 shadow-lg border">
+                  <h4 class="text-lg font-medium mb-1">目前所在地</h4>
+                  <p class="text-sm text-gray-500 mb-4" id="current-city">定位中…</p>
+                  <div id="weather-current" class="flex gap-4"></div>
+                  <p id="wear-current" class="text-sm text-gray-600 mt-3"></p>
+    </div>
+
+                <!-- San Francisco -->
+                  <div class="bg-white rounded-2xl p-6 shadow-lg border">
+                  <h4 class="text-lg font-medium mb-1">舊金山</h4>
+                  <p class="text-sm text-gray-500 mb-4">San Francisco</p>
+                  <div id="weather-sf" class="flex gap-4"></div>
+                  <p id="wear-sf" class="text-sm text-gray-600 mt-3"></p>
+    </div>
+
+                <!-- Los Angeles -->
+                  <div class="bg-white rounded-2xl p-6 shadow-lg border">
+                  <h4 class="text-lg font-medium mb-1">洛杉磯</h4>
+                  <p class="text-sm text-gray-500 mb-4">Los Angeles</p>
+                  <div id="weather-la" class="flex gap-4"></div>
+                  <p id="wear-la" class="text-sm text-gray-600 mt-3"></p>
+     </div>
+  </div>
+</section>
             </div>
 
             <!-- ACCOMMODATION SUMMARY -->
@@ -455,6 +513,62 @@
                 return map;
             }, {});
         }
+        function weatherIcon(code) {
+          if (code === 0) return "☀️";
+          if ([1, 2].includes(code)) return "🌤️";
+          if (code === 3) return "☁️";
+          if ([45, 48].includes(code)) return "🌫️";
+          if ([51, 53, 55, 61, 63, 65].includes(code)) return "🌧️";
+          if ([71, 73, 75].includes(code)) return "❄️";
+          return "🌡️";
+        }
+        function wearAdvice(maxTemp) {
+          if (maxTemp >= 28) return "👕 炎熱，短袖為主，注意防曬";
+          if (maxTemp >= 22) return "🧥 舒適，薄長袖或襯衫";
+          if (maxTemp >= 16) return "🧶 微涼，建議薄外套";
+          return "🧣 偏冷，外套或保暖層";
+        }
+        async function fetch3DayWeather(lat, lon, containerId, wearId) {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto`;
+          const res = await fetch(url);
+          const data = await res.json();
+        
+          const container = document.getElementById(containerId);
+          container.innerHTML = "";
+        
+          data.daily.time.forEach((date, i) => {
+            const card = document.createElement("div");
+            card.className = "weather-card";
+        
+            card.innerHTML = `
+              <div class="weather-icon">${weatherIcon(data.daily.weathercode[i])}</div>
+              <div class="weather-date">${new Date(date).toLocaleDateString()}</div>
+              <div class="weather-temp">
+                ${data.daily.temperature_2m_max[i]}° /
+                ${data.daily.temperature_2m_min[i]}°
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        
+          document.getElementById(wearId).innerText =
+            wearAdvice(data.daily.temperature_2m_max[0]);
+        }
+        function loadCurrentLocationWeather() {
+          if (!navigator.geolocation) {
+            document.getElementById("current-city").innerText = "無法取得定位";
+            return;
+          }
+        
+          navigator.geolocation.getCurrentPosition(async pos => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+        
+            document.getElementById("current-city").innerText = "依目前定位";
+        
+            fetch3DayWeather(lat, lon, "weather-current", "wear-current");
+          });
+        }
 
         function init() {
             createAttractionMap(); // 呼叫新的地圖創建函數
@@ -463,6 +577,13 @@
             renderWeatherChart();
             renderItinerary('phase1'); // 預設顯示 舊金山 階段
             renderAttractions('all'); // 預設渲染所有景點
+            loadCurrentLocationWeather();       
+            // San Francisco
+            fetch3DayWeather(37.7749, -122.4194, "weather-sf", "wear-sf");
+            
+            // Los Angeles
+            fetch3DayWeather(34.0522, -118.2437, "weather-la", "wear-la");
+
         }
 
         function scrollToSection(id) {
