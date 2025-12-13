@@ -72,19 +72,6 @@
         .custom-scroll::-webkit-scrollbar-thumb:hover {
             background: #a0aec0;
         }
-        /* Style for the individual forecast cards */
-        .forecast-card {
-            flex: 0 0 auto; /* Prevent cards from shrinking */
-            width: 100px; /* Fixed width for each day */
-            padding: 12px;
-            text-align: center;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: background-color 0.2s;
-        }
-        .forecast-card:hover {
-            background-color: #f7f9fc;
-        }
         /* Style for the clickable attraction name in itinerary */
         .attraction-link {
             transition: color 0.1s;
@@ -211,17 +198,6 @@
                 <div id="accommodation-content" class="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- Dynamic Content Loaded via JS -->
                 </div>
-            </div>
-
-           <!-- Daily 13-Day Forecast -->
-            <div id="daily-forecast" class="mt-12">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">🗓️ 13 日天氣預報 (基於歷史平均)</h3>
-                <div class="bg-white rounded-2xl shadow-xl p-4 border border-gray-100 overflow-x-auto">
-                    <div id="forecast-grid" class="flex flex-nowrap space-x-4 pb-2">
-                        <!-- Forecast Cards will be injected here via JS -->
-                    </div>
-                </div>
-                <p class="text-center text-sm text-gray-500 mt-2">此為根據歷史氣候資料的模擬預報，實際狀況請以出發前一週為準。</p>
             </div>
             
             <!-- Essential Checklist Grid -->
@@ -471,26 +447,6 @@
             }
         };
 
-        const weatherForecastData = [
-            // SF Days (2/26 - 3/2)
-            { date: "2/26", day: "四", city: "SF", high: 14, low: 9, condition: "多雲", icon: "🌤️", color: "blue" },
-            { date: "2/27", day: "五", city: "SF", high: 15, low: 8, condition: "晴朗", icon: "☀️", color: "yellow" },
-            { date: "2/28", day: "六", city: "SF", high: 13, low: 9, condition: "有霧", icon: "☁️", color: "gray" },
-            { date: "3/1", day: "日", city: "SF", high: 12, low: 7, condition: "陣雨", icon: "🌧️", color: "indigo" },
-            { date: "3/2", day: "一", city: "SF", high: 15, low: 8, condition: "晴朗", icon: "☀️", color: "yellow" },
-            // PCH Days (3/3 - 3/5)
-            { date: "3/3", day: "二", city: "PCH", high: 17, low: 10, condition: "晴朗", icon: "☀️", color: "yellow" },
-            { date: "3/4", day: "三", city: "PCH", high: 18, low: 11, condition: "多雲", icon: "🌤️", color: "blue" },
-            { date: "3/5", day: "四", city: "PCH", high: 20, low: 12, condition: "晴朗", icon: "☀️", color: "yellow" },
-            // LA Days (3/6 - 3/9)
-            { date: "3/6", day: "五", city: "LA", high: 21, low: 13, condition: "晴朗", icon: "☀️", color: "yellow" },
-            { date: "3/7", day: "六", city: "LA", high: 22, low: 14, condition: "晴朗", icon: "☀️", color: "yellow" },
-            { date: "3/8", day: "日", city: "LA", high: 20, low: 13, condition: "多雲", icon: "🌤️", color: "blue" },
-            { date: "3/9", day: "一", city: "LA", high: 21, low: 14, condition: "晴朗", icon: "☀️", color: "yellow" },
-            // Extra Day for return trip planning (3/10) - Using LA weather for context
-            { date: "3/10", day: "二", city: "LA", high: 20, low: 13, condition: "晴朗", icon: "☀️", color: "yellow" }
-        ];
-
         // --- Core Functions ---
 
         function createAttractionMap() {
@@ -505,7 +461,6 @@
             renderFlightTable('outbound');
             renderAccommodation(); // 渲染住宿資訊
             renderWeatherChart();
-            renderDailyForecast(); 
             renderItinerary('phase2'); // 預設顯示 PCH 階段
             renderAttractions('all'); // 預設渲染所有景點
         }
@@ -664,37 +619,6 @@
                     }
                 }
             });
-        }
-
-        // Render 13-Day Daily Forecast
-        function renderDailyForecast() {
-            const container = document.getElementById('forecast-grid');
-            let html = '';
-
-            weatherForecastData.forEach(day => {
-                let cityLabel = '';
-                let cityColor = 'text-gray-500';
-                if (day.city === 'SF') { cityLabel = '🌉'; cityColor = 'text-blue-600'; }
-                else if (day.city === 'PCH') { cityLabel = '🌊'; cityColor = 'text-yellow-600'; }
-                else if (day.city === 'LA') { cityLabel = '🎬'; cityColor = 'text-purple-600'; }
-
-                let conditionColor = 'bg-gray-50';
-                if (day.icon === '☀️') conditionColor = 'bg-yellow-50';
-                if (day.icon === '🌧️') conditionColor = 'bg-indigo-50';
-
-                html += `
-                    <div class="forecast-card bg-white border border-gray-100 ${conditionColor}">
-                        <p class="text-xs font-semibold text-gray-500 mb-1">${day.date} (${day.day})</p>
-                        <div class="text-2xl mb-1">${day.icon}</div>
-                        <p class="text-sm font-bold text-gray-800">${day.high}°C</p>
-                        <p class="text-xs text-gray-500 mb-2">/${day.low}°C</p>
-                        <div class="text-xs font-medium ${cityColor} flex items-center justify-center">
-                            ${cityLabel} ${day.city}
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
         }
 
         // --- Itinerary Logic ---
