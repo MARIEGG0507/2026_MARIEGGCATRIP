@@ -302,125 +302,183 @@
                 </div>
             </div>
         </div>
+ <!-- 2. 一日行程 View (Hidden by default) -->
+        <div id="view-itinerary" class="view hidden bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-200">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2 flex items-center">
+                <span class="disney-red text-5xl mr-3">🗓</span> 一日兩園區：逐時攻略 (2026/3/6 參考)
+            </h1>
+            <p class="text-lg text-gray-600 mb-8 pb-4 border-b">
+                本行程適用於購買 **Park Hopper** 票券的遊客，以最大限度體驗兩個園區的精華。
+            </p>
 
-        <!-- ITINERARY VIEW (NEW) -->
-        <div id="view-itinerary" class="hidden max-w-4xl mx-auto space-y-8 animate-fade-in">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-slate-900 mb-2">極致一日兩園區行程</h2>
-                <p class="text-lg text-slate-600">
-                    本行程專為購買 **Park Hopper** 及 **Genie+** 的遊客設計，實現高效率的雙園區體驗。
-                </p>
-                <div class="mt-4 p-3 bg-blue-100 border-l-4 border-blue-500 text-blue-800 rounded-lg text-sm">
-                    <i class="fa-solid fa-circle-info mr-2"></i> 提示：建議在 **Disneyland Park** 開園時衝刺，並於中午換園至 **DCA**。
+            <!-- Timeline Container - Content copied from previous file version but now within the new view div -->
+            <div class="space-y-6">
+
+                <!-- Section 1: 早上黃金衝刺期 (DLP) -->
+                <div class="timeline-item timeline-header">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fa-solid fa-sun text-yellow-500 mr-2"></i> 🌅 07:00–10:30｜Disneyland Park（早上黃金 2 小時）
+                    </h2>
                 </div>
-            </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-xl border border-slate-100">
-                <div class="space-y-6">
+                <!-- Event: 交通與準備 -->
+                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">07:00–08:15</p>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">前往迪士尼</h3>
+                    <p class="text-gray-700">07:00 出發（避開 LA 早高峰），08:00–08:15 抵達停車場。</p>
+                    <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                        <li>走到入口、安檢、拍照。</li>
+                    </ul>
+                </div>
 
-                    <!-- SECTION 1: 早上黃金衝刺期 (Disneyland Park) -->
-                    <div class="timeline-item-itinerary timeline-header-itinerary">
-                        <h3 class="text-xl font-bold text-red-600 flex items-center">
-                            <i class="fa-solid fa-rocket mr-2"></i> 07:30 – 12:00 | 迪士尼樂園 (DL) 衝刺
-                        </h3>
-                    </div>
+                <!-- Event: 入園衝刺 -->
+                <div class="timeline-item bg-blue-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">⏰ 08:30</p>
+                    <h3 class="font-bold text-xl disney-red mb-1">入園（開園）- 第一站衝刺</h3>
+                    <p class="text-gray-700 font-semibold">👉 Peter Pan’s Flight（第一優先！必衝設施）</p>
+                </div>
 
-                    <div class="timeline-item-itinerary">
-                        <p class="text-sm font-semibold text-slate-500">07:30 - 08:30</p>
-                        <h4 class="font-bold text-lg text-slate-800">停車與入園準備 (Rope Drop)</h4>
-                        <p class="text-slate-700 text-sm">完成停車、安檢與排隊，在主街區等待開園。抵達後立即打開 App 購買 **Genie+** 及預約第一個 Lightning Lane (LL)。</p>
-                        <ul class="list-disc list-inside text-xs text-slate-600 mt-1 ml-2">
-                            <li>LL 建議優先：**印第安納瓊斯冒險** 或 **太空山**。</li>
-                        </ul>
-                    </div>
+                <!-- Event: 設施衝刺 -->
+                <div class="timeline-item bg-blue-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">08:30–10:30</p>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">Disneyland Park 設施連擊</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-800 space-y-1">
+                        <li>Indiana Jones Adventure</li>
+                        <li>Space Mountain (明日世界)</li>
+                        <li>Buzz Lightyear / Star Tours（視排隊情況）</li>
+                    </ul>
+                    <p class="mt-3 text-sm font-semibold text-red-600">📌 原則：早上不吃早餐、先衝設施；排隊超過 40 分鐘就跳過。</p>
+                </div>
+                
+                <!-- Section 2: 經典補齊與午餐 (DLP) -->
+                <div class="timeline-item timeline-header">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fa-solid fa-mug-hot text-amber-500 mr-2"></i> ☕ 10:30–14:00｜經典補齊與轉換園區
+                    </h2>
+                </div>
 
-                    <div class="timeline-item-itinerary">
-                        <p class="text-sm font-semibold text-slate-500">08:30 - 09:30</p>
-                        <h4 class="font-bold text-lg text-indigo-600">衝刺區：幻想世界與星際大戰</h4>
-                        <p class="text-slate-700 text-sm">利用人潮剛入園的空檔，直衝人氣最高且無 LL 的設施。</p>
-                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
-                            <li>**Peter Pan’s Flight** (小飛俠)：**必衝首選**，排隊時間飆升最快。</li>
-                            <li>**Millennium Falcon: Smugglers Run** (千年隼號)</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="timeline-item-itinerary">
-                        <p class="text-sm font-semibold text-slate-500">09:30 - 11:30</p>
-                        <h4 class="font-bold text-lg text-slate-800">使用 LL & 經典設施</h4>
-                        <p class="text-slate-700 text-sm">使用預約的第一個 LL，並開始預約第二個設施。同時遊玩排隊較快的經典設施。</p>
-                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
-                            <li>使用 LL 玩：**印第安納瓊斯冒險** 或 **太空山**。</li>
-                            <li>經典設施：**加勒比海盜** (Pirates of the Caribbean) 或 **幽靈公館** (Haunted Mansion)。</li>
-                            <li>利用 **Mobile Order** 提前點好午餐。</li>
-                        </ul>
-                    </div>
+                <!-- Event: 休息/早餐 -->
+                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">10:30–11:00</p>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">早餐 / 咖啡時間</h3>
+                    <p class="text-gray-700">Jolly Holiday Bakery（咖啡＋甜點）或 Main Street 拍照放鬆。</p>
+                </div>
 
-                    <div class="timeline-item-itinerary">
-                        <p class="text-sm font-semibold text-slate-500">11:30 - 12:00</p>
-                        <h4 class="font-bold text-lg text-amber-600">午餐與換園準備</h4>
-                        <p class="text-slate-700 text-sm">在紐奧良廣場 **Mint Julep Bar** 買個米奇甜甜圈，並前往 DCA 樂園大門附近用餐，準備 13:00 換園。</p>
-                    </div>
+                <!-- Event: 經典設施 -->
+                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">🏴‍☠️ 11:00–13:00</p>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">經典設施補齊</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-800 space-y-1">
+                        <li>Pirates of the Caribbean (加勒比海盜)</li>
+                        <li>Haunted Mansion (鬼屋)</li>
+                        <li>It’s a Small World (小小世界 - 休息型)</li>
+                        <li>Disneyland Railroad（坐一小段休息）</li>
+                    </ul>
+                </div>
 
+                <!-- Event: 午餐 -->
+                <div class="timeline-item bg-yellow-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">🍗 13:00–14:00</p>
+                    <h3 class="font-bold text-xl text-orange-600 mb-1">午餐時段 (建議 App 預約)</h3>
+                    <p class="text-gray-700"><strong>Plaza Inn（炸雞）⭐最推薦</strong> 或 Red Rose Taverne。</p>
+                    <p class="text-sm font-semibold text-gray-600 mt-2">👉 吃完慢慢走到隔壁園區 DCA。</p>
+                </div>
 
-                    <!-- SECTION 2: 下午刺激與皮克斯 (Disney California Adventure) -->
-                    <div class="timeline-item-itinerary timeline-header-itinerary">
-                        <h3 class="text-xl font-bold text-red-600 flex items-center">
-                            <i class="fa-solid fa-car-side mr-2"></i> 13:00 – 19:30 | 冒險樂園 (DCA) 精華
-                        </h3>
-                    </div>
+                <!-- Section 3: 下午刺激與皮克斯 (DCA) -->
+                <div class="timeline-item timeline-header">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fa-solid fa-car-side text-red-500 mr-2"></i> 🎢 14:00–17:00｜California Adventure (DCA) 刺激區
+                    </h2>
+                </div>
+                
+                <!-- Event: 進入DCA -->
+                <div class="timeline-item bg-green-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">14:00</p>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">進入 Disney California Adventure (DCA)</h3>
+                </div>
 
-                    <div class="timeline-item-itinerary">
-                        <p class="text-sm font-semibold text-slate-500">13:00 - 15:30</p>
-                        <h4 class="font-bold text-lg text-indigo-600">水箱溫泉鎮與復仇者校園</h4>
-                        <p class="text-slate-700 text-sm">進入 DCA 後，立即預約 LL 或排 Single Rider 衝刺熱門設施。</p>
-                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
-                            <li>**ILL** 建議：**水箱溫泉鎮賽車手** (Racers)。</li>
-                            <li>**星際異攻隊：突圍任務** (Guardians)：推薦走 Single Rider。</li>
-                            <li>**蜘蛛人：蛛網穿行** (WEB SLINGERS)。</li>
-                        </ul>
-                    </div>
+                <!-- Event: DCA刺激 -->
+                <div class="timeline-item bg-green-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">⚡ 14:00–16:30</p>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">刺激＋皮克斯區</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-800 space-y-1">
+                        <li>Radiator Springs Racers（Cars Land 必玩）</li>
+                        <li>Toy Story Midway Mania (玩具總動員)</li>
+                        <li>Incredicoaster (超人特攻隊)</li>
+                        <li>WEB SLINGERS（蜘蛛人，漫威園區）</li>
+                    </ul>
+                    <p class="mt-3 text-sm font-semibold text-red-600">📌 下午排隊較長，記得善用 Lightning Lane / Single Rider。</p>
+                </div>
 
-                    <div class="timeline-item-itinerary">
-                        <p class="text-sm font-semibold text-slate-500">15:30 - 18:00</p>
-                        <h4 class="font-bold text-lg text-slate-800">皮克斯碼頭與海濱設施</h4>
-                        <p class="text-slate-700 text-sm">遊玩皮克斯主題設施，並在碼頭欣賞海景。</p>
-                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
-                            <li>**超特攻雲霄飛車** (Incredicoaster)：走 LL 或 Single Rider。</li>
-                            <li>**飛越世界** (Soarin')：療癒身心、休息。</li>
-                            <li>**Toy Story Midway Mania** (玩具總動員) (LL)。</li>
-                        </ul>
-                    </div>
+                <!-- Event: 下午茶休息 -->
+                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">☕ 16:30–17:00</p>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">下午休息</h3>
+                    <p class="text-gray-700">Pixar Pier 吃冰 / 咖啡，補體力、充行動電源。</p>
+                </div>
 
-                    <div class="timeline-item-itinerary">
-                        <p class="text-sm font-semibold text-slate-500">18:00 - 19:30</p>
-                        <h4 class="font-bold text-lg text-amber-600">晚餐與佔位</h4>
-                        <p class="text-slate-700 text-sm">在 **Flo’s V8 Cafe** 或 **Pym Test Kitchen** 快速解決晚餐，並前往指定區域為夜間水舞秀佔位。</p>
-                    </div>
+                <!-- Section 4: 傍晚夜間高潮 (DCA & DLP) -->
+                <div class="timeline-item timeline-header">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fa-solid fa-moon text-indigo-600 mr-2"></i> 🌙 17:00–關園｜表演與煙火
+                    </h2>
+                </div>
 
+                <!-- Event: 傍晚輕鬆 -->
+                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">🌇 17:00–18:30</p>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">傍晚拍照＋輕鬆設施</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-800 space-y-1">
+                        <li>Pixar Pier 黃昏拍照 🌅</li>
+                        <li>Little Mermaid（休息型設施）</li>
+                        <li>Guardians of the Galaxy（想刺激可上）</li>
+                    </ul>
+                </div>
 
-                    <!-- SECTION 3: 夜間表演高潮 (DCA & DL) -->
-                    <div class="timeline-item-itinerary timeline-header-itinerary">
-                        <h3 class="text-xl font-bold text-red-600 flex items-center">
-                            <i class="fa-solid fa-star-and-crescent mr-2"></i> 20:00 – 關園 | 夜間高潮
-                        </h3>
-                    </div>
-                    
-                    <div class="timeline-item-itinerary">
-                        <p class="text-sm font-semibold text-slate-500">20:00 - 21:00</p>
-                        <h4 class="font-bold text-lg text-indigo-600">World of Color (水舞秀)</h4>
-                        <p class="text-slate-700 text-sm">在天堂碼頭欣賞 DCA 的夜間水舞光影秀。若有預約虛擬隊伍，可選擇較佳觀賞區。</p>
-                        <p class="text-xs font-semibold text-blue-500 mt-1">💡 記得在 DCA 欣賞 **Cars Land** 霓虹燈夜景。</p>
-                    </div>
+                <!-- Event: 晚餐 -->
+                <div class="timeline-item bg-yellow-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">🍔 18:30–19:30</p>
+                    <h3 class="font-bold text-lg text-orange-600 mb-1">晚餐</h3>
+                    <p class="text-gray-700">Smoke Tree BBQ 或 Pym Test Kitchen（漫威）。</p>
+                </div>
 
-                    <div class="timeline-item-itinerary">
-                        <p class="text-sm font-semibold text-slate-500">21:00 - 關園</p>
-                        <h4 class="font-bold text-lg text-red-600">返回 DL 看煙火與最後衝刺</h4>
-                        <p class="text-slate-700 text-sm">趕回 Disneyland Park 欣賞經典的城堡煙火秀。煙火結束後，許多人會離場，可把握機會遊玩最後一波設施 (如巨雷山、星際遨遊)。</p>
-                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
-                            <li>最後一站：**Main Street** 採購紀念品，拍夜景。</li>
-                        </ul>
-                    </div>
+                <!-- Event: 水舞秀 -->
+                <div class="timeline-item bg-blue-100 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">🌊 20:00</p>
+                    <h3 class="font-bold text-xl text-blue-800 mb-1">World of Color (水舞秀)</h3>
+                    <p class="text-gray-700">非常推薦！可能需要 App 抽虛擬入場（當天確認）。</p>
+                </div>
 
+                <!-- Event: 煙火 -->
+                <div class="timeline-item bg-red-100 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">🎆 21:00–22:00</p>
+                    <h3 class="font-bold text-xl disney-red mb-1">夜間煙火 (回 Disneyland Park)</h3>
+                    <p class="text-gray-700">夜拍城堡 ✨，看夜間煙火（時間以 App 公告為準）。</p>
+                    <p class="mt-2 text-sm font-semibold text-gray-600">📸 最佳位置：Sleeping Beauty Castle 前 或 It’s a Small World 正面。</p>
+                </div>
+
+                <!-- Event: 購物散步 -->
+                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <p class="text-sm text-gray-500 font-semibold">🛍️ 22:00–關園</p>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">購物＋散步</h3>
+                    <p class="text-gray-700">Main Street 紀念品，人潮散去拍照超美。</p>
+                </div>
+                
+                <!-- Section Summary -->
+                <div class="timeline-item timeline-header">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fa-solid fa-check-circle text-green-600 mr-2"></i> 🎯 成功關鍵總整理
+                    </h2>
+                    <ul class="list-disc list-inside text-lg text-gray-700 font-semibold mt-3 space-y-2">
+                        <li>✅ 早進場 (越早越好，利用黃金 2 小時)</li>
+                        <li>✅ Peter Pan 一定最早玩 (人潮成長速度最快)</li>
+                        <li>✅ 中午換園 (錯開人潮，高效遊玩)</li>
+                        <li>✅ 晚上回本園看煙火 (完美收尾)</li>
+                        <li>✅ 不硬塞全部設施（留餘裕，享受氛圍）</li>
+                    </ul>
+                </div>
+
+            </div> <!-- End Timeline Container -->
                 </div>
             </div>
         </div>
