@@ -802,7 +802,7 @@
 
             // 使用 Google Maps Search API 的 query 參數來標記多個地點
             const query = poiList.join(' and '); // 使用 ' and ' 作為分隔符在 Google Maps 查詢中效果較好
-            const baseUrl = "https://www.google.com/maps/search/?api=1&query=";
+            const baseUrl = "<iframe src="https://www.google.com/maps/d/u/0/embed?mid=13FEUvYkI3F-sLKa64_YCU6V1JCZztng&ehbc=2E312F" width="640" height="480"></iframe>";
             return baseUrl + encodeURIComponent(query);
         }
 
