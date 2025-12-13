@@ -496,7 +496,7 @@
             renderAccommodation(); // 渲染住宿資訊
             renderWeatherChart();
             renderDailyForecast(); 
-            renderItinerary('phase1'); // 預設顯示 舊金山 階段
+            renderItinerary('phase2'); // 預設顯示 PCH 階段
             renderAttractions('all'); // 預設渲染所有景點
         }
 
@@ -579,73 +579,33 @@
         }
 
         // 渲染住宿資訊
-        // 渲染單一住宿卡片的函式 (已根據圖片樣式重寫)
-        function createAccommodationCard(data) {
-            // 使用資料中的顏色類別
-            const primaryColorClass = data.cardClass; 
+        function renderAccommodation() {
+            const container = document.getElementById('accommodation-content');
             
-            // 決定飯店名稱的顏色 (深色版本)
-            let hotelNameColor = 'text-gray-900';
-            if (data.city.includes('舊金山')) hotelNameColor = 'text-blue-900';
-            else if (data.city.includes('好萊塢')) hotelNameColor = 'text-purple-900';
-            else if (data.city.includes('PCH')) hotelNameColor = 'text-yellow-900';
-            
-            // 由於好萊塢卡片在圖片中佔了獨立的一行，我們需要為其單獨設定寬度
-            const isHollywood = data.city.includes('好萊塢');
-            const cardWidthClass = isHollywood ? 'md:col-span-2 lg:col-span-1' : '';
+            // Convert object to array for easy iteration
+            const accommodations = Object.values(accommodationData);
 
-            // 確保地址顯示在深色文字上
-            const addressTextColor = 'text-gray-700';
-            const locationIconColor = 'text-pink-600';
+            let html = '';
+            accommodations.forEach((hotel) => {
+                let colorClass = '';
+                if (hotel.city.includes('舊金山')) colorClass = 'border-blue-500 bg-blue-50 text-blue-800';
+                else if (hotel.city.includes('PCH')) colorClass = 'border-yellow-500 bg-yellow-50 text-yellow-800';
+                else colorClass = 'border-purple-500 bg-purple-50 text-purple-800';
 
-            // 生成 HTML 內容
-            return `
-                <div class="p-5 rounded-2xl shadow-xl transition duration-300 border ${primaryColorClass} ${cardWidthClass}">
-                    
-                    <!-- 城市/日期 (頂部資訊) -->
-                    <div class="mb-3 border-b border-dashed border-opacity-30 pb-3">
-                        <p class="text-sm font-semibold text-gray-700">
-                            ${data.cityText} (${data.dates})
-                        </p>
-                    </div>
-
-                    <!-- 飯店名稱 (粗體/主要標題) -->
-                    <h2 class="text-lg font-extrabold ${hotelNameColor} mb-3">
-                        ${data.name}
-                    </h2>
-                    
-                    <div class="space-y-1 text-sm ${addressTextColor}">
-                        <!-- 地址 (使用定位圖釘) -->
-                        <p class="flex items-start">
-                            <span class="text-sm mr-2 mt-0.5 ${locationIconColor} leading-none">📍</span>
-                            <span class="flex-1">${data.address}</span>
-                        </p>
-                        
-                        <!-- 地圖連結 (使用外部連結圖示) -->
-                        <a href="${data.mapLink}" target="_blank" class="inline-flex items-center text-sm font-semibold text-indigo-500 hover:text-indigo-700 transition duration-150">
-                            查看地圖
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
+                html += `
+                    <div class="p-4 rounded-xl border-l-4 ${colorClass} shadow-inner">
+                        <h4 class="text-base font-bold mb-1">
+                            ${hotel.city} <span class="text-sm font-medium">(${hotel.dates})</span>
+                        </h4>
+                        <p class="text-sm font-semibold mb-1">${hotel.name}</p>
+                        <p class="text-xs italic">📍 地址: ${hotel.address}</p>
+                        <a href="${hotel.mapLink !== '#' ? hotel.mapLink : 'javascript:void(0)'}" target="_blank" class="text-xs font-medium ${hotel.mapLink !== '#' ? 'text-gray-700 hover:underline' : 'text-gray-400 cursor-default'} inline-flex items-center mt-2">
+                            ${hotel.mapLink !== '#' ? '查看地圖' : '地圖連結待補'}
+                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </a>
                     </div>
-                </div>
-            `;
-        }
-
-        // 渲染所有住宿清單的函式
-        function renderAccommodationList() {
-            const container = document.getElementById('accommodation-list');
-            // 將 accommodationData 物件轉換為陣列，然後映射成 HTML 卡片，最後合併
-            container.innerHTML = Object.values(accommodationData)
-                .map(data => createAccommodationCard(data))
-                .join('');
-            
-            // 由於好萊塢卡片在原圖中是獨立一行且佔滿寬度，我們手動處理網格結構。
-            // 這裡的網格設定已經在 CSS 中完成，但在小螢幕時會自動換行。
-            // 為了模擬圖片的佈局，我們將好萊塢卡片放在最後，讓它自然排列到第二行 (如果只有四個項目的話)。
-            // 由於我們調整了網格為 3 欄，現在它們會以 3 + 1 (新的一行) 的方式排列。
-        }
+                `;
+            });
             
             container.innerHTML = html;
         }
