@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -9,14 +8,23 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Chosen Palette: Earthy Calm */
-        :root {
-            --bg-warm: #fdfbf7;
-            --text-primary: #2d3748;
-            --accent-gold: #d69e2e;
-            --accent-ocean: #4299e1;
-            --accent-sage: #81e6d9; /* Lighter for bg */
-            --accent-sage-dark: #319795;
-            --accent-forest: #2f855a; /* New for Yosemite */
+    :root {
+        /* 奶油系基底 */
+        --bg-warm: #fbf7f2;          /* 奶油白背景 */
+        --card-bg: #ffffff;
+        --border-soft: #efe6d8;
+
+        /* 文字 */
+        --text-primary: #3a3a3a;
+        --text-secondary: #6b6b6b;
+
+        /* 主視覺強調色（只留一組） */
+        --accent-main: #d6b98c;      /* 奶茶金 */
+        --accent-main-dark: #c3a36f;
+
+        /* 輔助色（低彩度） */
+        --accent-soft-blue: #cfdde6;
+        --accent-soft-green: #d9e5d8;
         }
         body {
             background-color: var(--bg-warm);
