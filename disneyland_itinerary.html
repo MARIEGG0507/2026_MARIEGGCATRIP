@@ -38,23 +38,41 @@
             background-color: #f8fafc; /* Slate 50 - Warm Neutral Base */
             color: #1e293b; /* Slate 800 */
         }
+
+        /* --- Custom Timeline Styles for Itinerary View --- */
+        .timeline-item-itinerary {
+            position: relative;
+            padding: 0 0 1.5rem 2rem; /* Adjusted padding */
+            border-left: 2px solid #cbd5e1; /* Slate 300 for timeline line */
+        }
+        .timeline-item-itinerary::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0.5rem;
+            width: 14px;
+            height: 14px;
+            background-color: #6366f1; /* Indigo 500 dot */
+            border-radius: 50%;
+            border: 3px solid #f8fafc; /* Body background color rim */
+            z-index: 10;
+        }
+        .timeline-header-itinerary::before {
+            background-color: #ef4444; /* Red 500 for headers */
+            width: 18px;
+            height: 18px;
+            left: -10px;
+        }
     </style>
     <!-- Chosen Palette: Warm Neutrals (Slate/Stone) with Magical Blue and Sunset Orange Accents. Minimalistic and clean. -->
     <!-- Application Structure Plan:
-        1. Hero Section: Brief intro and clear navigation between main views (Overview, Park Explorer, Food, Tips).
-        2. Dashboard View: High-level comparison of the two parks using charts (Vibe, Ride Types) to help users decide allocation of time.
-        3. Park Explorer View: The core interactive section. Users select a park, then a 'Land'. This updates a dynamic list of attractions specific to that land. This hierarchal approach manages the density of information.
-        4. Food Guide View: A card-based layout for must-eat items, filterable by Park.
-        5. Tips View: Static but styled checklists for strategy.
-        Why? The report is dense with hierarchical data (Park -> Land -> Ride). A drill-down interface is best for consumption without scrolling forever.
+        1. Hero Section: Brief intro and clear navigation between main views (Overview, Park Explorer, Food, Tips, Itinerary).
+        2. Dashboard View: High-level comparison of the two parks using charts.
+        3. Park Explorer View: Drill-down interface for Park -> Land -> Attraction.
+        4. Food Guide View: Card-based layout for must-eat items.
+        5. Tips View: Static checklists for strategy.
+        6. Itinerary View: Timeline for a highly efficient one-day dual-park plan.
     -->
-    <!-- Visualization & Content Choices:
-        1. Radar Chart (Chart.js): Comparing "Disneyland" vs "DCA" on attributes like Thrill, Nostalgia, Food, Immersion. Goal: Inform/Compare.
-        2. Doughnut Chart (Chart.js): Distribution of attraction types (Dark Ride, Coaster, Interactive). Goal: Inform/Context.
-        3. Dynamic Cards (DOM Manipulation): For Attractions and Food. Allows instant filtering and detailed display without page reloads. Goal: Organize.
-        4. Interactive "Land" Selector: Horizontal scroll list to save vertical space. Goal: Navigation.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
 <body class="font-sans antialiased selection:bg-blue-200">
 
@@ -72,6 +90,8 @@
                     <button onclick="switchView('explorer')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-explorer">園區探索</button>
                     <button onclick="switchView('food')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-food">必吃美食</button>
                     <button onclick="switchView('tips')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-tips">遊玩策略</button>
+                    <!-- NEW BUTTON FOR ITINERARY -->
+                    <button onclick="switchView('itinerary')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-itinerary">一日行程</button>
                 </div>
             </div>
         </div>
@@ -136,7 +156,7 @@
                         <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-2xl">🎡</div>
                         <div class="ml-4">
                             <h2 class="text-xl font-bold text-orange-900">加州冒險樂園</h2>
-                            <span class="text-sm text-orange-600 font-medium">California Adventure</span>
+                            <span class="text-sm text-orange-600 font-medium">Disney California Adventure</span>
                         </div>
                     </div>
                     <p class="text-slate-700 mb-4">結合皮克斯與漫威，展現加州地景與電影文化的現代樂園。</p>
@@ -251,6 +271,17 @@
                     </ul>
                 </div>
 
+                <!-- Strategy Card 5: NEW PARKING INFO CARD -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-400">
+                    <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-square-parking text-red-500 mr-2"></i>停車與交通資訊</h3>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>主要停車場：</strong> 米奇與朋友停車場 (Mickey & Friends) 和 皮克斯夥伴停車場 (Pixar Pals)，兩者車位極多。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>停車費用：</strong> 標準汽車每日約 $35 USD (可能變動)，需於 App 或現場繳費。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>接駁方式：</strong> 停車後需搭乘免費的**接駁電車或巴士**前往樂園大門。務必記住停車區域/樓層。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>提早抵達：</strong> 停車和安檢流程需 30-45 分鐘，建議在開園前 1.5 小時完成停車。</li>
+                    </ul>
+                </div>
+
                 <!-- Strategy Card 3 -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-400">
                     <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-stopwatch text-green-500 mr-2"></i>時間管理</h3>
@@ -272,6 +303,128 @@
             </div>
         </div>
 
+        <!-- ITINERARY VIEW (NEW) -->
+        <div id="view-itinerary" class="hidden max-w-4xl mx-auto space-y-8 animate-fade-in">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">極致一日兩園區行程</h2>
+                <p class="text-lg text-slate-600">
+                    本行程專為購買 **Park Hopper** 及 **Genie+** 的遊客設計，實現高效率的雙園區體驗。
+                </p>
+                <div class="mt-4 p-3 bg-blue-100 border-l-4 border-blue-500 text-blue-800 rounded-lg text-sm">
+                    <i class="fa-solid fa-circle-info mr-2"></i> 提示：建議在 **Disneyland Park** 開園時衝刺，並於中午換園至 **DCA**。
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-xl border border-slate-100">
+                <div class="space-y-6">
+
+                    <!-- SECTION 1: 早上黃金衝刺期 (Disneyland Park) -->
+                    <div class="timeline-item-itinerary timeline-header-itinerary">
+                        <h3 class="text-xl font-bold text-red-600 flex items-center">
+                            <i class="fa-solid fa-rocket mr-2"></i> 07:30 – 12:00 | 迪士尼樂園 (DL) 衝刺
+                        </h3>
+                    </div>
+
+                    <div class="timeline-item-itinerary">
+                        <p class="text-sm font-semibold text-slate-500">07:30 - 08:30</p>
+                        <h4 class="font-bold text-lg text-slate-800">停車與入園準備 (Rope Drop)</h4>
+                        <p class="text-slate-700 text-sm">完成停車、安檢與排隊，在主街區等待開園。抵達後立即打開 App 購買 **Genie+** 及預約第一個 Lightning Lane (LL)。</p>
+                        <ul class="list-disc list-inside text-xs text-slate-600 mt-1 ml-2">
+                            <li>LL 建議優先：**印第安納瓊斯冒險** 或 **太空山**。</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item-itinerary">
+                        <p class="text-sm font-semibold text-slate-500">08:30 - 09:30</p>
+                        <h4 class="font-bold text-lg text-indigo-600">衝刺區：幻想世界與星際大戰</h4>
+                        <p class="text-slate-700 text-sm">利用人潮剛入園的空檔，直衝人氣最高且無 LL 的設施。</p>
+                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
+                            <li>**Peter Pan’s Flight** (小飛俠)：**必衝首選**，排隊時間飆升最快。</li>
+                            <li>**Millennium Falcon: Smugglers Run** (千年隼號)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-item-itinerary">
+                        <p class="text-sm font-semibold text-slate-500">09:30 - 11:30</p>
+                        <h4 class="font-bold text-lg text-slate-800">使用 LL & 經典設施</h4>
+                        <p class="text-slate-700 text-sm">使用預約的第一個 LL，並開始預約第二個設施。同時遊玩排隊較快的經典設施。</p>
+                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
+                            <li>使用 LL 玩：**印第安納瓊斯冒險** 或 **太空山**。</li>
+                            <li>經典設施：**加勒比海盜** (Pirates of the Caribbean) 或 **幽靈公館** (Haunted Mansion)。</li>
+                            <li>利用 **Mobile Order** 提前點好午餐。</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item-itinerary">
+                        <p class="text-sm font-semibold text-slate-500">11:30 - 12:00</p>
+                        <h4 class="font-bold text-lg text-amber-600">午餐與換園準備</h4>
+                        <p class="text-slate-700 text-sm">在紐奧良廣場 **Mint Julep Bar** 買個米奇甜甜圈，並前往 DCA 樂園大門附近用餐，準備 13:00 換園。</p>
+                    </div>
+
+
+                    <!-- SECTION 2: 下午刺激與皮克斯 (Disney California Adventure) -->
+                    <div class="timeline-item-itinerary timeline-header-itinerary">
+                        <h3 class="text-xl font-bold text-red-600 flex items-center">
+                            <i class="fa-solid fa-car-side mr-2"></i> 13:00 – 19:30 | 冒險樂園 (DCA) 精華
+                        </h3>
+                    </div>
+
+                    <div class="timeline-item-itinerary">
+                        <p class="text-sm font-semibold text-slate-500">13:00 - 15:30</p>
+                        <h4 class="font-bold text-lg text-indigo-600">水箱溫泉鎮與復仇者校園</h4>
+                        <p class="text-slate-700 text-sm">進入 DCA 後，立即預約 LL 或排 Single Rider 衝刺熱門設施。</p>
+                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
+                            <li>**ILL** 建議：**水箱溫泉鎮賽車手** (Racers)。</li>
+                            <li>**星際異攻隊：突圍任務** (Guardians)：推薦走 Single Rider。</li>
+                            <li>**蜘蛛人：蛛網穿行** (WEB SLINGERS)。</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item-itinerary">
+                        <p class="text-sm font-semibold text-slate-500">15:30 - 18:00</p>
+                        <h4 class="font-bold text-lg text-slate-800">皮克斯碼頭與海濱設施</h4>
+                        <p class="text-slate-700 text-sm">遊玩皮克斯主題設施，並在碼頭欣賞海景。</p>
+                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
+                            <li>**超特攻雲霄飛車** (Incredicoaster)：走 LL 或 Single Rider。</li>
+                            <li>**飛越世界** (Soarin')：療癒身心、休息。</li>
+                            <li>**Toy Story Midway Mania** (玩具總動員) (LL)。</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item-itinerary">
+                        <p class="text-sm font-semibold text-slate-500">18:00 - 19:30</p>
+                        <h4 class="font-bold text-lg text-amber-600">晚餐與佔位</h4>
+                        <p class="text-slate-700 text-sm">在 **Flo’s V8 Cafe** 或 **Pym Test Kitchen** 快速解決晚餐，並前往指定區域為夜間水舞秀佔位。</p>
+                    </div>
+
+
+                    <!-- SECTION 3: 夜間表演高潮 (DCA & DL) -->
+                    <div class="timeline-item-itinerary timeline-header-itinerary">
+                        <h3 class="text-xl font-bold text-red-600 flex items-center">
+                            <i class="fa-solid fa-star-and-crescent mr-2"></i> 20:00 – 關園 | 夜間高潮
+                        </h3>
+                    </div>
+                    
+                    <div class="timeline-item-itinerary">
+                        <p class="text-sm font-semibold text-slate-500">20:00 - 21:00</p>
+                        <h4 class="font-bold text-lg text-indigo-600">World of Color (水舞秀)</h4>
+                        <p class="text-slate-700 text-sm">在天堂碼頭欣賞 DCA 的夜間水舞光影秀。若有預約虛擬隊伍，可選擇較佳觀賞區。</p>
+                        <p class="text-xs font-semibold text-blue-500 mt-1">💡 記得在 DCA 欣賞 **Cars Land** 霓虹燈夜景。</p>
+                    </div>
+
+                    <div class="timeline-item-itinerary">
+                        <p class="text-sm font-semibold text-slate-500">21:00 - 關園</p>
+                        <h4 class="font-bold text-lg text-red-600">返回 DL 看煙火與最後衝刺</h4>
+                        <p class="text-slate-700 text-sm">趕回 Disneyland Park 欣賞經典的城堡煙火秀。煙火結束後，許多人會離場，可把握機會遊玩最後一波設施 (如巨雷山、星際遨遊)。</p>
+                        <ul class="list-disc list-inside text-sm text-slate-700 mt-1 ml-2">
+                            <li>最後一站：**Main Street** 採購紀念品，拍夜景。</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <footer class="bg-slate-800 text-slate-400 py-8 mt-12">
@@ -282,6 +435,13 @@
     </footer>
 
     <script>
+        // --- HELPER FUNCTION FOR IMAGE PLACEHOLDERS ---
+        function getPlaceholderUrl(text, width = 300, height = 160) {
+            const bg = 'c7d2fe'; // Blue 200
+            const tc = '4f46e5'; // Indigo 600
+            return `https://placehold.co/${width}x${height}/${bg}/${tc}?text=${text}`;
+        }
+
         // --- DATA ---
         const parksData = {
             DL: {
@@ -293,8 +453,8 @@
                         desc: "完全沉浸式的區域，背景設定在邊境星球「巴圖」。這裡的造景細節驚人，讓你彷彿置身電影場景。",
                         tags: ["沉浸式", "電影場景", "熱門"],
                         attractions: [
-                            { name: "抵抗軍的崛起 (Rise of the Resistance)", type: "大型室內遊樂設施", highlight: "必玩之首！長達20分鐘的電影體驗，被俘虜後逃脫的緊張情節。", tags: ["ILL", "刺激"] },
-                            { name: "千年隼號：走私者逃亡", type: "飛行模擬", highlight: "駕駛銀河系最快破銅爛鐵，六人合作操控飛船。", tags: ["Genie+", "互動"] }
+                            { name: "抵抗軍的崛起 (Rise of the Resistance)", type: "大型室內遊樂設施", highlight: "必玩之首！長達20分鐘的電影體驗，被俘虜後逃脫的緊張情節。", tags: ["ILL", "刺激"], imageText: "抵抗軍" },
+                            { name: "千年隼號：走私者逃亡", type: "飛行模擬", highlight: "駕駛銀河系最快破銅爛鐵，六人合作操控飛船。", tags: ["Genie+", "互動"], imageText: "千年隼" }
                         ]
                     },
                     {
@@ -303,8 +463,8 @@
                         desc: "展現對未來的想像與太空探索的主題，擁有經典的太空設施。",
                         tags: ["科技", "太空", "經典"],
                         attractions: [
-                            { name: "太空山 (Space Mountain)", type: "室內雲霄飛車", highlight: "全黑室內星空中的高速旅程，加州版配樂經典。", tags: ["Genie+", "刺激"] },
-                            { name: "星際遨遊 (Star Tours)", type: "3D動感電影", highlight: "C-3PO駕駛太空船，場景隨機組合。", tags: ["Genie+", "3D"] }
+                            { name: "太空山 (Space Mountain)", type: "室內雲霄飛車", highlight: "全黑室內星空中的高速旅程，加州版配樂經典。", tags: ["Genie+", "刺激"], imageText: "太空山" },
+                            { name: "星際遨遊 (Star Tours)", type: "3D動感電影", highlight: "C-3PO駕駛太空船，場景隨機組合。", tags: ["Genie+", "3D"], imageText: "星際遨遊" }
                         ]
                     },
                     {
@@ -313,9 +473,9 @@
                         desc: "迪士尼最核心的童話世界，穿過城堡即達，充滿溫馨回憶。",
                         tags: ["童話", "親子", "核心"],
                         attractions: [
-                            { name: "馬特洪峰雪橇飛車", type: "雲霄飛車", highlight: "【加州獨家】模擬阿爾卑斯山雪橇冒險，會遇到雪怪。", tags: ["Genie+", "獨家"] },
-                            { name: "小小世界", type: "水上遊船", highlight: "搭船遊覽各國風情，白色幾何外觀精緻。", tags: ["經典", "親子"] },
-                            { name: "經典暗黑騎乘", type: "軌道車", highlight: "小飛俠、白雪公主、愛麗絲夢遊仙境等經典童話設施。", tags: ["懷舊", "親子"] }
+                            { name: "馬特洪峰雪橇飛車", type: "雲霄飛車", highlight: "【加州獨家】模擬阿爾卑斯山雪橇冒險，會遇到雪怪。", tags: ["Genie+", "獨家"], imageText: "馬特洪峰" },
+                            { name: "小小世界", type: "水上遊船", highlight: "搭船遊覽各國風情，白色幾何外觀精緻。", tags: ["經典", "親子"], imageText: "小小世界" },
+                            { name: "經典暗黑騎乘", type: "軌道車", highlight: "小飛俠、白雪公主、愛麗絲夢遊仙境等經典童話設施。", tags: ["懷舊", "親子"], imageText: "童話騎乘" }
                         ]
                     },
                     {
@@ -324,8 +484,8 @@
                         desc: "充滿叢林、神廟與異國情調的區域。",
                         tags: ["叢林", "冒險"],
                         attractions: [
-                            { name: "印第安納瓊斯冒險", type: "吉普車冒險", highlight: "闖入禁忌神廟，融合火焰、蛇群與巨石的特效。", tags: ["Genie+", "刺激"] },
-                            { name: "叢林巡航", type: "水上遊船", highlight: "船長幽默導覽是最大亮點。", tags: ["經典", "導覽"] }
+                            { name: "印第安納瓊斯冒險", type: "吉普車冒險", highlight: "闖入禁忌神廟，融合火焰、蛇群與巨石的特效。", tags: ["Genie+", "刺激"], imageText: "印第安瓊斯" },
+                            { name: "叢林巡航", type: "水上遊船", highlight: "船長幽默導覽是最大亮點。", tags: ["經典", "導覽"], imageText: "叢林巡航" }
                         ]
                     },
                     {
@@ -334,8 +494,8 @@
                         desc: "以19世紀路易斯安那州為藍本，擁有爵士樂氛圍與精緻陽台。",
                         tags: ["氣氛", "精緻"],
                         attractions: [
-                            { name: "加勒比海盜", type: "水上遊船", highlight: "場景比其他國家更長更完整，海盜世界體驗。", tags: ["Genie+", "經典"] },
-                            { name: "幽靈公館", type: "鬼屋/黑屋", highlight: "充滿黑色幽默與精美特效的幽靈舞會。", tags: ["Genie+", "經典"] }
+                            { name: "加勒比海盜", type: "水上遊船", highlight: "場景比其他國家更長更完整，海盜世界體驗。", tags: ["Genie+", "經典"], imageText: "加勒比海盜" },
+                            { name: "幽靈公館", type: "鬼屋/黑屋", highlight: "充滿黑色幽默與精美特效的幽靈舞會。", tags: ["Genie+", "經典"], imageText: "幽靈公館" }
                         ]
                     },
                     {
@@ -344,7 +504,7 @@
                         desc: "致敬美國西部的開拓時代，充滿紅岩與荒野氣息。",
                         tags: ["西部", "荒野"],
                         attractions: [
-                            { name: "巨雷山鐵路", type: "戶外雲霄飛車", highlight: "荒野中最瘋狂的旅程，穿梭礦坑之間。", tags: ["Genie+", "刺激"] }
+                            { name: "巨雷山鐵路", type: "戶外雲霄飛車", highlight: "荒野中最瘋狂的旅程，穿梭礦坑之間。", tags: ["Genie+", "刺激"], imageText: "巨雷山" }
                         ]
                     },
                     {
@@ -353,8 +513,8 @@
                         desc: "【全新翻修】米奇與朋友們居住的小鎮，色彩鮮豔的2D動畫世界。",
                         tags: ["卡通", "親子", "拍照"],
                         attractions: [
-                            { name: "米奇和米妮飛速鐵路", type: "無軌道車", highlight: "結合裸眼3D技術，進入歡樂卡通世界。", tags: ["Genie+", "新設施"] },
-                            { name: "角色的家", type: "參觀互動", highlight: "參觀米奇米妮的房子並合照。", tags: ["拍照", "親子"] }
+                            { name: "米奇和米妮飛速鐵路", type: "無軌道車", highlight: "結合裸眼3D技術，進入歡樂卡通世界。", tags: ["Genie+", "新設施"], imageText: "米奇飛速" },
+                            { name: "角色的家", type: "參觀互動", highlight: "參觀米奇米妮的房子並合照。", tags: ["拍照", "親子"], imageText: "米奇之家" }
                         ]
                     }
                 ]
@@ -368,7 +528,7 @@
                         desc: "【必去推薦】完美還原電影《Cars》水箱溫泉鎮，被譽為最成功的園區設計。",
                         tags: ["必訪", "電影還原", "夜景"],
                         attractions: [
-                            { name: "水箱溫泉鎮賽車手", type: "高速賽車", highlight: "鎮園之寶！戶外紅岩區高速競賽，晚上霓虹燈亮起時最美。", tags: ["ILL", "刺激"] }
+                            { name: "水箱溫泉鎮賽車手", type: "高速賽車", highlight: "鎮園之寶！戶外紅岩區高速競賽，晚上霓虹燈亮起時最美。", tags: ["ILL", "刺激"], imageText: "賽車手" }
                         ]
                     },
                     {
@@ -377,8 +537,8 @@
                         desc: "漫威英雄訓練基地，隨時可見英雄在屋頂戰鬥。",
                         tags: ["漫威", "英雄", "現代"],
                         attractions: [
-                            { name: "星際異攻隊：突圍任務", type: "自由落體", highlight: "搖滾風格自由落體，隨音樂隨機升降，氣氛超嗨。", tags: ["Genie+", "刺激"] },
-                            { name: "蜘蛛人：蛛網穿行", type: "互動射擊", highlight: "手勢感應發射蜘蛛絲，體驗成為蜘蛛人。", tags: ["Genie+", "互動"] }
+                            { name: "星際異攻隊：突圍任務", type: "自由落體", highlight: "搖滾風格自由落體，隨音樂隨機升降，氣氛超嗨。", tags: ["Genie+", "刺激"], imageText: "突圍任務" },
+                            { name: "蜘蛛人：蛛網穿行", type: "互動射擊", highlight: "手勢感應發射蜘蛛絲，體驗成為蜘蛛人。", tags: ["Genie+", "互動"], imageText: "蜘蛛人" }
                         ]
                     },
                     {
@@ -387,9 +547,9 @@
                         desc: "美式海濱遊樂場風格，集結皮克斯主題設施。",
                         tags: ["皮克斯", "海濱", "歡樂"],
                         attractions: [
-                            { name: "超特攻雲霄飛車", type: "雲霄飛車", highlight: "速度快且有360度翻轉，配合積琪雷射眼特效。", tags: ["Genie+", "刺激"] },
-                            { name: "皮克斯摩天輪", type: "摩天輪", highlight: "搖晃車廂驚嚇指數高，可滑動擺盪。", tags: ["風景", "驚嚇"] },
-                            { name: "玩具總動員瘋狂遊戲屋", type: "3D射擊", highlight: "戴眼鏡的射擊遊戲，非常歡樂具競爭性。", tags: ["Genie+", "親子"] }
+                            { name: "超特攻雲霄飛車", type: "雲霄飛車", highlight: "速度快且有360度翻轉，配合積琪雷射眼特效。", tags: ["Genie+", "刺激"], imageText: "超特攻" },
+                            { name: "皮克斯摩天輪", type: "摩天輪", highlight: "搖晃車廂驚嚇指數高，可滑動擺盪。", tags: ["風景", "驚嚇"], imageText: "皮克斯摩天輪" },
+                            { name: "玩具總動員瘋狂遊戲屋", type: "3D射擊", highlight: "戴眼鏡的射擊遊戲，非常歡樂具競爭性。", tags: ["Genie+", "親子"], imageText: "玩具遊戲屋" }
                         ]
                     },
                     {
@@ -398,7 +558,7 @@
                         desc: "《大英雄天團》風格區域，以美食為主。",
                         tags: ["美食", "大英雄天團"],
                         attractions: [
-                            { name: "杯麵見面會", type: "角色互動", highlight: "可以跟Baymax擁抱合照。", tags: ["拍照"] }
+                            { name: "杯麵見面會", type: "角色互動", highlight: "可以跟Baymax擁抱合照。", tags: ["拍照"], imageText: "杯麵合照" }
                         ]
                     },
                     {
@@ -407,8 +567,8 @@
                         desc: "以加州國家公園與大自然為主題，綠意盎然。",
                         tags: ["自然", "國家公園"],
                         attractions: [
-                            { name: "飛越世界，翱翔天際", type: "飛行模擬", highlight: "飛越全球地標，能聞到草地海洋香氣。", tags: ["Genie+", "療癒"] },
-                            { name: "灰熊激流泛舟", type: "激流泛舟", highlight: "湍急河流漂流與大俯衝，全身濕透機率高。", tags: ["Genie+", "濕身"] }
+                            { name: "飛越世界，翱翔天際", type: "飛行模擬", highlight: "飛越全球地標，能聞到草地海洋香氣。", tags: ["Genie+", "療癒"], imageText: "飛越世界" },
+                            { name: "灰熊激流泛舟", type: "激流泛舟", highlight: "湍急河流漂流與大俯衝，全身濕透機率高。", tags: ["Genie+", "濕身"], imageText: "激流泛舟" }
                         ]
                     },
                     {
@@ -417,8 +577,8 @@
                         desc: "重現好萊塢黃金時代街道。",
                         tags: ["電影", "復古"],
                         attractions: [
-                            { name: "怪獸電力公司", type: "慢速騎乘", highlight: "跟著毛怪與大眼仔拯救阿布。", tags: ["Genie+", "親子"] },
-                            { name: "動畫學院", type: "繪畫教學", highlight: "畫師教畫迪士尼角色，作品可帶回，隱藏版推薦。", tags: ["室內", "創作"] }
+                            { name: "怪獸電力公司", type: "慢速騎乘", highlight: "跟著毛怪與大眼仔拯救阿布。", tags: ["Genie+", "親子"], imageText: "怪獸電力" },
+                            { name: "動畫學院", type: "繪畫教學", highlight: "畫師教畫迪士尼角色，作品可帶回，隱藏版推薦。", tags: ["室內", "創作"], imageText: "動畫學院" }
                         ]
                     }
                 ]
@@ -426,17 +586,17 @@
         };
 
         const foodData = [
-            { park: "DL", name: "Blue Bayou Restaurant", area: "紐奧良廣場", type: "餐廳 (需預約)", highlight: "位於加勒比海盜設施內，氣氛浪漫。", items: "Monte Cristo 三明治, 紐奧良什錦飯" },
-            { park: "DL", name: "Dole Whip", area: "探險樂園", type: "小吃", highlight: "迪士尼最經典的鳳梨霜淇淋，清爽解熱。", items: "Dole Whip Float" },
-            { park: "DL", name: "Little Red Wagon", area: "美國大街", type: "小吃", highlight: "被譽為迪士尼最好吃的熱狗。", items: "Hand-dipped Corn Dog" },
-            { park: "DL", name: "Mint Julep Bar", area: "紐奧良廣場", type: "小吃", highlight: "米奇形狀法式甜甜圈，熱騰騰灑滿糖粉。", items: "Mickey-shaped Beignets, Mint Julep" },
-            { park: "DL", name: "Oga's Cantina", area: "星際大戰", type: "酒吧 (需預約)", highlight: "還原電影酒吧場景，機器人DJ。", items: "Jedi Mind Trick (調酒)" },
-            { park: "DCA", name: "Lamplight Lounge", area: "皮克斯碼頭", type: "餐廳 (需預約)", highlight: "欣賞湖景與摩天輪的最佳位置。", items: "Lobster Nachos (龍蝦玉米片)" },
-            { park: "DCA", name: "Flo’s V8 Cafe", area: "汽車總動員", type: "快餐", highlight: "霓虹燈餐廳，晚上氣氛超棒。", items: "炸雞, 奶昔" },
-            { park: "DCA", name: "Cozy Cone Motel", area: "汽車總動員", type: "小吃", highlight: "交通錐形狀小店。", items: "Chili Cone Queso, 培根起司通心粉" },
-            { park: "DCA", name: "Pym Test Kitchen", area: "復仇者校園", type: "快餐", highlight: "食物會變大變小的實驗廚房。", items: "巨大蝴蝶餅, 巨大炸雞漢堡" },
-            { park: "DCA", name: "Jack-Jack Cookie", area: "皮克斯碼頭", type: "小吃", highlight: "小傑最愛的溫熱巨大巧克力餅乾。", items: "Cookie Num Nums" },
-            { park: "DCA", name: "Boudin Bakery", area: "舊金山廣場", type: "快餐", highlight: "加州冒險樂園標誌性美食。", items: "酸種麵包湯 (Sourdough Bread Bowl)" }
+            { park: "DL", name: "Blue Bayou Restaurant", area: "紐奧良廣場", type: "餐廳 (需預約)", highlight: "位於加勒比海盜設施內，氣氛浪漫。", items: "Monte Cristo 三明治, 紐奧良什錦飯", imageText: "藍色港灣" },
+            { park: "DL", name: "Dole Whip", area: "探險樂園", type: "小吃", highlight: "迪士尼最經典的鳳梨霜淇淋，清爽解熱。", items: "Dole Whip Float", imageText: "都樂鳳梨冰" },
+            { park: "DL", name: "Little Red Wagon", area: "美國大街", type: "小吃", highlight: "被譽為迪士尼最好吃的熱狗。", items: "Hand-dipped Corn Dog", imageText: "玉米熱狗" },
+            { park: "DL", name: "Mint Julep Bar", area: "紐奧良廣場", type: "小吃", highlight: "米奇形狀法式甜甜圈，熱騰騰灑滿糖粉。", items: "Mickey-shaped Beignets, Mint Julep", imageText: "米奇甜甜圈" },
+            { park: "DL", name: "Oga's Cantina", area: "星際大戰", type: "酒吧 (需預約)", highlight: "還原電影酒吧場景，機器人DJ。", items: "Jedi Mind Trick (調酒)", imageText: "奧加酒館" },
+            { park: "DCA", name: "Lamplight Lounge", area: "皮克斯碼頭", type: "餐廳 (需預約)", highlight: "欣賞湖景與摩天輪的最佳位置。", items: "Lobster Nachos (龍蝦玉米片)", imageText: "龍蝦玉米片" },
+            { park: "DCA", name: "Flo’s V8 Cafe", area: "汽車總動員", type: "快餐", highlight: "霓虹燈餐廳，晚上氣氛超棒。", items: "炸雞, 奶昔", imageText: "V8咖啡" },
+            { park: "DCA", name: "Cozy Cone Motel", area: "汽車總動員", type: "小吃", highlight: "交通錐形狀小店。", items: "Chili Cone Queso, 培根起司通心粉", imageText: "玉米甜筒" },
+            { park: "DCA", name: "Pym Test Kitchen", area: "復仇者校園", type: "快餐", highlight: "食物會變大變小的實驗廚房。", items: "巨大蝴蝶餅, 巨大炸雞漢堡", imageText: "巨大食物" },
+            { park: "DCA", name: "Jack-Jack Cookie", area: "皮克斯碼頭", type: "小吃", highlight: "小傑最愛的溫熱巨大巧克力餅乾。", items: "Cookie Num Nums", imageText: "小傑餅乾" },
+            { park: "DCA", name: "Boudin Bakery", area: "舊金山廣場", type: "快餐", highlight: "加州冒險樂園標誌性美食。", items: "酸種麵包湯 (Sourdough Bread Bowl)", imageText: "酸種麵包" }
         ];
 
         // --- STATE & INITIALIZATION ---
@@ -448,14 +608,15 @@
             renderLandNav();
             renderLandContent();
             renderFood('all');
+            switchView('dashboard'); // Start on dashboard
         });
 
         // --- NAVIGATION LOGIC ---
         function switchView(viewId) {
             // Hide all views
-            ['dashboard', 'explorer', 'food', 'tips'].forEach(id => {
+            ['dashboard', 'explorer', 'food', 'tips', 'itinerary'].forEach(id => {
                 document.getElementById(`view-${id}`).classList.add('hidden');
-                document.getElementById(`btn-${id}`).classList.remove('bg-blue-50', 'text-blue-600');
+                document.getElementById(`btn-${id}`).classList.remove('bg-blue-50', 'text-blue-600', 'bg-orange-50', 'text-orange-600');
                 document.getElementById(`btn-${id}`).classList.add('text-slate-700');
             });
 
@@ -466,7 +627,7 @@
 
             // Specific initialization if needed
             if(viewId === 'explorer') {
-                renderLandNav(); // Ensure layout calculates correctly
+                setPark(currentPark); // Re-render land nav/content on view switch
             }
         }
 
@@ -557,7 +718,7 @@
             if (parkCode === 'DL') {
                 btnDL.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
                 btnDL.classList.remove('text-slate-500', 'hover:text-slate-700');
-                btnDCA.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+                btnDCA.classList.remove('bg-white', 'text-orange-600', 'shadow-sm');
                 btnDCA.classList.add('text-slate-500', 'hover:text-slate-700');
             } else {
                 btnDCA.classList.add('bg-white', 'text-orange-600', 'shadow-sm');
@@ -615,8 +776,11 @@
 
             land.attractions.forEach(attr => {
                 const card = document.createElement('div');
-                card.className = 'bg-slate-50 rounded-lg p-4 border border-slate-100 hover:border-blue-200 transition-colors group';
+                card.className = 'bg-white rounded-xl shadow-md border border-slate-100 hover:border-blue-300 transition-colors group overflow-hidden';
                 
+                // Image Placeholder
+                const imgUrl = getPlaceholderUrl(attr.imageText, 400, 180);
+
                 // Card Header: Name + Tags
                 let tagsHtml = '';
                 attr.tags.forEach(t => {
@@ -628,12 +792,15 @@
                 });
 
                 card.innerHTML = `
-                    <div class="flex justify-between items-start mb-2">
-                        <h5 class="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${attr.name}</h5>
+                    <img src="${imgUrl}" alt="${attr.name} 圖片示意圖" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h5 class="font-bold text-lg text-slate-800 group-hover:text-blue-600 transition-colors">${attr.name}</h5>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-3">${tagsHtml}</div>
+                        <p class="text-sm text-slate-600 mb-1"><span class="font-semibold text-slate-500">類型：</span> ${attr.type}</p>
+                        <p class="text-sm text-slate-700 mt-2 bg-slate-50 p-2 rounded border border-slate-100"><i class="fa-solid fa-star text-yellow-400 mr-1"></i> ${attr.highlight}</p>
                     </div>
-                    <div class="flex flex-wrap gap-2 mb-3">${tagsHtml}</div>
-                    <p class="text-sm text-slate-600 mb-1"><span class="font-semibold text-slate-500">類型：</span> ${attr.type}</p>
-                    <p class="text-sm text-slate-700 mt-2 bg-white p-2 rounded border border-slate-100"><i class="fa-solid fa-star text-yellow-400 mr-1"></i> ${attr.highlight}</p>
                 `;
                 attractList.appendChild(card);
             });
@@ -666,15 +833,22 @@
                     : '<span class="absolute top-3 right-3 bg-orange-100 text-orange-800 text-xs font-bold px-2 py-1 rounded-full">冒險樂園</span>';
                 
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-xl shadow-sm border border-slate-100 p-5 relative hover:shadow-md transition-shadow';
+                card.className = 'bg-white rounded-xl shadow-md border border-slate-100 relative hover:shadow-lg transition-shadow overflow-hidden';
+                
+                // Image Placeholder
+                const imgUrl = getPlaceholderUrl(item.imageText, 400, 160);
+
                 card.innerHTML = `
-                    ${parkBadge}
-                    <h3 class="font-bold text-lg text-slate-800 pr-16">${item.name}</h3>
-                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">${item.area} • ${item.type}</p>
-                    <p class="text-sm text-slate-600 mb-4">${item.highlight}</p>
-                    <div class="bg-slate-50 p-3 rounded-lg">
-                        <p class="text-xs text-slate-500 font-semibold mb-1">必點推薦：</p>
-                        <p class="text-sm font-medium text-slate-800"><i class="fa-solid fa-utensils text-slate-400 mr-2"></i>${item.items}</p>
+                    <img src="${imgUrl}" alt="${item.name} 圖片示意圖" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        ${parkBadge}
+                        <h3 class="font-bold text-lg text-slate-800 pr-16">${item.name}</h3>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">${item.area} • ${item.type}</p>
+                        <p class="text-sm text-slate-600 mb-4">${item.highlight}</p>
+                        <div class="bg-slate-50 p-3 rounded-lg">
+                            <p class="text-xs text-slate-500 font-semibold mb-1">必點推薦：</p>
+                            <p class="text-sm font-medium text-slate-800"><i class="fa-solid fa-utensils text-slate-400 mr-2"></i>${item.items}</p>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(card);
