@@ -495,7 +495,7 @@
                 title: "Phase 1: 三藩市漫遊與NBA",
                 days: [
                     { date: "2/26 (四)", loc: "舊金山", act: "抵達與時差調適", detail: "21:15 SFO 抵達、前往 Riu Plaza Fisherman's Wharf、休息調適時差。", transport: "Shared Shuttle 或 Uber/Lyft (費用較高但最方便)。", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "上午：惡魔島參觀。<br>午餐：漁人碼頭<br>下午：Lombard Street (纜車體驗)、前往藝術宮。<br>晚餐<br>晚上：藝術宮湖畔欣賞夕陽、返回飯店。", transport: "惡魔島：碼頭步行。九曲花街/藝術宮： Powell-Hyde 纜車 🚋。", attractionKey: "惡魔島 Alcatraz",attractionKey:"漁人碼頭與 39 號碼頭", hotel: "Riu Plaza Fisherman's Wharf" }, 
+                    { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "上午：惡魔島參觀。<br>午餐：漁人碼頭<br>下午：Lombard Street (纜車體驗)、前往藝術宮。<br>晚餐<br>晚上：藝術宮湖畔欣賞夕陽、返回飯店。", transport: "惡魔島：碼頭步行。九曲花街/藝術宮： Powell-Hyde 纜車 🚋。", attractionKey: "惡魔島 Alcatraz", hotel: "Riu Plaza Fisherman's Wharf" }, 
                     { date: "2/28 (六)", loc: "舊金山", act: "NBA 賽事日", detail: "上午：悠閒早午餐、Ferry Building 散步。<br>下午：前往 Chase Center 周邊用晚餐。<br>午晚餐<br>晚上：17:30 觀賞 NBA 勇士隊 vs 湖人隊。", transport: "Ferry Building： MUNI 巴士。Chase Center： MUNI T-Line 輕軌直達。賽後： MUNI 或 Uber/Lyft 回飯店。", attractionKey: "Chase Center", hotel: "Riu Plaza Fisherman's Wharf" },
                     { date: "3/1 (日)", loc: "舊金山/周邊", act: "內陸自然探索 (優勝美地)", detail: "<strong>06:30 – 07:30</strong> 舊金山市區上車 (視地點而定，請準時)<br><strong>07:30 – 11:30</strong> 乘車前往優勝美地 (中途休息 20-30 分)<br><strong>11:30 – 12:00</strong> 抵達國家公園 (經南側或西側入口)<br><strong>12:00 – 16:30</strong> 優勝美地谷深度探索 (自由午餐)<br><strong>16:30 – 17:00</strong> 觀賞 Tunnel View (重點觀景台)<br><strong>17:00 – 21:30</strong> 返回舊金山 (中途休息，晚餐時段抵達)", transport: "旅行社提供交通車。", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
                     { date: "3/2 (一)", loc: "舊金山", act: "城市文化巡禮", detail: "上午：聯合廣場逛街、前往唐人街午餐。下午：搭車前往金門大橋北邊 Vista Point 拍照。晚上：順路回程經 Crissy Field、晚餐、自由活動。", transport: "纜車/唐人街： Powell-Mason 纜車 🚋。金門大橋： 從唐人街搭 Uber/Lyft 直達。", attractionKey: "金門大橋 Golden Gate", hotel: "Riu Plaza Fisherman's Wharf" }
@@ -665,7 +665,7 @@
                         <p class="text-xs text-teal-700">開放時間：通常為起飛前 48 小時。建議優先使用以節省時間。</p>
                         <a href="https://www.cathaypacific.com/mb/?cxsource=TOP-NAV_FLIGHTS_3_1#!/zh_TW/olci/login" target="_blank" class="text-xs text-blue-600 hover:underline font-medium inline-flex items-center">
                             前往國泰航空官網報到連結 
-                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="https://www.google.com/maps/d/u/0/embed?mid=13FEUvYkI3F-sLKa64_YCU6V1JCZztng&ehbc=2E312F"round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </a>
                     </div>
 
@@ -705,7 +705,7 @@
                         <p class="text-xs italic">📍 地址: ${hotel.address}</p>
                         <a href="${hotel.mapLink !== '#' ? hotel.mapLink : 'javascript:void(0)'}" target="_blank" class="text-xs font-medium ${hotel.mapLink !== '#' ? 'text-gray-700 hover:underline' : 'text-gray-400 cursor-default'} inline-flex items-center mt-2">
                             ${hotel.mapLink !== '#' ? '查看地圖' : '地圖連結待補'}
-                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="https://www.google.com/maps/d/u/0/embed?mid=13FEUvYkI3F-sLKa64_YCU6V1JCZztng&ehbc=2E312F"round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </a>
                     </div>
                 `;
@@ -877,9 +877,9 @@
                 <div class="mb-6 animate-fade-in">
                     <!-- NEW: 地圖連結按鈕 (整合自 dashboard 概念) -->
                     <a href="${mapUrl}" target="_blank" class="flex items-center justify-center p-3 mb-4 rounded-xl text-white font-bold ${primaryColorClass} ${hoverColorClass} transition-colors shadow-lg card-hover">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="https://www.google.com/maps/d/u/0/embed?mid=13FEUvYkI3F-sLKa64_YCU6V1JCZztng&ehbc=2E312F"round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657A8 8 0 1117.657 16.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657A8 8 0 1117.657 16.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         🔍 地圖連結: 點擊查看 ${phase.title} 區域所有景點
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="https://www.google.com/maps/d/u/0/embed?mid=13FEUvYkI3F-sLKa64_YCU6V1JCZztng&ehbc=2E312F"round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </a>
                     
                     <h3 class="text-2xl font-bold text-gray-900">${phase.title}</h3>
