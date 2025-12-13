@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加州迪士尼度假區深度攻略</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom Scrollbar for horizontal lists */
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body {
+            background-color: #f8fafc; /* Slate 50 - Warm Neutral Base */
+            color: #1e293b; /* Slate 800 */
+        }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals (Slate/Stone) with Magical Blue and Sunset Orange Accents. Minimalistic and clean. -->
+    <!-- Application Structure Plan:
+        1. Hero Section: Brief intro and clear navigation between main views (Overview, Park Explorer, Food, Tips).
+        2. Dashboard View: High-level comparison of the two parks using charts (Vibe, Ride Types) to help users decide allocation of time.
+        3. Park Explorer View: The core interactive section. Users select a park, then a 'Land'. This updates a dynamic list of attractions specific to that land. This hierarchal approach manages the density of information.
+        4. Food Guide View: A card-based layout for must-eat items, filterable by Park.
+        5. Tips View: Static but styled checklists for strategy.
+        Why? The report is dense with hierarchical data (Park -> Land -> Ride). A drill-down interface is best for consumption without scrolling forever.
+    -->
+    <!-- Visualization & Content Choices:
+        1. Radar Chart (Chart.js): Comparing "Disneyland" vs "DCA" on attributes like Thrill, Nostalgia, Food, Immersion. Goal: Inform/Compare.
+        2. Doughnut Chart (Chart.js): Distribution of attraction types (Dark Ride, Coaster, Interactive). Goal: Inform/Context.
+        3. Dynamic Cards (DOM Manipulation): For Attractions and Food. Allows instant filtering and detailed display without page reloads. Goal: Organize.
+        4. Interactive "Land" Selector: Horizontal scroll list to save vertical space. Goal: Navigation.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="font-sans antialiased selection:bg-blue-200">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur shadow-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+                        <i class="fa-brands fa-fort-awesome mr-2 text-blue-600"></i>加州迪士尼攻略
+                    </span>
+                </div>
+                <div class="flex space-x-1 sm:space-x-8 items-center overflow-x-auto hide-scroll">
+                    <button onclick="switchView('dashboard')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-dashboard">總覽分析</button>
+                    <button onclick="switchView('explorer')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-explorer">園區探索</button>
+                    <button onclick="switchView('food')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-food">必吃美食</button>
+                    <button onclick="switchView('tips')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-tips">遊玩策略</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
+
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="space-y-8 animate-fade-in">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <h1 class="text-3xl font-bold text-slate-900 mb-4">兩大樂園風格解析</h1>
+                <p class="text-lg text-slate-600">
+                    加州迪士尼度假區由「迪士尼樂園 (Disneyland Park)」與「迪士尼加州冒險樂園 (Disney California Adventure)」組成。
+                    本區塊透過數據分析幫助您快速理解兩者的差異，決定您的時間分配與遊玩重點。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <!-- Vibe Radar Chart -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 flex items-center">
+                        <i class="fa-solid fa-chart-radar text-purple-500 mr-2"></i> 風格雷達圖
+                    </h3>
+                    <p class="text-sm text-slate-500 mb-4">比較兩個樂園在刺激度、情懷、IP 強度等方面的傾向。</p>
+                    <div class="chart-container">
+                        <canvas id="vibeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Attraction Type Doughnut -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2 flex items-center">
+                        <i class="fa-solid fa-chart-pie text-blue-500 mr-2"></i> 設施類型分佈
+                    </h3>
+                    <p class="text-sm text-slate-500 mb-4">了解園區內設施的屬性組成。</p>
+                    <div class="chart-container">
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Park Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-2xl">🏰</div>
+                        <div class="ml-4">
+                            <h2 class="text-xl font-bold text-blue-900">迪士尼樂園</h2>
+                            <span class="text-sm text-blue-600 font-medium">Disneyland Park</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 mb-4">全球第一座迪士尼，充滿經典童話與華特迪士尼的原創夢想。</p>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li class="flex items-start"><i class="fa-solid fa-check text-blue-400 mt-1 mr-2"></i> <span>必訪：星際大戰、睡美人城堡</span></li>
+                        <li class="flex items-start"><i class="fa-solid fa-check text-blue-400 mt-1 mr-2"></i> <span>氛圍：溫馨、懷舊、夢幻</span></li>
+                    </ul>
+                </div>
+
+                <div class="bg-orange-50 p-6 rounded-xl border border-orange-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-2xl">🎡</div>
+                        <div class="ml-4">
+                            <h2 class="text-xl font-bold text-orange-900">加州冒險樂園</h2>
+                            <span class="text-sm text-orange-600 font-medium">California Adventure</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 mb-4">結合皮克斯與漫威，展現加州地景與電影文化的現代樂園。</p>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li class="flex items-start"><i class="fa-solid fa-check text-orange-400 mt-1 mr-2"></i> <span>必訪：汽車總動員、復仇者校園</span></li>
+                        <li class="flex items-start"><i class="fa-solid fa-check text-orange-400 mt-1 mr-2"></i> <span>氛圍：刺激、現代、美食美酒</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPLORER VIEW -->
+        <div id="view-explorer" class="hidden space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-2xl font-bold text-slate-800 mb-4">深入園區探索</h2>
+                <p class="text-slate-600 mb-6">
+                    請選擇樂園與區域，查看該區的必玩設施詳情與亮點。點擊不同的區域標籤可切換顯示內容。
+                </p>
+                
+                <!-- Park Toggle -->
+                <div class="flex justify-center mb-8">
+                    <div class="bg-slate-100 p-1 rounded-lg inline-flex">
+                        <button onclick="setPark('DL')" id="btn-park-dl" class="px-6 py-2 rounded-md text-sm font-semibold transition-all shadow-sm bg-white text-blue-600">
+                            迪士尼樂園 (DL)
+                        </button>
+                        <button onclick="setPark('DCA')" id="btn-park-dca" class="px-6 py-2 rounded-md text-sm font-semibold text-slate-500 hover:text-slate-700 transition-all">
+                            加州冒險樂園 (DCA)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lands Navigation (Horizontal Scroll) -->
+                <div class="relative">
+                    <div class="overflow-x-auto hide-scroll pb-4" id="land-nav-container">
+                        <div class="flex space-x-2" id="land-list">
+                            <!-- JS Generated Land Buttons -->
+                        </div>
+                    </div>
+                    <!-- Fade indicators for scroll -->
+                    <div class="absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-white pointer-events-none"></div>
+                </div>
+            </div>
+
+            <!-- Content Display Area -->
+            <div id="land-content" class="animate-fade-in grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left: Land Info -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sticky top-24">
+                        <h3 id="land-title" class="text-2xl font-bold text-slate-900 mb-2">區域名稱</h3>
+                        <p id="land-desc" class="text-slate-600 leading-relaxed mb-4">區域描述...</p>
+                        <div class="border-t border-slate-100 pt-4">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">特色標籤</span>
+                            <div id="land-tags" class="flex flex-wrap gap-2 mt-2">
+                                <!-- Tags -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Attractions Grid -->
+                <div class="lg:col-span-2 space-y-4">
+                    <h4 class="text-lg font-semibold text-slate-700 ml-1">必玩設施推薦</h4>
+                    <div id="attraction-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- JS Generated Attraction Cards -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOD VIEW -->
+        <div id="view-food" class="hidden">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">雙樂園必吃美食指南</h2>
+                <p class="text-lg text-slate-600">
+                    迪士尼的體驗不僅在於遊樂設施，美食也是重頭戲！我們為您精選了兩個樂園中絕對不能錯過的經典小吃與特色餐廳。
+                </p>
+                <div class="mt-6 flex justify-center gap-4">
+                    <button onclick="filterFood('all')" class="food-filter-btn active px-4 py-1 rounded-full text-sm border border-slate-300 bg-slate-800 text-white">全部</button>
+                    <button onclick="filterFood('DL')" class="food-filter-btn px-4 py-1 rounded-full text-sm border border-slate-300 bg-white text-slate-600 hover:bg-slate-50">迪士尼樂園</button>
+                    <button onclick="filterFood('DCA')" class="food-filter-btn px-4 py-1 rounded-full text-sm border border-slate-300 bg-white text-slate-600 hover:bg-slate-50">冒險樂園</button>
+                </div>
+            </div>
+
+            <div id="food-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JS Generated Food Cards -->
+            </div>
+        </div>
+
+        <!-- TIPS VIEW -->
+        <div id="view-tips" class="hidden max-w-4xl mx-auto space-y-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">遊玩策略與小貼士</h2>
+                <p class="text-lg text-slate-600">掌握這些技巧，讓您的迪士尼之旅事半功倍。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Strategy Card 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-400">
+                    <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-bolt text-yellow-500 mr-2"></i>Genie+ 與 快速通關</h3>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>Genie+：</strong> 購買後可預約多項設施的 Lightning Lane。一次只能預約一項，需等待 2 小時冷卻或使用後才能再約。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>ILL (付費單項)：</strong> 針對《抵抗軍的崛起》、《水箱溫泉鎮賽車手》等超熱門設施，需額外付費購買。</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy Card 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-400">
+                    <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-mobile-screen text-blue-500 mr-2"></i>善用官方 App</h3>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>Mobile Order：</strong> 早上就先在 App 上選好中午要吃的時段和餐點，時間到直接去窗口領取，省去大排長龍。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>即時資訊：</strong> 查看排隊時間、預約餐廳、找廁所與飲水機。</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy Card 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-400">
+                    <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-stopwatch text-green-500 mr-2"></i>時間管理</h3>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>提早入園：</strong> 建議比開園時間提早 1.5 小時抵達，完成停車安檢。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>單人通道 (Single Rider)：</strong> 若不介意分開坐，賽車手、超特攻雲霄飛車等設施走單人通道可大幅節省時間。</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy Card 4 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-400">
+                    <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-moon text-purple-500 mr-2"></i>夜間亮點</h3>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>Cars Land：</strong> 晚上務必去欣賞霓虹燈亮起的瞬間。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>皮克斯碼頭：</strong> 欣賞摩天輪與水面倒影，World of Color 水舞秀也在此。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>煙火：</strong> 迪士尼樂園睡美人城堡前是最佳觀賞點。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="mb-2">此攻略基於「加州迪士尼雙樂園深度景點介紹」整理生成。</p>
+            <p class="text-sm">祝您在世界上最快樂的地方度過美好的一天！✨</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA ---
+        const parksData = {
+            DL: {
+                name: "迪士尼樂園",
+                lands: [
+                    {
+                        id: "galaxy",
+                        name: "星際大戰：銀河邊緣",
+                        desc: "完全沉浸式的區域，背景設定在邊境星球「巴圖」。這裡的造景細節驚人，讓你彷彿置身電影場景。",
+                        tags: ["沉浸式", "電影場景", "熱門"],
+                        attractions: [
+                            { name: "抵抗軍的崛起 (Rise of the Resistance)", type: "大型室內遊樂設施", highlight: "必玩之首！長達20分鐘的電影體驗，被俘虜後逃脫的緊張情節。", tags: ["ILL", "刺激"] },
+                            { name: "千年隼號：走私者逃亡", type: "飛行模擬", highlight: "駕駛銀河系最快破銅爛鐵，六人合作操控飛船。", tags: ["Genie+", "互動"] }
+                        ]
+                    },
+                    {
+                        id: "tomorrow",
+                        name: "明日世界",
+                        desc: "展現對未來的想像與太空探索的主題，擁有經典的太空設施。",
+                        tags: ["科技", "太空", "經典"],
+                        attractions: [
+                            { name: "太空山 (Space Mountain)", type: "室內雲霄飛車", highlight: "全黑室內星空中的高速旅程，加州版配樂經典。", tags: ["Genie+", "刺激"] },
+                            { name: "星際遨遊 (Star Tours)", type: "3D動感電影", highlight: "C-3PO駕駛太空船，場景隨機組合。", tags: ["Genie+", "3D"] }
+                        ]
+                    },
+                    {
+                        id: "fantasy",
+                        name: "幻想世界",
+                        desc: "迪士尼最核心的童話世界，穿過城堡即達，充滿溫馨回憶。",
+                        tags: ["童話", "親子", "核心"],
+                        attractions: [
+                            { name: "馬特洪峰雪橇飛車", type: "雲霄飛車", highlight: "【加州獨家】模擬阿爾卑斯山雪橇冒險，會遇到雪怪。", tags: ["Genie+", "獨家"] },
+                            { name: "小小世界", type: "水上遊船", highlight: "搭船遊覽各國風情，白色幾何外觀精緻。", tags: ["經典", "親子"] },
+                            { name: "經典暗黑騎乘", type: "軌道車", highlight: "小飛俠、白雪公主、愛麗絲夢遊仙境等經典童話設施。", tags: ["懷舊", "親子"] }
+                        ]
+                    },
+                    {
+                        id: "adventure",
+                        name: "探險樂園",
+                        desc: "充滿叢林、神廟與異國情調的區域。",
+                        tags: ["叢林", "冒險"],
+                        attractions: [
+                            { name: "印第安納瓊斯冒險", type: "吉普車冒險", highlight: "闖入禁忌神廟，融合火焰、蛇群與巨石的特效。", tags: ["Genie+", "刺激"] },
+                            { name: "叢林巡航", type: "水上遊船", highlight: "船長幽默導覽是最大亮點。", tags: ["經典", "導覽"] }
+                        ]
+                    },
+                    {
+                        id: "neworleans",
+                        name: "紐奧良廣場",
+                        desc: "以19世紀路易斯安那州為藍本，擁有爵士樂氛圍與精緻陽台。",
+                        tags: ["氣氛", "精緻"],
+                        attractions: [
+                            { name: "加勒比海盜", type: "水上遊船", highlight: "場景比其他國家更長更完整，海盜世界體驗。", tags: ["Genie+", "經典"] },
+                            { name: "幽靈公館", type: "鬼屋/黑屋", highlight: "充滿黑色幽默與精美特效的幽靈舞會。", tags: ["Genie+", "經典"] }
+                        ]
+                    },
+                    {
+                        id: "frontier",
+                        name: "邊境樂園",
+                        desc: "致敬美國西部的開拓時代，充滿紅岩與荒野氣息。",
+                        tags: ["西部", "荒野"],
+                        attractions: [
+                            { name: "巨雷山鐵路", type: "戶外雲霄飛車", highlight: "荒野中最瘋狂的旅程，穿梭礦坑之間。", tags: ["Genie+", "刺激"] }
+                        ]
+                    },
+                    {
+                        id: "toontown",
+                        name: "米奇卡通城",
+                        desc: "【全新翻修】米奇與朋友們居住的小鎮，色彩鮮豔的2D動畫世界。",
+                        tags: ["卡通", "親子", "拍照"],
+                        attractions: [
+                            { name: "米奇和米妮飛速鐵路", type: "無軌道車", highlight: "結合裸眼3D技術，進入歡樂卡通世界。", tags: ["Genie+", "新設施"] },
+                            { name: "角色的家", type: "參觀互動", highlight: "參觀米奇米妮的房子並合照。", tags: ["拍照", "親子"] }
+                        ]
+                    }
+                ]
+            },
+            DCA: {
+                name: "加州冒險樂園",
+                lands: [
+                    {
+                        id: "cars",
+                        name: "汽車總動員天地",
+                        desc: "【必去推薦】完美還原電影《Cars》水箱溫泉鎮，被譽為最成功的園區設計。",
+                        tags: ["必訪", "電影還原", "夜景"],
+                        attractions: [
+                            { name: "水箱溫泉鎮賽車手", type: "高速賽車", highlight: "鎮園之寶！戶外紅岩區高速競賽，晚上霓虹燈亮起時最美。", tags: ["ILL", "刺激"] }
+                        ]
+                    },
+                    {
+                        id: "avengers",
+                        name: "復仇者聯盟校園",
+                        desc: "漫威英雄訓練基地，隨時可見英雄在屋頂戰鬥。",
+                        tags: ["漫威", "英雄", "現代"],
+                        attractions: [
+                            { name: "星際異攻隊：突圍任務", type: "自由落體", highlight: "搖滾風格自由落體，隨音樂隨機升降，氣氛超嗨。", tags: ["Genie+", "刺激"] },
+                            { name: "蜘蛛人：蛛網穿行", type: "互動射擊", highlight: "手勢感應發射蜘蛛絲，體驗成為蜘蛛人。", tags: ["Genie+", "互動"] }
+                        ]
+                    },
+                    {
+                        id: "pixar",
+                        name: "皮克斯碼頭",
+                        desc: "美式海濱遊樂場風格，集結皮克斯主題設施。",
+                        tags: ["皮克斯", "海濱", "歡樂"],
+                        attractions: [
+                            { name: "超特攻雲霄飛車", type: "雲霄飛車", highlight: "速度快且有360度翻轉，配合積琪雷射眼特效。", tags: ["Genie+", "刺激"] },
+                            { name: "皮克斯摩天輪", type: "摩天輪", highlight: "搖晃車廂驚嚇指數高，可滑動擺盪。", tags: ["風景", "驚嚇"] },
+                            { name: "玩具總動員瘋狂遊戲屋", type: "3D射擊", highlight: "戴眼鏡的射擊遊戲，非常歡樂具競爭性。", tags: ["Genie+", "親子"] }
+                        ]
+                    },
+                    {
+                        id: "sanfran",
+                        name: "舊金山廣場",
+                        desc: "《大英雄天團》風格區域，以美食為主。",
+                        tags: ["美食", "大英雄天團"],
+                        attractions: [
+                            { name: "杯麵見面會", type: "角色互動", highlight: "可以跟Baymax擁抱合照。", tags: ["拍照"] }
+                        ]
+                    },
+                    {
+                        id: "grizzly",
+                        name: "灰熊遊樂園",
+                        desc: "以加州國家公園與大自然為主題，綠意盎然。",
+                        tags: ["自然", "國家公園"],
+                        attractions: [
+                            { name: "飛越世界，翱翔天際", type: "飛行模擬", highlight: "飛越全球地標，能聞到草地海洋香氣。", tags: ["Genie+", "療癒"] },
+                            { name: "灰熊激流泛舟", type: "激流泛舟", highlight: "湍急河流漂流與大俯衝，全身濕透機率高。", tags: ["Genie+", "濕身"] }
+                        ]
+                    },
+                    {
+                        id: "hollywood",
+                        name: "好萊塢世界",
+                        desc: "重現好萊塢黃金時代街道。",
+                        tags: ["電影", "復古"],
+                        attractions: [
+                            { name: "怪獸電力公司", type: "慢速騎乘", highlight: "跟著毛怪與大眼仔拯救阿布。", tags: ["Genie+", "親子"] },
+                            { name: "動畫學院", type: "繪畫教學", highlight: "畫師教畫迪士尼角色，作品可帶回，隱藏版推薦。", tags: ["室內", "創作"] }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        const foodData = [
+            { park: "DL", name: "Blue Bayou Restaurant", area: "紐奧良廣場", type: "餐廳 (需預約)", highlight: "位於加勒比海盜設施內，氣氛浪漫。", items: "Monte Cristo 三明治, 紐奧良什錦飯" },
+            { park: "DL", name: "Dole Whip", area: "探險樂園", type: "小吃", highlight: "迪士尼最經典的鳳梨霜淇淋，清爽解熱。", items: "Dole Whip Float" },
+            { park: "DL", name: "Little Red Wagon", area: "美國大街", type: "小吃", highlight: "被譽為迪士尼最好吃的熱狗。", items: "Hand-dipped Corn Dog" },
+            { park: "DL", name: "Mint Julep Bar", area: "紐奧良廣場", type: "小吃", highlight: "米奇形狀法式甜甜圈，熱騰騰灑滿糖粉。", items: "Mickey-shaped Beignets, Mint Julep" },
+            { park: "DL", name: "Oga's Cantina", area: "星際大戰", type: "酒吧 (需預約)", highlight: "還原電影酒吧場景，機器人DJ。", items: "Jedi Mind Trick (調酒)" },
+            { park: "DCA", name: "Lamplight Lounge", area: "皮克斯碼頭", type: "餐廳 (需預約)", highlight: "欣賞湖景與摩天輪的最佳位置。", items: "Lobster Nachos (龍蝦玉米片)" },
+            { park: "DCA", name: "Flo’s V8 Cafe", area: "汽車總動員", type: "快餐", highlight: "霓虹燈餐廳，晚上氣氛超棒。", items: "炸雞, 奶昔" },
+            { park: "DCA", name: "Cozy Cone Motel", area: "汽車總動員", type: "小吃", highlight: "交通錐形狀小店。", items: "Chili Cone Queso, 培根起司通心粉" },
+            { park: "DCA", name: "Pym Test Kitchen", area: "復仇者校園", type: "快餐", highlight: "食物會變大變小的實驗廚房。", items: "巨大蝴蝶餅, 巨大炸雞漢堡" },
+            { park: "DCA", name: "Jack-Jack Cookie", area: "皮克斯碼頭", type: "小吃", highlight: "小傑最愛的溫熱巨大巧克力餅乾。", items: "Cookie Num Nums" },
+            { park: "DCA", name: "Boudin Bakery", area: "舊金山廣場", type: "快餐", highlight: "加州冒險樂園標誌性美食。", items: "酸種麵包湯 (Sourdough Bread Bowl)" }
+        ];
+
+        // --- STATE & INITIALIZATION ---
+        let currentPark = 'DL';
+        let currentLandIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            renderLandNav();
+            renderLandContent();
+            renderFood('all');
+        });
+
+        // --- NAVIGATION LOGIC ---
+        function switchView(viewId) {
+            // Hide all views
+            ['dashboard', 'explorer', 'food', 'tips'].forEach(id => {
+                document.getElementById(`view-${id}`).classList.add('hidden');
+                document.getElementById(`btn-${id}`).classList.remove('bg-blue-50', 'text-blue-600');
+                document.getElementById(`btn-${id}`).classList.add('text-slate-700');
+            });
+
+            // Show selected view
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            document.getElementById(`btn-${viewId}`).classList.add('bg-blue-50', 'text-blue-600');
+            document.getElementById(`btn-${viewId}`).classList.remove('text-slate-700');
+
+            // Specific initialization if needed
+            if(viewId === 'explorer') {
+                renderLandNav(); // Ensure layout calculates correctly
+            }
+        }
+
+        // --- CHART LOGIC ---
+        function initCharts() {
+            // Radar Chart: Vibe Comparison
+            const ctxVibe = document.getElementById('vibeChart').getContext('2d');
+            new Chart(ctxVibe, {
+                type: 'radar',
+                data: {
+                    labels: ['刺激度', 'IP 沉浸感', '親子友善', '酒精/成人向', '懷舊情懷', '美食多樣性'],
+                    datasets: [{
+                        label: '迪士尼樂園 (DL)',
+                        data: [6, 9, 10, 2, 10, 7],
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(59, 130, 246)'
+                    }, {
+                        label: '冒險樂園 (DCA)',
+                        data: [9, 8, 7, 9, 5, 9],
+                        fill: true,
+                        backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                        borderColor: 'rgb(249, 115, 22)',
+                        pointBackgroundColor: 'rgb(249, 115, 22)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(249, 115, 22)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // Doughnut Chart: Attraction Types
+            const ctxType = document.getElementById('typeChart').getContext('2d');
+            new Chart(ctxType, {
+                type: 'doughnut',
+                data: {
+                    labels: ['暗黑/故事騎乘', '雲霄飛車/刺激', '互動/射擊', '模擬器/4D', '水上設施'],
+                    datasets: [{
+                        label: '設施數量',
+                        data: [12, 5, 4, 3, 3], // Approximate counts based on report
+                        backgroundColor: [
+                            '#a78bfa', // Purple
+                            '#f87171', // Red
+                            '#fbbf24', // Yellow
+                            '#34d399', // Green
+                            '#60a5fa'  // Blue
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+        }
+
+        // --- EXPLORER LOGIC ---
+        function setPark(parkCode) {
+            currentPark = parkCode;
+            currentLandIndex = 0; // Reset to first land
+            
+            // Toggle Button Styles
+            const btnDL = document.getElementById('btn-park-dl');
+            const btnDCA = document.getElementById('btn-park-dca');
+            
+            if (parkCode === 'DL') {
+                btnDL.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+                btnDL.classList.remove('text-slate-500', 'hover:text-slate-700');
+                btnDCA.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+                btnDCA.classList.add('text-slate-500', 'hover:text-slate-700');
+            } else {
+                btnDCA.classList.add('bg-white', 'text-orange-600', 'shadow-sm');
+                btnDCA.classList.remove('text-slate-500', 'hover:text-slate-700');
+                btnDL.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+                btnDL.classList.add('text-slate-500', 'hover:text-slate-700');
+            }
+
+            renderLandNav();
+            renderLandContent();
+        }
+
+        function setLand(index) {
+            currentLandIndex = index;
+            renderLandNav(); // Update active state
+            renderLandContent();
+        }
+
+        function renderLandNav() {
+            const list = document.getElementById('land-list');
+            list.innerHTML = '';
+            
+            const lands = parksData[currentPark].lands;
+            const activeColor = currentPark === 'DL' ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-orange-500 text-orange-600 bg-orange-50';
+
+            lands.forEach((land, index) => {
+                const btn = document.createElement('button');
+                btn.className = `whitespace-nowrap px-4 py-2 rounded-full border text-sm font-medium transition-colors ${index === currentLandIndex ? activeColor : 'border-slate-200 text-slate-600 hover:border-slate-300'}`;
+                btn.innerText = land.name;
+                btn.onclick = () => setLand(index);
+                list.appendChild(btn);
+            });
+        }
+
+        function renderLandContent() {
+            const land = parksData[currentPark].lands[currentLandIndex];
+            
+            // Update Text Info
+            document.getElementById('land-title').innerText = land.name;
+            document.getElementById('land-desc').innerText = land.desc;
+            
+            // Update Tags
+            const tagContainer = document.getElementById('land-tags');
+            tagContainer.innerHTML = '';
+            land.tags.forEach(tag => {
+                const span = document.createElement('span');
+                span.className = 'px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-md';
+                span.innerText = tag;
+                tagContainer.appendChild(span);
+            });
+
+            // Update Attractions
+            const attractList = document.getElementById('attraction-list');
+            attractList.innerHTML = '';
+
+            land.attractions.forEach(attr => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-50 rounded-lg p-4 border border-slate-100 hover:border-blue-200 transition-colors group';
+                
+                // Card Header: Name + Tags
+                let tagsHtml = '';
+                attr.tags.forEach(t => {
+                    let colorClass = 'bg-gray-200 text-gray-700';
+                    if (t === 'ILL') colorClass = 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+                    if (t === 'Genie+') colorClass = 'bg-purple-100 text-purple-800 border border-purple-200';
+                    if (t === '刺激') colorClass = 'bg-red-100 text-red-800';
+                    tagsHtml += `<span class="text-xs px-2 py-0.5 rounded ${colorClass}">${t}</span>`;
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h5 class="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${attr.name}</h5>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-3">${tagsHtml}</div>
+                    <p class="text-sm text-slate-600 mb-1"><span class="font-semibold text-slate-500">類型：</span> ${attr.type}</p>
+                    <p class="text-sm text-slate-700 mt-2 bg-white p-2 rounded border border-slate-100"><i class="fa-solid fa-star text-yellow-400 mr-1"></i> ${attr.highlight}</p>
+                `;
+                attractList.appendChild(card);
+            });
+        }
+
+        // --- FOOD LOGIC ---
+        function filterFood(filter) {
+            // Button Styles
+            document.querySelectorAll('.food-filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-slate-800', 'text-white');
+                btn.classList.add('bg-white', 'text-slate-600');
+                if (btn.innerText.includes(filter === 'all' ? '全部' : (filter === 'DL' ? '迪士尼樂園' : '冒險樂園'))) {
+                    btn.classList.add('bg-slate-800', 'text-white');
+                    btn.classList.remove('bg-white', 'text-slate-600');
+                }
+            });
+
+            renderFood(filter);
+        }
+
+        function renderFood(filter) {
+            const grid = document.getElementById('food-grid');
+            grid.innerHTML = '';
+
+            const items = filter === 'all' ? foodData : foodData.filter(f => f.park === filter);
+
+            items.forEach(item => {
+                const parkBadge = item.park === 'DL' 
+                    ? '<span class="absolute top-3 right-3 bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded-full">迪士尼樂園</span>' 
+                    : '<span class="absolute top-3 right-3 bg-orange-100 text-orange-800 text-xs font-bold px-2 py-1 rounded-full">冒險樂園</span>';
+                
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-sm border border-slate-100 p-5 relative hover:shadow-md transition-shadow';
+                card.innerHTML = `
+                    ${parkBadge}
+                    <h3 class="font-bold text-lg text-slate-800 pr-16">${item.name}</h3>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">${item.area} • ${item.type}</p>
+                    <p class="text-sm text-slate-600 mb-4">${item.highlight}</p>
+                    <div class="bg-slate-50 p-3 rounded-lg">
+                        <p class="text-xs text-slate-500 font-semibold mb-1">必點推薦：</p>
+                        <p class="text-sm font-medium text-slate-800"><i class="fa-solid fa-utensils text-slate-400 mr-2"></i>${item.items}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+    </script>
+</body>
+</html>
