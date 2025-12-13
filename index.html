@@ -820,56 +820,30 @@
         }
 
         function renderItinerary(phaseKey) {
-          const phase = itineraryData[phaseKey];
-          const container = document.getElementById("itinerary");
-        
-          if (!phase || !container) return;
-        
-          container.innerHTML = `
-            <section class="phase-section">
-              <h1 class="phase-title">${phase.title}</h1>
-        
-              ${phase.days.map(day => `
-                <article class="daily-itinerary">
-        
-                  <header class="day-header">
-                    <h2>${day.date}｜${day.loc}</h2>
-                    <p class="day-theme">🌏 ${day.act}</p>
-                  </header>
-        
-                  <section class="day-section">
-                    <h3>🕘 行程安排</h3>
-                    <p class="day-detail">${day.detail}</p>
-                  </section>
-        
-                  ${day.attractionKey ? `
-                  <section class="day-section">
-                    <h3>🎢 景點亮點</h3>
-                    <ul class="highlight-list">
-                      <li>${day.attractionKey}</li>
-                    </ul>
-                  </section>
-                  ` : ""}
-        
-                  <section class="day-section">
-                    <h3>🚗 交通方式</h3>
-                    <p class="transport">${day.transport}</p>
-                  </section>
-        
-                  ${day.hotel ? `
-                  <section class="day-section">
-                    <h3>🏨 住宿</h3>
-                    <p class="hotel">${day.hotel}</p>
-                  </section>
-                  ` : ""}
-        
-                </article>
-              `).join("")}
-        
-            </section>
-          `;
-        }
+            // Update active sidebar style
+            ['phase1', 'phase2', 'phase3'].forEach(key => {
+                const btn = document.getElementById(`nav-${key}`);
+                // Clear all styles first
+                btn.classList.remove('bg-white', 'shadow-sm', 'border-blue-500', 'border-yellow-500', 'border-purple-500', 'hover:border-yellow-500', 'hover:bg-yellow-50', 'hover:border-purple-500', 'hover:bg-purple-50', 'bg-blue-50', 'bg-yellow-50', 'bg-purple-50');
+                
+                // Add default non-active styles
+                btn.classList.add('border-transparent', 'bg-gray-50');
+                
+                // Set hover styles based on phase
+                if (key === 'phase2') btn.classList.add('hover:border-yellow-500', 'hover:bg-yellow-50');
+                if (key === 'phase3') btn.classList.add('hover:border-purple-500', 'hover:bg-purple-50');
+                if (key === 'phase1') btn.classList.add('hover:border-blue-500', 'hover:bg-blue-50');
 
+                
+                // Apply active style
+                if (key === phaseKey) {
+                    btn.classList.add('bg-white', 'shadow-sm');
+                    btn.classList.remove('border-transparent', 'bg-gray-50');
+                    if (key === 'phase1') btn.classList.add('border-blue-500', 'bg-blue-50');
+                    if (key === 'phase2') btn.classList.add('border-yellow-500', 'bg-yellow-50');
+                    if (key === 'phase3') btn.classList.add('border-purple-500', 'bg-purple-50');
+                }
+            });
 
             const phase = itineraryData[phaseKey];
             const container = document.getElementById('itinerary-details');
