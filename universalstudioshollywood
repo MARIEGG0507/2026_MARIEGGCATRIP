@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加州好萊塢環球影城深度攻略</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom Scrollbar for horizontal lists */
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            background-color: #f3f4f6; /* Gray 100 - Light neutral background */
+            color: #1f2937; /* Gray 800 */
+            font-family: 'Inter', sans-serif;
+        }
+        .header-gradient {
+            background: linear-gradient(90deg, #1f2937, #111827); /* Dark cinematic theme */
+        }
+        .accent-gold {
+            color: #d97706; /* Amber 600 */
+        }
+        .card-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .attraction-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-yellow-200">
+
+    <!-- Navigation & Header -->
+    <header class="sticky top-0 z-50 header-gradient shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center">
+                    <span class="text-3xl font-extrabold text-white">
+                        <i class="fa-solid fa-camera-movie mr-3 accent-gold"></i>環球影城攻略
+                    </span>
+                </div>
+                <div class="flex space-x-1 sm:space-x-8 items-center overflow-x-auto hide-scroll text-sm">
+                    <button onclick="scrollToSection('overview')" class="text-white hover:text-yellow-400 transition-colors py-2 px-3">樂園總覽</button>
+                    <button onclick="scrollToSection('upper-lot')" class="text-white hover:text-yellow-400 transition-colors py-2 px-3">上園區</button>
+                    <button onclick="scrollToSection('lower-lot')" class="text-white hover:text-yellow-400 transition-colors py-2 px-3">下園區</button>
+                    <button onclick="scrollToSection('food')" class="text-white hover:text-yellow-400 transition-colors py-2 px-3">美食指南</button>
+                    <button onclick="scrollToSection('strategy')" class="text-white hover:text-yellow-400 transition-colors py-2 px-3">遊玩策略</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-screen space-y-16">
+
+        <!-- 1. OVERVIEW SECTION -->
+        <section id="overview" class="pt-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-6 border-b-2 border-amber-500 pb-2">
+                加州好萊塢環球影城：電影夢工廠
+            </h1>
+            <div class="bg-white p-6 md:p-8 rounded-xl card-shadow border border-gray-100">
+                <p class="text-lg text-gray-700 mb-4">
+                    好萊塢環球影城不僅是主題樂園，更是真實的電影製片廠。樂園分為「上園區 (Upper Lot)」與「下園區 (Lower Lot)」兩大區塊，由長長的電動手扶梯連接，規劃行程時必須考慮移動時間。
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <i class="fa-solid fa-wand-magic-sparkles accent-gold text-xl mb-2"></i>
+                        <h3 class="font-semibold text-gray-900">上園區重點</h3>
+                        <p class="text-sm text-gray-600">哈利波特魔法世界、辛普森家庭、水世界表演、環球影城之旅。</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <i class="fa-solid fa-meteor accent-gold text-xl mb-2"></i>
+                        <h3 class="font-semibold text-gray-900">下園區重點</h3>
+                        <p class="text-sm text-gray-600">超級任天堂世界、侏羅紀世界激流勇進、神鬼傳奇雲霄飛車。</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <i class="fa-solid fa-map-location-dot accent-gold text-xl mb-2"></i>
+                        <h3 class="font-semibold text-gray-900">移動挑戰</h3>
+                        <p class="text-sm text-gray-600">連接上下園區的手扶梯移動時間約需 8-10 分鐘，建議集中遊玩。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. UPPER LOT SECTION -->
+        <section id="upper-lot" class="pt-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b border-amber-300 pb-2 flex items-center">
+                <i class="fa-solid fa-cloud-arrow-up mr-3 text-blue-500"></i>上園區：魔法與電影之旅
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Attraction Card 1: Harry Potter -->
+                <div class="bg-white p-5 rounded-xl card-shadow border border-yellow-200">
+                    <img src="https://placehold.co/400x150/5D4037/ffffff?text=Hogwarts+Castle" alt="霍格華茲城堡圖片" class="attraction-image">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center">
+                        <i class="fa-solid fa-house-chimney-window text-yellow-600 mr-2"></i>哈利波特的魔法世界
+                    </h3>
+                    <p class="text-sm font-semibold text-amber-700 mb-2">【景點簡介】</p>
+                    <p class="text-sm text-gray-700 mb-3">走進活米村和霍格華茲城堡，完全沉浸在《哈利波特》的魔幻世界中。無論是購買魔杖、品嚐奶油啤酒，還是體驗設施，都充滿驚喜。</p>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>禁忌之旅：</strong> 霍格華茲城堡內的 3D/4D 設施，帶您飛越城堡、穿越禁忌森林，體感強烈。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>鷹馬的飛行：</strong> 親子型雲霄飛車，適合熱身，從空中俯瞰活米村。</li>
+                    </ul>
+                </div>
+
+                <!-- Attraction Card 2: Studio Tour -->
+                <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
+                    <img src="https://placehold.co/400x150/A31919/ffffff?text=Studio+Tour+Tram" alt="環球影城之旅電車圖片" class="attraction-image">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center">
+                        <i class="fa-solid fa-film text-red-600 mr-2"></i>環球影城之旅
+                    </h3>
+                    <p class="text-sm font-semibold text-amber-700 mb-2">【景點簡介】</p>
+                    <p class="text-sm text-gray-700 mb-3">長達 60 分鐘的園區招牌體驗，搭乘電車深入好萊塢真實片場。能親眼看到電影道具、災難現場，並體驗兩段超震撼的 3D 體驗。</p>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>金剛 360 度 3D：</strong> 與金剛和恐龍的史詩級戰鬥，身臨其境。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>大白鯊/洪水：</strong> 經典的舊電影特效示範，趣味十足。</li>
+                    </ul>
+                </div>
+
+                <!-- Attraction Card 3: WaterWorld & Others -->
+                <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
+                    <img src="https://placehold.co/400x150/007FFF/ffffff?text=WaterWorld+Stunt+Show" alt="水世界特技秀圖片" class="attraction-image">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center">
+                        <i class="fa-solid fa-water text-cyan-600 mr-2"></i>水世界與其他
+                    </h3>
+                    <p class="text-sm font-semibold text-amber-700 mb-2">【景點簡介】</p>
+                    <p class="text-sm text-gray-700 mb-3">「水世界」是一場令人難以置信的現場特技表演，結合水上摩托車、爆破和高空跳水，是環球影城最精彩的演出，強烈建議觀看。</p>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>辛普森家庭：</strong> 體驗克魯斯蒂樂園的瘋狂模擬雲霄飛車。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>神偷奶爸：</strong> 溫馨 3D 模擬設施，讓您化身小黃人，適合全家同樂。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. LOWER LOT SECTION -->
+        <section id="lower-lot" class="pt-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b border-amber-300 pb-2 flex items-center">
+                <i class="fa-solid fa-cloud-arrow-down mr-3 text-red-500"></i>下園區：刺激與未來科技
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- Attraction Card 4: Super Nintendo World -->
+                <div class="bg-white p-5 rounded-xl card-shadow border border-red-200">
+                    <img src="https://placehold.co/400x150/FF0000/ffffff?text=Super+Mario+World" alt="超級任天堂世界入口圖片" class="attraction-image">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center">
+                        <i class="fa-solid fa-mushroom text-red-600 mr-2"></i>超級任天堂世界
+                    </h3>
+                    <p class="text-sm font-semibold text-amber-700 mb-2">【景點簡介】</p>
+                    <p class="text-sm text-gray-700 mb-3">進入蘑菇王國，色彩鮮豔的場景讓您宛如置身遊戲世界。這是目前環球影城最熱門的區域，需注意入場預約和排隊時間。</p>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>瑪利歐賽車：</strong> 最新設施，結合AR眼鏡，讓您親自參與庫巴的賽車挑戰，創新有趣。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>能量手環：</strong> 必買！用於園區互動遊戲，可累積金幣，解鎖「鑰匙挑戰」。</li>
+                    </ul>
+                </div>
+
+                <!-- Attraction Card 5: Thrill Rides -->
+                <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
+                    <img src="https://placehold.co/400x150/004080/ffffff?text=Jurassic+World+Drop" alt="侏羅紀世界激流俯衝圖片" class="attraction-image">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center">
+                        <i class="fa-solid fa-fire text-orange-600 mr-2"></i>下園區三大刺激設施
+                    </h3>
+                    <p class="text-sm font-semibold text-amber-700 mb-2">【景點簡介】</p>
+                    <p class="text-sm text-gray-700 mb-3">下園區是速度和腎上腺素的集合地。三個主要設施提供不同的刺激體驗，適合尋求快速心跳的遊客。</p>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>侏羅紀世界：</strong> 激流勇進，終點有近 26 公尺的陡坡俯衝，保證濕透。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>神鬼傳奇：</strong> 室內黑暗高速雲霄飛車，有倒車，驚嚇度高，千萬別眨眼。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2 text-amber-600">•</span> <strong>變形金剛：</strong> 3D模擬戰鬥，雖舊但仍經典，感受與機器人並肩作戰的震撼。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. FOOD & DRINKS SECTION -->
+        <section id="food" class="pt-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b border-amber-300 pb-2 flex items-center">
+                <i class="fa-solid fa-burger-soda mr-3 text-pink-500"></i>美食指南：主題特色餐飲
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Food Card 1: Three Broomsticks -->
+                <div class="bg-white p-5 rounded-xl card-shadow border border-yellow-200">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">三根掃帚 (Three Broomsticks)</h3>
+                    <p class="text-sm text-gray-600 mb-3">哈利波特區 / 主餐</p>
+                    <p class="text-sm text-gray-700"><strong>特色：</strong> 重現小說中的英式餐點，推薦「大盤盛宴 (Great Feast Platter)」適合多人分享。</p>
+                </div>
+
+                <!-- Food Card 2: Toadstool Cafe -->
+                <div class="bg-white p-5 rounded-xl card-shadow border border-red-200">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">奇諾比奧咖啡店 (Toadstool Cafe)</h3>
+                    <p class="text-sm text-gray-600 mb-3">任天堂世界 / 主餐</p>
+                    <p class="text-sm text-gray-700"><strong>特色：</strong> 主題餐點超可愛！像是蘑菇湯和瑪利歐漢堡。<strong><span class="text-red-500">（通常需 App 預約時段）</span></strong></p>
+                </div>
+
+                <!-- Food Card 3: Krusty Burger -->
+                <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">柯式漢堡 (Krusty Burger)</h3>
+                    <p class="text-sm text-gray-600 mb-3">辛普森家庭區 / 速食</p>
+                    <p class="text-sm text-gray-700"><strong>特色：</strong> 嚐嚐卡通裡經典的漢堡、塔可飯。旁邊還有 Moe's Tavern 莫氏酒吧。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. STRATEGY SECTION -->
+        <section id="strategy" class="pt-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b border-amber-300 pb-2 flex items-center">
+                <i class="fa-solid fa-rocket-launch mr-3 text-green-600"></i>終極遊玩策略與省時密技
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Strategy Card 1: Express Pass -->
+                <div class="bg-white p-6 rounded-xl card-shadow border-l-4 border-amber-500">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3"><i class="fa-solid fa-ticket mr-2 accent-gold"></i>Express Pass 快速通關</h3>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>高度推薦：</strong> 尤其在假日或旺季，購買快速通關是必須的。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>包含範圍：</strong> 可對大多數設施（含 Studio Tour）使用一次快速通道。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>任天堂世界：</strong> Express Pass **不包括**任天堂世界的瑪利歐賽車。需另購任天堂世界的 Express 票。</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy Card 2: App & Timing -->
+                <div class="bg-white p-6 rounded-xl card-shadow border-l-4 border-blue-500">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3"><i class="fa-solid fa-mobile-screen mr-2 text-blue-600"></i>App 應用與時間規劃</h3>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>下載 App：</strong> 查看即時排隊時間、地圖和表演時間表。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>Early Access：</strong> 如果購買了提早入園券，請優先衝刺任天堂世界。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>Studio Tour：</strong> 建議在中午時段（11:00-14:00）排隊，此時其他設施人潮最多。</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy Card 3: Route Planning -->
+                <div class="bg-white p-6 rounded-xl card-shadow border-l-4 border-green-500">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3"><i class="fa-solid fa-map-marked-alt mr-2 text-green-600"></i>上下園區路線規劃</h3>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>最有效率：：</strong> 一次性集中遊玩 Lower Lot (任天堂/侏羅紀/神鬼)，再回到 Upper Lot。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>下午衝刺：</strong> 下午 4 點後許多旅行團離開，是排隊的好時機。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>水世界：：</strong> 務必提前 30 分鐘到場佔位，表演場次以 App 為準。</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy Card 4: Parking & Transportation -->
+                <div class="bg-white p-6 rounded-xl card-shadow border-l-4 border-red-500">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3"><i class="fa-solid fa-car-side mr-2 text-red-600"></i>停車與交通資訊</h3>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>停車場：</strong> 有數個停車場（General Parking, Preferred Parking, Valet）。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>首選：：</strong> 推薦 General Parking，雖然離入口較遠，但通常有接駁車或步行道。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>費用：：</strong> 費用從 General Parking 的約 $30 USD 起跳，會隨時間與節日調整。</li>
+                        <li class="flex items-start"><span class="font-bold mr-2">•</span> <strong>提早：：</strong> 建議開園前 45 分鐘抵達，以完成停車與安檢流程。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="mb-1">Universal Studios Hollywood 祝您電影之旅愉快！</p>
+            <p class="text-xs">數據可能隨時變動，請以官方 App 為準。</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll function
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
