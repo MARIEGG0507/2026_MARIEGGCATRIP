@@ -110,6 +110,26 @@
             font-size: 0.9rem;
             font-weight: 500;
         }
+        /* ---------- Fix Weather Layout Overflow ---------- */
+        
+        #weather-3day .flex {
+            flex-wrap: wrap;          /* 允許換行 */
+            justify-content: flex-start;
+        }
+        
+        .weather-card {
+            flex: 1 1 calc(33.333% - 0.75rem);  /* 桌機三等分 */
+            min-width: 80px;          /* 降低最小寬 */
+            max-width: 100%;
+        }
+        
+        /* 手機優化 */
+        @media (max-width: 640px) {
+            .weather-card {
+                flex: 1 1 calc(50% - 0.75rem);  /* 兩張一排 */
+            }
+        }
+
     </style>
     <!-- Application Structure Plan:
          1. Hero Section: Title, Dates, and high-level trip stats (Days, Cities).
