@@ -89,46 +89,19 @@
 
 <body class="antialiased min-h-screen flex flex-col">
 
-    <!-- Hero Section -->
+    <!-- Hero Section -->   
     <header class="bg-white shadow-sm border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl mb-2">
-                2026 美西舊金山與洛杉磯之旅
-            </h1>
-            <p class="text-lg text-gray-600 mb-6">
-                2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行
-            </p>
-            <!-- 可點擊的導航按鈕 (已連結至外部網站) -->
-            <!-- 調整 space-x 以適應更多項目 -->
-            <div class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-sm font-medium text-gray-500">
-                <a href="https://www.sftravel.com/" target="_blank" class="flex flex-col items-center hover:text-blue-600 hover:scale-110 transition-all cursor-pointer" title="前往舊金山旅遊局官網">
-                    <span class="text-2xl mb-1">🌉</span>
-                    <span>舊金山</span>
-                </a>
-                <a href="https://www.nps.gov/yose/index.htm" target="_blank" class="flex flex-col items-center hover:text-green-600 hover:scale-110 transition-all cursor-pointer" title="前往優勝美地國家公園官網">
-                    <span class="text-2xl mb-1">🌲</span>
-                    <span>優勝美地</span>
-                </a>
-                <a href="https://www.visitcalifornia.com/road-trips/highway-one-classic/" target="_blank" class="flex flex-col items-center hover:text-yellow-600 hover:scale-110 transition-all cursor-pointer" title="前往加州旅遊局-一號公路介紹">
-                    <span class="text-2xl mb-1">🚗</span>
-                    <span>一號公路</span>
-                </a>
-                <a href="https://www.discoverlosangeles.com/" target="_blank" class="flex flex-col items-center hover:text-purple-600 hover:scale-110 transition-all cursor-pointer" title="前往洛杉磯旅遊局官網">
-                    <span class="text-2xl mb-1">🎬</span>
-                    <span>洛杉磯</span>
-                </a>
-                <!-- 新增：迪士尼樂園 -->
-                <a href="disneyland_itinerary.html" target="_blank" class="flex flex-col items-center hover:text-red-600 hover:scale-110 transition-all cursor-pointer" title="前往迪士尼樂園官網">
-                    <span class="text-2xl mb-1">🏰</span>
-                    <span>迪士尼樂園</span>
-                </a>
-                <!-- 新增：環球影城 -->
-                <a href="universal_hollywood.html" target="_blank" class="flex flex-col items-center hover:text-orange-600 hover:scale-110 transition-all cursor-pointer" title="前往環球影城官網">
-                    <span class="text-2xl mb-1">🎥</span>
-                    <span>環球影城</span>
-                </a>
-            </div>
-        </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+        <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl mb-2">2026 美西舊金山與洛杉磯之旅</h1>
+        <p class="text-lg text-gray-600 mb-6">2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行</p>
+    
+        <nav class="flex flex-wrap justify-center gap-4 md:gap-8 text-sm font-medium text-gray-500" aria-label="目的地快速連結">
+          <a href="https://www.sftravel.com/" target="_blank" rel="noopener noreferrer"
+            pan><span>舊金山</span>
+          </a>
+          <!-- 其餘連結同樣加 rel、aria-hidden、transform-gpu -->
+        </nav>
+      </div>
     </header>
 
     <!-- Navigation -->
@@ -478,6 +451,7 @@
                 return map;
             }, {});
         }
+
         function weatherIcon(code) {
           if (code === 0) return "☀️";
           if ([1, 2].includes(code)) return "🌤️";
@@ -494,65 +468,81 @@
           return "🧣 偏冷，外套或保暖層";
         }
         async function fetch3DayWeather(lat, lon, containerId, wearId) {
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto`;
-          const res = await fetch(url);
-          const data = await res.json();
-        
           const container = document.getElementById(containerId);
-          container.innerHTML = "";
+          const wearEl = document.getElementById(wearId);
+          if (!container || !wearEl) return;
         
-          data.daily.time.forEach((date, i) => {
-            const card = document.createElement("div");
-            card.className = "weather-card";
+          try {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
         
-            card.innerHTML = `
-              <div class="weather-icon">${weatherIcon(data.daily.weathercode[i])}</div>
-              <div class="weather-date">${new Date(date).toLocaleDateString()}</div>
-              <div class="weather-temp">
-                ${data.daily.temperature_2m_max[i]}° /
-                ${data.daily.temperature_2m_min[i]}°
-              </div>
-            `;
-            container.appendChild(card);
-          });
+            container.innerHTML = "";
+            data.daily.time.forEach((date, i) => {
+              const card = document.createElement("div");
+              card.className = "weather-card";
+              const dayStr = new Date(date).toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric' });
         
-          document.getElementById(wearId).innerText =
-            wearAdvice(data.daily.temperature_2m_max[0]);
+              card.innerHTML = `
+                <div class="weather-icon">${weatherIcon(data.daily.weathercode[i])}</div>
+                <div class="weather-date">${dayStr}</div>
+                <div class="weather-temp">
+                  ${Math.round(data.daily.temperature_2m_max[i])}° /
+                  ${Math.round(data.daily.temperature_2m_min[i])}°
+                </div>
+              `;
+              container.appendChild(card);
+            });
+        
+            wearEl.innerText = wearAdvice(data.daily.temperature_2m_max[0]);
+          } catch (err) {
+            container.innerHTML = `<div class="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3">無法取得天氣資料，請稍後再試。</div>`;
+            wearEl.innerText = "";
+            console.error(err);
+          }
         }
         function loadCurrentLocationWeather() {
+          const cityEl = document.getElementById("current-city");
           if (!navigator.geolocation) {
-            document.getElementById("current-city").innerText = "無法取得定位";
+            cityEl.innerText = "無法取得定位";
             return;
           }
-        
-          navigator.geolocation.getCurrentPosition(async pos => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-        
-            document.getElementById("current-city").innerText = "依目前定位";
-        
-            fetch3DayWeather(lat, lon, "weather-current", "wear-current");
-          });
+          navigator.geolocation.getCurrentPosition(
+            pos => {
+              const { latitude: lat, longitude: lon } = pos.coords;
+              cityEl.innerText = "依目前定位";
+              fetch3DayWeather(lat, lon, "weather-current", "wear-current");
+            },
+            err => {
+              cityEl.innerText = "定位被拒絕或失敗";
+              // 可退回預設地點（例如舊金山）
+              fetch3DayWeather(37.7749, -122.4194, "weather-current", "wear-current");
+              console.warn(err);
+            },
+            { enableHighAccuracy: false, timeout: 8000 }
+          );
         }
+        ``
 
-        function init() {
-            createAttractionMap(); // 呼叫新的地圖創建函數
+          function init() {
+            createAttractionMap();
             renderFlightTable('outbound');
-            renderAccommodation(); // 渲染住宿資訊
-            renderWeatherChart();
-            renderItinerary('phase1'); // 預設顯示 舊金山 階段
-            renderAttractions('all'); // 預設渲染所有景點
-            loadCurrentLocationWeather();       
-            // San Francisco
+            renderAccommodation();
+            renderItinerary('phase1');
+            renderAttractions('all');
+          
+            loadCurrentLocationWeather();
+            // 固定城市
             fetch3DayWeather(37.7749, -122.4194, "weather-sf", "wear-sf");
-            
-            // Los Angeles
             fetch3DayWeather(34.0522, -118.2437, "weather-la", "wear-la");
-
-        }
-
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+          
+            observeChart(); // 改用觀察者進視窗再渲染 Chart
+          }
+          window.addEventListener('DOMContentLoaded', init);
+      
+            function scrollToSection(id) {
+               document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         // --- Logistics Logic (Functions remain the same) ---
@@ -662,50 +652,42 @@
         }
 
         function renderWeatherChart() {
-            const ctx = document.getElementById('weatherChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['早晨', '中午', '傍晚', '夜晚'],
-                    datasets: [
-                        {
-                            label: '舊金山 (SF) 氣溫 °C',
-                            data: [8, 14, 12, 9],
-                            borderColor: '#4299e1', // Ocean Blue
-                            backgroundColor: 'rgba(66, 153, 225, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: '洛杉磯 (LA) 氣溫 °C',
-                            data: [11, 21, 18, 12],
-                            borderColor: '#ed8936', // Warm Orange
-                            backgroundColor: 'rgba(237, 137, 54, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: { mode: 'index', intersect: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 0,
-                            max: 25,
-                            title: { display: true, text: '溫度 (°C)' }
-                        }
-                    }
-                }
-            });
+          const canvas = document.getElementById('weatherChart');
+          if (!canvas) return;
+          const ctx = canvas.getContext('2d');
+        
+          // 若 Chart 未載入（因 defer 或未使用），保護性檢查
+          if (typeof Chart === 'undefined') return;
+        
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: ['早晨', '中午', '傍晚', '夜晚'],
+              datasets: [
+                { label: '舊金山 (SF) 氣溫 °C', data: [8, 14, 12, 9], borderColor: '#4299e1', backgroundColor: 'rgba(66, 153, 225, 0.1)', borderWidth: 2, tension: 0.4, fill: true },
+                { label: '洛杉磯 (LA) 氣溫 °C', data: [11, 21, 18, 12], borderColor: '#ed8936', backgroundColor: 'rgba(237, 137, 54, 0.1)', borderWidth: 2, tension: 0.4, fill: true }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom' }, tooltip: { mode: 'index', intersect: false } },
+              scales: { y: { beginAtZero: false, min: 0, max: 25, title: { display: true, text: '溫度 (°C)' } } }
+            }
+          });
         }
+        // 觀察圖表容器進視窗再渲染
+        function observeChart() {
+          const el = document.getElementById('weatherChart');
+          if (!el || typeof IntersectionObserver === 'undefined') { renderWeatherChart(); return; }
+          const io = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+              if (e.isIntersecting) { renderWeatherChart(); io.disconnect(); }
+            });
+          }, { rootMargin: '100px' });
+          io.observe(el);
+        }
+
 
         // --- Itinerary Logic ---
 
@@ -764,173 +746,108 @@
             return 'bg-gray-100 text-gray-600';
         }
 
-        function renderItinerary(phaseKey) {
-            // Update active sidebar style
-            ['phase1', 'phase2', 'phase3'].forEach(key => {
-                const btn = document.getElementById(`nav-${key}`);
-                // Clear all styles first
-                btn.classList.remove('bg-white', 'shadow-sm', 'border-blue-500', 'border-yellow-500', 'border-purple-500', 'hover:border-yellow-500', 'hover:bg-yellow-50', 'hover:border-purple-500', 'hover:bg-purple-50', 'bg-blue-50', 'bg-yellow-50', 'bg-purple-50');
-                
-                // Add default non-active styles
-                btn.classList.add('border-transparent', 'bg-gray-50');
-                
-                // Set hover styles based on phase
-                if (key === 'phase2') btn.classList.add('hover:border-yellow-500', 'hover:bg-yellow-50');
-                if (key === 'phase3') btn.classList.add('hover:border-purple-500', 'hover:bg-purple-50');
-                if (key === 'phase1') btn.classList.add('hover:border-blue-500', 'hover:bg-blue-50');
+        
+const PHASE_STYLES = {
+  phase1: { primary: 'bg-blue-500', hover: 'hover:bg-blue-600', pin: 'border-blue-400', line: 'border-blue-300', loc: 'text-blue-600', locBg: 'bg-blue-100' },
+  phase2: { primary: 'bg-yellow-500', hover: 'hover:bg-yellow-600', pin: 'border-yellow-500', line: 'border-yellow-400', loc: 'text-yellow-600', locBg: 'bg-yellow-100' },
+  phase3: { primary: 'bg-purple-500', hover: 'hover:bg-purple-600', pin: 'border-purple-500', line: 'border-purple-400', loc: 'text-purple-600', locBg: 'bg-purple-100' }
+};
 
-                
-                // Apply active style
-                if (key === phaseKey) {
-                    btn.classList.add('bg-white', 'shadow-sm');
-                    btn.classList.remove('border-transparent', 'bg-gray-50');
-                    if (key === 'phase1') btn.classList.add('border-blue-500', 'bg-blue-50');
-                    if (key === 'phase2') btn.classList.add('border-yellow-500', 'bg-yellow-50');
-                    if (key === 'phase3') btn.classList.add('border-purple-500', 'bg-purple-50');
-                }
-            });
+function renderItinerary(phaseKey) {
+  // Sidebar active 切換（精簡）
+  ['phase1','phase2','phase3'].forEach(key => {
+    const btn = document.getElementById(`nav-${key}`);
+    const active = key === phaseKey;
+    btn.className = 'w-full text-left p-4 rounded-xl transition-all group ' +
+      (active
+        ? 'bg-white shadow-sm ' + (key==='phase1'?'border-l-4 border-blue-500 bg-blue-50': key==='phase2'?'border-l-4 border-yellow-500 bg-yellow-50':'border-l-4 border-purple-500 bg-purple-50')
+        : 'border-l-4 border-transparent bg-gray-50 hover:' + (key==='phase1'?'border-blue-500 hover:bg-blue-50': key==='phase2'?'border-yellow-500 hover:bg-yellow-50':'border-purple-500 hover:bg-purple-50'));
+  });
 
-            const phase = itineraryData[phaseKey];
-            const container = document.getElementById('itinerary-details');
-            const mapUrl = generatePhaseMapUrl(phaseKey); // Get the map URL
+  const phase = itineraryData[phaseKey];
+  const container = document.getElementById('itinerary-details');
+  const mapUrl = generatePhaseMapUrl(phaseKey);
+  const s = PHASE_STYLES[phaseKey];
 
-            // Determine primary color for map button and phase title underline
-            let primaryColorClass = 'bg-blue-500';
-            let hoverColorClass = 'hover:bg-blue-600';
-            let pinColor = 'border-blue-400';
-            let lineColor = 'border-blue-300';
-            let locColor = 'text-blue-600';
-            let locBg = 'bg-blue-100';
+  let html = `
+    <div class="mb-6 animate-fade-in">
+      ${mapUrl}
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657A8 8 0 1117.657 16.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        🔍 地圖連結: 點擊查看 ${phase.title} 區域所有景點
+        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+      </a>
+      <h3 class="text-2xl font-bold text-gray-900">${phase.title}</h3>
+      <div class="h-1 w-20 ${s.primary} mt-2 rounded-full"></div>
+    </div>
+  `;
 
+  phase.days.forEach(day => {
+    const attraction = day.attractionKey ? attractionMap[day.attractionKey] : null;
+    let attractionHtml = '';
+    if (attraction) {
+      const badgeColor = getAttractionBadgeColor(attraction.type);
+      const typeLabel = attraction.type === 'History' ? '歷史地標' :
+                        attraction.type === 'Nature'  ? '自然景觀' :
+                        attraction.type === 'Fun'     ? '娛樂樂園' :
+                        attraction.type === 'Food'    ? '美食體驗' :
+                        attraction.type === 'Photo'   ? '攝影打卡' :
+                        attraction.type === 'Culture' ? '文化藝術' : '其他';
+      attractionHtml = `
+        <div class="mt-3 pt-3 border-t border-gray-100">
+          <div class="flex items-center space-x-2 mb-2">
+            <div class="text-xl" aria-hidden="true">${attraction.icon}</div>
+            <button onclick="scrollToSection('highlights')" class="text-sm font-bold text-gray-800 underline hover:text-yellow-600 attraction-link bg-transparent p-0 m-0">
+              <span class="mr-1">景點亮點:</span><span>${attraction.name}</span>
+            </button>
+            <span class="text-xs px-2 py-0.5 rounded-full font-bold ${badgeColor}">${typeLabel}</span>
+          </div>
+          <p class="text-xs text-gray-600 italic leading-relaxed">${attraction.short_desc}</p>
+        </div>`;
+    }
+    const currentHotel = Object.values(accommodationData).find(h => h.name === day.hotel);
+    const hotelHtml = currentHotel ? `<span class="text-xs text-gray-500 bg-yellow-50 border border-yellow-200 inline-block px-2 py-1 rounded ml-2">🏠 ${currentHotel.city}</span>` : '';
 
-            if (phaseKey === 'phase2') {
-                primaryColorClass = 'bg-yellow-500';
-                hoverColorClass = 'hover:bg-yellow-600';
-                pinColor = 'border-yellow-500';
-                lineColor = 'border-yellow-400';
-                locColor = 'text-yellow-600';
-                locBg = 'bg-yellow-100';
-            } else if (phaseKey === 'phase3') {
-                primaryColorClass = 'bg-purple-500';
-                hoverColorClass = 'hover:bg-purple-600';
-                pinColor = 'border-purple-500';
-                lineColor = 'border-purple-400';
-                locColor = 'text-purple-600';
-                locBg = 'bg-purple-100';
-            }
+    html += `
+      <div class="flex group relative pl-8 pb-8 last:pb-0 border-l-2 border-gray-200 transition-colors">
+        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-4 ${s.pin} group-hover:scale-125 transition-transform"></div>
+        <div class="bg-gray-50 rounded-xl p-5 w-full hover:bg-white hover:shadow-md transition-all border border-gray-100">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+            <span class="font-bold ${s.loc} ${s.locBg} px-3 py-1 rounded-full text-sm w-fit mb-2 sm:mb-0">
+              ${day.date} ${hotelHtml}
+            </span>
+            <span class="text-sm font-semibold text-gray-500 flex items-center"><span class="mr-1" aria-hidden="true">📍</span> ${day.loc}</span>
+          </div>
+          <h4 class="text-lg font-bold text-gray-800 mb-2">${day.act}</h4>
+          <p class="text-gray-600 text-sm leading-relaxed mb-1">${day.detail}</p>
+          ${attractionHtml}
+          <div class="text-xs text-gray-500 bg-white border border-gray-200 inline-block px-2 py-1 rounded mt-3">🚇 交通: ${day.transport}</div>
+        </div>
+      </div>`;
+   });
 
-            // Generate HTML with animation
-            let html = `
-                <div class="mb-6 animate-fade-in">
-                    <!-- NEW: 地圖連結按鈕 (整合自 dashboard 概念) -->
-                    <a href="${mapUrl}" target="_blank" class="flex items-center justify-center p-3 mb-4 rounded-xl text-white font-bold ${primaryColorClass} ${hoverColorClass} transition-colors shadow-lg card-hover">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657A8 8 0 1117.657 16.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        🔍 地圖連結: 點擊查看 ${phase.title} 區域所有景點
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                    </a>
-                    
-                    <h3 class="text-2xl font-bold text-gray-900">${phase.title}</h3>
-                    <div class="h-1 w-20 ${phaseKey === 'phase2' ? 'bg-yellow-500' : phaseKey === 'phase3' ? 'bg-purple-500' : 'bg-blue-500'} mt-2 rounded-full"></div>
-                </div>
-            `;
+  container.innerHTML = html;
 
-            phase.days.forEach(day => {
-                // Check for linked attraction
-                const attraction = day.attractionKey ? attractionMap[day.attractionKey] : null;
-                let attractionHtml = '';
-
-                if (attraction) {
-                    const badgeColor = getAttractionBadgeColor(attraction.type);
-                    // 景點類型中文翻譯
-                    const typeLabel = attraction.type === 'History' ? '歷史地標' : 
-                                      attraction.type === 'Nature' ? '自然景觀' : 
-                                      attraction.type === 'Fun' ? '娛樂樂園' : 
-                                      attraction.type === 'Food' ? '美食體驗' : 
-                                      attraction.type === 'Photo' ? '攝影打卡' : 
-                                      attraction.type === 'Culture' ? '文化藝術' : '其他';
-
-                    attractionHtml = `
-                        <div class="mt-3 pt-3 border-t border-gray-100">
-                            <div class="flex items-center space-x-2 mb-2">
-                                <div class="text-xl">${attraction.icon}</div>
-                                <!-- 點擊景點名稱跳轉到 Highlights 區塊 -->
-                                <button onclick="scrollToSection('highlights')" class="text-sm font-bold text-gray-800 underline hover:text-yellow-600 attraction-link cursor-pointer p-0 m-0 border-none bg-transparent flex items-center">
-                                    <span class="mr-1">景點亮點:</span>
-                                    <span>${attraction.name}</span>
-                                </button>
-                                <span class="text-xs px-2 py-0.5 rounded-full font-bold ${badgeColor}">${typeLabel}</span>
-                            </div>
-                            <!-- 使用 short_desc 簡短介紹 -->
-                            <p class="text-xs text-gray-600 italic leading-relaxed">${attraction.short_desc}</p>
-                        </div>
-                    `;
-                }
-
-                // Check for linked hotel
-                let hotelHtml = '';
-                const currentHotel = Object.values(accommodationData).find(h => h.name === day.hotel);
-                if (currentHotel) {
-                     hotelHtml = `<span class="text-xs text-gray-500 bg-yellow-50 border border-yellow-200 inline-block px-2 py-1 rounded ml-2">🏠 ${currentHotel.city}</span>`;
-                }
-
-                // Determine pin and line color based on phase
-                // Color variables already set above (pinColor, lineColor, locColor, locBg)
-
-                html += `
-                    <div class="flex group relative pl-8 pb-8 last:pb-0 border-l-2 border-gray-200 last:border-0 hover:${lineColor} transition-colors">
-                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-4 ${pinColor} group-hover:scale-125 transition-transform"></div>
-                        <div class="bg-gray-50 rounded-xl p-5 w-full hover:bg-white hover:shadow-md transition-all border border-gray-100">
-                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
-                                <span class="font-bold ${locColor} ${locBg} px-3 py-1 rounded-full text-sm w-fit mb-2 sm:mb-0">
-                                    ${day.date}
-                                    ${hotelHtml}
-                                </span>
-                                <span class="text-sm font-semibold text-gray-500 flex items-center">
-                                    <span class="mr-1">📍</span> ${day.loc}
-                                </span>
-                            </div>
-                            <h4 class="text-lg font-bold text-gray-800 mb-2">${day.act}</h4>
-                            <p class="text-gray-600 text-sm leading-relaxed mb-1">${day.detail}</p>
-                            
-                            ${attractionHtml} <!-- 注入景點資訊 -->
-
-                            <div class="text-xs text-gray-500 bg-white border border-gray-200 inline-block px-2 py-1 rounded mt-3">
-                                🚇 交通: ${day.transport}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
         }
 
         // --- Attraction Logic ---
-
         function filterAttractions(filter) {
-            // Update active button state
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                // Remove all color classes
-                btn.classList.remove('bg-gray-800', 'text-white', 'shadow-md');
-                btn.classList.remove('bg-white', 'text-gray-600', 'border', 'hover:bg-blue-50', 'hover:text-blue-600', 'hover:bg-yellow-50', 'hover:text-yellow-600', 'hover:bg-purple-50', 'hover:text-purple-600', 'hover:bg-green-50', 'hover:text-green-600');
-                
-                // Add default non-active styles
-                btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+          const ACTIVE = ['bg-gray-800','text-white','shadow-md'];
+          const INACTIVE = ['bg-white','text-gray-600','border','border-gray-200'];
+        
+          document.querySelectorAll('.filter-btn').forEach(btn => {
+            const isActive = btn.dataset.filter === filter;
+            btn.classList.remove(...ACTIVE, ...INACTIVE, 'hover:bg-blue-50','hover:text-blue-600','hover:bg-green-50','hover:text-green-600','hover:bg-yellow-50','hover:text-yellow-600','hover:bg-purple-50','hover:text-purple-600');
+            btn.classList.add(...(isActive ? ACTIVE : INACTIVE));
+            if (!isActive) {
+              const f = btn.dataset.filter;
+              if (f === 'SF') btn.classList.add('hover:bg-blue-50','hover:text-blue-600');
+              if (f === 'Yosemite') btn.classList.add('hover:bg-green-50','hover:text-green-600');
+              if (f === 'PCH') btn.classList.add('hover:bg-yellow-50','hover:text-yellow-600');
+              if (f === 'LA') btn.classList.add('hover:bg-purple-50','hover:text-purple-600');
+               }
+          });
+          renderAttractions(filter);
 
-                if(btn.dataset.filter === filter) {
-                    // Active state
-                    btn.classList.add('bg-gray-800', 'text-white', 'shadow-md');
-                    btn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
-                } else {
-                    // Hover states based on filter name (for non-active buttons)
-                    if (btn.dataset.filter === 'SF') btn.classList.add('hover:bg-blue-50', 'hover:text-blue-600');
-                    if (btn.dataset.filter === 'Yosemite') btn.classList.add('hover:bg-green-50', 'hover:text-green-600');
-                    if (btn.dataset.filter === 'PCH') btn.classList.add('hover:bg-yellow-50', 'hover:text-yellow-600');
-                    if (btn.dataset.filter === 'LA') btn.classList.add('hover:bg-purple-50', 'hover:text-purple-600');
-                }
-            });
-
-            renderAttractions(filter);
         }
 
         function renderAttractions(filter) {
