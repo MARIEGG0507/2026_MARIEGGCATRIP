@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,7 +47,7 @@
             }
         }
         .tab-active {
-            border-bottom: 2px solid var(--accent-gold);
+            border-bottom: 2px solid var(--accent-main;
             color: #d69e2e;
             font-weight: bold;
         }
@@ -151,47 +151,44 @@
             <p class="text-lg text-gray-600 mb-6">
                 2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行
             </p>
-            <!-- 可點擊的導航按鈕 (已連結至外部網站) -->
-            <!-- 調整 space-x 以適應更多項目 -->
-            <div class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-sm font-medium text-gray-500">
+            
+            <nav aria-label="主要景點連結" class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-sm font-medium text-gray-500">
                 <a href="https://www.sftravel.com/" target="_blank" class="flex flex-col items-center hover:text-blue-600 hover:scale-110 transition-all cursor-pointer" title="前往舊金山旅遊局官網">
-                    <span class="text-2xl mb-1">🌉</span>
+                    <span class="text-2xl mb-1" aria-hidden="true">🌉</span>
                     <span>舊金山</span>
                 </a>
                 <a href="https://www.nps.gov/yose/index.htm" target="_blank" class="flex flex-col items-center hover:text-green-600 hover:scale-110 transition-all cursor-pointer" title="前往優勝美地國家公園官網">
-                    <span class="text-2xl mb-1">🌲</span>
+                    <span class="text-2xl mb-1" aria-hidden="true">🌲</span>
                     <span>優勝美地</span>
                 </a>
                 <a href="https://www.visitcalifornia.com/road-trips/highway-one-classic/" target="_blank" class="flex flex-col items-center hover:text-yellow-600 hover:scale-110 transition-all cursor-pointer" title="前往加州旅遊局-一號公路介紹">
-                    <span class="text-2xl mb-1">🚗</span>
+                    <span class="text-2xl mb-1" aria-hidden="true">🚗</span>
                     <span>一號公路</span>
                 </a>
                 <a href="https://www.discoverlosangeles.com/" target="_blank" class="flex flex-col items-center hover:text-purple-600 hover:scale-110 transition-all cursor-pointer" title="前往洛杉磯旅遊局官網">
-                    <span class="text-2xl mb-1">🎬</span>
+                    <span class="text-2xl mb-1" aria-hidden="true">🎬</span>
                     <span>洛杉磯</span>
                 </a>
-                <!-- 新增：迪士尼樂園 -->
                 <a href="disneyland_itinerary.html" target="_blank" class="flex flex-col items-center hover:text-red-600 hover:scale-110 transition-all cursor-pointer" title="前往迪士尼樂園官網">
-                    <span class="text-2xl mb-1">🏰</span>
+                    <span class="text-2xl mb-1" aria-hidden="true">🏰</span>
                     <span>迪士尼樂園</span>
                 </a>
-                <!-- 新增：環球影城 -->
                 <a href="universal_hollywood.html" target="_blank" class="flex flex-col items-center hover:text-orange-600 hover:scale-110 transition-all cursor-pointer" title="前往環球影城官網">
-                    <span class="text-2xl mb-1">🎥</span>
+                    <span class="text-2xl mb-1" aria-hidden="true">🎥</span>
                     <span>環球影城</span>
                 </a>
-            </div>
+            </nav>
         </div>
     </header>
 
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-center space-x-8 h-12 items-center">
-                <button onclick="scrollToSection('logistics')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">行前準備 & 航班</button>
-                <button onclick="scrollToSection('itinerary')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">每日行程</button>
-                <button onclick="scrollToSection('highlights')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">景點探索</button>
-            </div>
+            <ul class="flex justify-center space-x-8 h-12 items-center">
+                <li><button onclick="scrollToSection('logistics')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">行前準備 & 航班</button></li>
+                <li><button onclick="scrollToSection('itinerary')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">每日行程</button></li>
+                <li><button onclick="scrollToSection('highlights')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">景點探索</button></li>
+            </ul>
         </div>
     </nav>
 
@@ -280,26 +277,26 @@
             
             <!-- Essential Checklist Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                    <div class="text-2xl mb-2">📄</div>
+                <article class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <div class="text-2xl mb-2" aria-hidden="true">📄</div>
                     <h4 class="font-bold text-blue-900">證件檢查</h4>
                     <p class="text-sm text-blue-800 mt-1">護照、ESTA、國際駕照、台灣駕照正本。</p>
-                </div>
-                <div class="bg-green-50 p-4 rounded-xl border border-green-100">
-                    <div class="text-2xl mb-2">💵</div>
+                </article>
+                <article class="bg-green-50 p-4 rounded-xl border border-green-100">
+                    <div class="text-2xl mb-2" aria-hidden="true">💵</div>
                     <h4 class="font-bold text-green-900">貨幣小費</h4>
                     <p class="text-sm text-green-800 mt-1">使用 USD。餐廳小費約 15-20%。標價不含稅。</p>
-                </div>
-                <div class="bg-purple-50 p-4 rounded-xl border border-purple-100">
-                    <div class="text-2xl mb-2">📱</div>
+                </article>
+                <article class="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                    <div class="text-2xl mb-2" aria-hidden="true">📱</div>
                     <h4 class="font-bold text-purple-900">網路通訊</h4>
                     <p class="text-sm text-purple-800 mt-1">提前購買 SIM 卡或租借 Wi-Fi 機。時區慢 16 小時。</p>
-                </div>
-                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
-                    <div class="text-2xl mb-2">🚗</div>
+                </article>
+                <article class="bg-red-50 p-4 rounded-xl border border-red-100">
+                    <div class="text-2xl mb-2" aria-hidden="true">🚗</div>
                     <h4 class="font-bold text-red-900">交通須知</h4>
                     <p class="text-sm text-red-800 mt-1">SF搭大眾運輸；LA搭Uber；PCH自駕前查路況。</p>
-                </div>
+                </article>
             </div>
 
 
