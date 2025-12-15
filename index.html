@@ -3,254 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>美國西岸旅遊行程規劃 (SF & PCH & LA)</title>
+    <title>2026 美西舊金山與洛杉磯之旅</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* 定義 Tailwind 以外的自訂樣式 */
+        /* Chosen Palette: Earthy Calm */
+    :root {
+        /* 奶油系基底 */
+        --bg-warm: #fbf7f2;          /* 奶油白背景 */
+        --card-bg: #ffffff;
+        --border-soft: #efe6d8;
+
+        /* 文字 */
+        --text-primary: #3a3a3a;
+        --text-secondary: #6b6b6b;
+
+        /* 主視覺強調色（只留一組） */
+        --accent-main: #d6b98c;      /* 奶茶金 */
+        --accent-main-dark: #c3a36f;
+
+        /* 輔助色（低彩度） */
+        --accent-soft-blue: #cfdde6;
+        --accent-soft-green: #d9e5d8;
+        }
+    body {
+        background-color: var(--bg-warm);
+        color: var(--text-primary);
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .tab-active {
+            border-bottom: 2px solid var(--accent-gold);
+            color: #d69e2e;
+            font-weight: bold;
+        }
+        .card-hover {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Custom Scrollbar for itinerary list */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+        /* Style for the clickable attraction name in itinerary */
+        .attraction-link {
+            transition: color 0.1s;
+        }
+        /* Keyframe for a subtle fade-in effect on itinerary change */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
+            animation: fadeIn 0.5s ease-out;
         }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
+        /* ---------- 3-Day Weather (MUJI Style) ---------- */
+        
         .weather-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
-            border-radius: 8px;
-            background-color: #f9fafb; /* gray-50 */
-            border: 1px solid #e5e7eb; /* gray-200 */
+            background-color: #faf7f2;
+            border: 1px solid var(--border-soft);
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
             text-align: center;
+            min-width: 90px;
         }
+        
         .weather-icon {
-            font-size: 24px;
-            margin-bottom: 4px;
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
         }
+        
         .weather-date {
-            font-size: 10px;
-            color: #6b7280; /* gray-500 */
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+        
+        .weather-temp {
+            font-size: 0.9rem;
             font-weight: 500;
         }
-        .weather-temp {
-            font-size: 14px;
-            font-weight: bold;
-            color: #1f2937; /* gray-800 */
+        /* ---------- Fix Weather Layout Overflow ---------- */
+        
+        #weather-3day .flex {
+            flex-wrap: wrap;          /* 允許換行 */
+            justify-content: flex-start;
         }
-        #weather-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+        
+        .weather-card {
+            flex: 1 1 calc(33.333% - 0.75rem);  /* 桌機三等分 */
+            min-width: 80px;          /* 降低最小寬 */
+            max-width: 100%;
         }
-    </style>
-</head>
-<body class="bg-gray-50 font-sans">
+        
+        /* 手機優化 */
+        @media (max-width: 640px) {
+            .weather-card {
+                flex: 1 1 calc(50% - 0.75rem);  /* 兩張一排 */
+            }
+        }
 
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-extrabold text-gray-900 flex items-center">
-                <span class="text-3xl mr-2 text-indigo-600">🗺️</span> 
-                美國西岸🇺🇸 三城之旅 (2025/03)
+    </style>
+    <!-- Application Structure Plan:
+         1. Hero Section: Title, Dates, and high-level trip stats (Days, Cities).
+         2. Navigation: Simple sticky sub-nav to jump between Logistics, Itinerary, and Highlights.
+         3. Logistics Hub: Interactive section for Flights (toggle View) and Essential Info (Cards). Includes a Weather Comparison Chart (Chart.js) to visualize clothing needs. NOW includes a 13-Day Daily Forecast and Accommodation Summary.
+         4. The Journey (Itinerary): A split-view interactive timeline. Left side lists the 3 major phases (SF, PCH, LA). Clicking a phase reveals detailed day-by-day activities on the right. (Daily itinerary includes Attraction Details.)
+         5. Destination Discovery (Attractions): A filterable grid of attraction cards.
+         6. Footer: Simple closing.
+    -->
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Hero Section -->
+    <header class="bg-white shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl mb-2">
+                2026 美西舊金山與洛杉磯之旅
             </h1>
-            <nav class="hidden md:flex space-x-4">
-                <button onclick="scrollToSection('itinerary')" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">每日行程</button>
-                <button onclick="scrollToSection('logistics')" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">航班與住宿</button>
-                <button onclick="scrollToSection('weather')" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">天氣與穿搭</button>
-                <button onclick="scrollToSection('highlights')" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">景點亮點</button>
-            </nav>
+            <p class="text-lg text-gray-600 mb-6">
+                2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行
+            </p>
+            <!-- 可點擊的導航按鈕 (已連結至外部網站) -->
+            <!-- 調整 space-x 以適應更多項目 -->
+            <div class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-sm font-medium text-gray-500">
+                <a href="https://www.sftravel.com/" target="_blank" class="flex flex-col items-center hover:text-blue-600 hover:scale-110 transition-all cursor-pointer" title="前往舊金山旅遊局官網">
+                    <span class="text-2xl mb-1">🌉</span>
+                    <span>舊金山</span>
+                </a>
+                <a href="https://www.nps.gov/yose/index.htm" target="_blank" class="flex flex-col items-center hover:text-green-600 hover:scale-110 transition-all cursor-pointer" title="前往優勝美地國家公園官網">
+                    <span class="text-2xl mb-1">🌲</span>
+                    <span>優勝美地</span>
+                </a>
+                <a href="https://www.visitcalifornia.com/road-trips/highway-one-classic/" target="_blank" class="flex flex-col items-center hover:text-yellow-600 hover:scale-110 transition-all cursor-pointer" title="前往加州旅遊局-一號公路介紹">
+                    <span class="text-2xl mb-1">🚗</span>
+                    <span>一號公路</span>
+                </a>
+                <a href="https://www.discoverlosangeles.com/" target="_blank" class="flex flex-col items-center hover:text-purple-600 hover:scale-110 transition-all cursor-pointer" title="前往洛杉磯旅遊局官網">
+                    <span class="text-2xl mb-1">🎬</span>
+                    <span>洛杉磯</span>
+                </a>
+                <!-- 新增：迪士尼樂園 -->
+                <a href="disneyland_itinerary.html" target="_blank" class="flex flex-col items-center hover:text-red-600 hover:scale-110 transition-all cursor-pointer" title="前往迪士尼樂園官網">
+                    <span class="text-2xl mb-1">🏰</span>
+                    <span>迪士尼樂園</span>
+                </a>
+                <!-- 新增：環球影城 -->
+                <a href="universal_hollywood.html" target="_blank" class="flex flex-col items-center hover:text-orange-600 hover:scale-110 transition-all cursor-pointer" title="前往環球影城官網">
+                    <span class="text-2xl mb-1">🎥</span>
+                    <span>環球影城</span>
+                </a>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <section id="summary" class="mb-12 bg-indigo-600 p-6 sm:p-8 rounded-2xl shadow-xl text-white animate-fade-in">
-            <h2 class="text-3xl font-bold mb-3">旅行總覽 (2025/03/01 - 03/09)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                <div class="bg-indigo-700 p-3 rounded-lg">
-                    <p class="font-semibold">🛫 航段總計</p>
-                    <p class="text-lg font-extrabold">2段 (去程/回程)</p>
-                </div>
-                <div class="bg-indigo-700 p-3 rounded-lg">
-                    <p class="font-semibold">🛏️ 住宿地點</p>
-                    <p class="text-lg font-extrabold">4家飯店</p>
-                </div>
-                <div class="bg-indigo-700 p-3 rounded-lg">
-                    <p class="font-semibold">🚗 交通方式</p>
-                    <p class="text-lg font-extrabold">自駕 (5天) + Uber</p>
-                </div>
-                <div class="bg-indigo-700 p-3 rounded-lg">
-                    <p class="font-semibold">🗓️ 總天數</p>
-                    <p class="text-lg font-extrabold">9天8夜</p>
-                </div>
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-center space-x-8 h-12 items-center">
+                <button onclick="scrollToSection('logistics')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">行前準備 & 航班</button>
+                <button onclick="scrollToSection('itinerary')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">每日行程</button>
+                <button onclick="scrollToSection('highlights')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">景點探索</button>
             </div>
-        </section>
+        </div>
+    </nav>
 
-        <section id="itinerary" class="mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-indigo-200 pb-2">
-                <span class="text-indigo-600 mr-2">📅</span> 每日行程細節 (Itinerary)
-            </h2>
-            <div class="flex flex-col lg:flex-row gap-8">
-                
-                <div class="lg:w-1/4">
-                    <nav class="space-y-3 p-2 bg-white rounded-xl shadow-lg border border-gray-100 sticky lg:top-20">
-                        <button id="nav-phase1" data-phase="phase1" onclick="renderItinerary('phase1')" 
-                                class="w-full text-left p-3 rounded-lg border border-transparent transition-all hover:bg-blue-50 hover:border-blue-500 bg-gray-50 text-gray-700 hover:text-blue-700">
-                            <span class="font-extrabold text-blue-600 mr-1">1.</span> 舊金山 (3/1-3/3)
-                        </button>
-                        <button id="nav-phase2" data-phase="phase2" onclick="renderItinerary('phase2')" 
-                                class="w-full text-left p-3 rounded-lg border border-yellow-500 transition-all bg-yellow-50 text-yellow-800 shadow-sm">
-                            <span class="font-extrabold text-yellow-600 mr-1">2.</span> 加州一號公路 (3/3-3/5)
-                        </button>
-                        <button id="nav-phase3" data-phase="phase3" onclick="renderItinerary('phase3')" 
-                                class="w-full text-left p-3 rounded-lg border border-transparent transition-all hover:bg-purple-50 hover:border-purple-500 bg-gray-50 text-gray-700 hover:text-purple-700">
-                            <span class="font-extrabold text-purple-600 mr-1">3.</span> 洛杉磯 (3/5-3/9)
-                        </button>
-                    </nav>
-                </div>
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-16">
 
-                <div id="itinerary-details" class="lg:w-3/4">
-                    </div>
+        <!-- Section 1: Logistics Hub -->
+        <section id="logistics" class="scroll-mt-20">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">🛫 行前準備與資訊</h2>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
+                    包含航班時間、必備文件檢查、以及當地天氣預測，協助您打包行李與規劃抵達事宜。
+                </p>
             </div>
-        </section>
-
-        <section id="logistics" class="mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-indigo-200 pb-2">
-                <span class="text-indigo-600 mr-2">✈️🏠</span> 航班與住宿資訊 (Logistics)
-            </h2>
-            
+ 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <span class="text-2xl mr-2">🛫</span> 航班資訊 (Cathay Pacific)
-                    </h3>
-                    <div class="flex mb-4 p-1 bg-gray-100 rounded-lg">
-                        <button id="btn-outbound" onclick="switchFlightTab('outbound')" 
-                                class="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-colors bg-white shadow text-gray-900">
-                            去程 (Outbound)
-                        </button>
-                        <button id="btn-inbound" onclick="switchFlightTab('inbound')" 
-                                class="flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-gray-500 hover:bg-gray-200">
-                            回程 (Inbound)
-                        </button>
+                <!-- Flight Info -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">✈️ 航班資訊</h3>
+                        <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
+                            <button onclick="switchFlightTab('outbound')" id="btn-outbound" class="px-3 py-1 rounded-md text-sm font-medium transition-colors bg-white shadow text-gray-900">去程</button>
+                            <button onclick="switchFlightTab('inbound')" id="btn-inbound" class="px-3 py-1 rounded-md text-sm font-medium transition-colors text-gray-500 hover:text-gray-900">回程</button>
+                        </div>
                     </div>
+                    
                     <div id="flight-content" class="space-y-4">
-                        </div>
+                        <!-- Dynamic Content Loaded via JS -->
+                    </div>
                 </div>
-
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <span class="text-2xl mr-2">🏨</span> 飯店預訂與地址
-                    </h3>
-                    <div id="accommodation-content" class="space-y-4">
-                        </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="weather" class="mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-indigo-200 pb-2">
-                <span class="text-indigo-600 mr-2">☀️🧣</span> 天氣預報與穿搭建議 (3-Day Forecast)
-            </h2>
             
-            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-                <div class="mb-6 h-64">
-                    <canvas id="weatherChart"></canvas>
+                <!-- Weather & Tips -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex flex-col">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">🌡️ 氣溫趨勢與穿著建議</h3>
+                    <div class="flex-grow flex flex-col justify-center">
+                        <div class="chart-container mb-4">
+                            <canvas id="weatherChart"></canvas>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg text-sm text-yellow-800 border border-yellow-100">
+                            <strong>💡 穿搭筆記：</strong> 舊金山溫差大且多風，建議「洋蔥式穿法」並攜帶防風外套；洛杉磯白天溫暖，可準備薄長袖。
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="p-4 rounded-lg border border-blue-200 bg-blue-50">
-                        <h4 class="font-bold text-blue-800 text-lg mb-3">📍 舊金山 (SF)</h4>
-                        <div id="weather-sf" class="grid grid-cols-3 gap-2"></div>
-                        <p class="mt-3 text-sm font-semibold text-blue-700">🧣 穿搭建議: <span id="wear-sf" class="font-normal text-blue-600"></span></p>
-                    </div>
+                <!-- 3-Day Weather Forecast -->
+                <section id="weather-3day" class="mt-12">
+                  <h3 class="text-2xl font-semibold text-center mb-6">
+                    📍 所在地區・未來 3 天天氣
+                  </h3>
 
-                    <div class="p-4 rounded-lg border border-purple-200 bg-purple-50">
-                        <h4 class="font-bold text-purple-800 text-lg mb-3">📍 洛杉磯 (LA)</h4>
-                        <div id="weather-la" class="grid grid-cols-3 gap-2"></div>
-                        <p class="mt-3 text-sm font-semibold text-purple-700">🧣 穿搭建議: <span id="wear-la" class="font-normal text-purple-600"></span></p>
-                    </div>
+                  <div class="grid md:grid-cols-3 gap-6">
+                <!-- Current Location -->
+                  <div class="bg-white rounded-2xl p-6 shadow-lg border">
+                  <h4 class="text-lg font-medium mb-1">目前所在地</h4>
+                  <p class="text-sm text-gray-500 mb-4" id="current-city">定位中…</p>
+                  <div id="weather-current" class="flex gap-4"></div>
+                  <p id="wear-current" class="text-sm text-gray-600 mt-3"></p>
+    </div>
 
-                    <div class="p-4 rounded-lg border border-gray-200 bg-gray-100">
-                        <h4 class="font-bold text-gray-800 text-lg mb-3">
-                            <span id="current-city">目前定位城市</span>
-                        </h4>
-                        <div id="weather-current" class="grid grid-cols-3 gap-2"></div>
-                        <p class="mt-3 text-sm font-semibold text-gray-700">🧣 穿搭建議: <span id="wear-current" class="font-normal text-gray-600"></span></p>
+                <!-- San Francisco -->
+                  <div class="bg-white rounded-2xl p-6 shadow-lg border">
+                  <h4 class="text-lg font-medium mb-1">舊金山</h4>
+                  <p class="text-sm text-gray-500 mb-4">San Francisco</p>
+                  <div id="weather-sf" class="flex gap-4"></div>
+                  <p id="wear-sf" class="text-sm text-gray-600 mt-3"></p>
+    </div>
+
+                <!-- Los Angeles -->
+                  <div class="bg-white rounded-2xl p-6 shadow-lg border">
+                  <h4 class="text-lg font-medium mb-1">洛杉磯</h4>
+                  <p class="text-sm text-gray-500 mb-4">Los Angeles</p>
+                  <div id="weather-la" class="flex gap-4"></div>
+                  <p id="wear-la" class="text-sm text-gray-600 mt-3"></p>
+     </div>
+  </div>
+</section>
+            </div>
+
+            <!-- ACCOMMODATION SUMMARY -->
+            <div class="mt-8 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <span class="mr-2 text-2xl">🏨</span> 住宿規劃
+                </h3>
+                <div id="accommodation-content" class="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dynamic Content Loaded via JS -->
+                </div>
+            </div>
+            
+            <!-- Essential Checklist Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <div class="text-2xl mb-2">📄</div>
+                    <h4 class="font-bold text-blue-900">證件檢查</h4>
+                    <p class="text-sm text-blue-800 mt-1">護照、ESTA、國際駕照、台灣駕照正本。</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-xl border border-green-100">
+                    <div class="text-2xl mb-2">💵</div>
+                    <h4 class="font-bold text-green-900">貨幣小費</h4>
+                    <p class="text-sm text-green-800 mt-1">使用 USD。餐廳小費約 15-20%。標價不含稅。</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                    <div class="text-2xl mb-2">📱</div>
+                    <h4 class="font-bold text-purple-900">網路通訊</h4>
+                    <p class="text-sm text-purple-800 mt-1">提前購買 SIM 卡或租借 Wi-Fi 機。時區慢 16 小時。</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                    <div class="text-2xl mb-2">🚗</div>
+                    <h4 class="font-bold text-red-900">交通須知</h4>
+                    <p class="text-sm text-red-800 mt-1">SF搭大眾運輸；LA搭Uber；PCH自駕前查路況。</p>
+                </div>
+            </div>
+
+
+        </section>
+
+        <!-- Section 2: Itinerary -->
+        <section id="itinerary" class="scroll-mt-20">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">🗺️ 13 天旅程規劃</h2>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
+                    行程分為三大主題階段。點選左側階段可查看每日詳細安排與**相關景點亮點**。
+                </p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row h-[600px]">
+                <!-- Sidebar: Phases -->
+                <div class="w-full md:w-1/3 bg-gray-50 border-r border-gray-200 overflow-y-auto custom-scroll">
+                    <div class="p-4 space-y-2">
+                        <button onclick="renderItinerary('phase1')" id="nav-phase1" class="w-full text-left p-4 rounded-xl transition-all border-l-4 border-blue-500 bg-white shadow-sm hover:bg-blue-50 group">
+                            <div class="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">Phase 1 · 2/26 - 3/2</div>
+                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-blue-700">三藩市漫遊與NBA</h3>
+                            <p class="text-sm text-gray-500 mt-1">金門大橋、惡魔島、NBA 賽事</p>
+                        </button>
+
+                        <button onclick="renderItinerary('phase2')" id="nav-phase2" class="w-full text-left p-4 rounded-xl transition-all border-l-4 border-transparent hover:border-yellow-500 hover:bg-yellow-50 group">
+                            <div class="text-xs font-bold text-yellow-600 uppercase tracking-wider mb-1">Phase 2 · 3/3 - 3/5</div>
+                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-yellow-700">加州一號公路</h3>
+                            <p class="text-sm text-gray-500 mt-1">絕美海岸自駕、赫氏古堡</p>
+                        </button>
+
+                        <button onclick="renderItinerary('phase3')" id="nav-phase3" class="w-full text-left p-4 rounded-xl transition-all border-l-4 border-transparent hover:border-purple-500 hover:bg-purple-50 group">
+                            <div class="text-xs font-bold text-purple-500 uppercase tracking-wider mb-1">Phase 3 · 3/6 - 3/9</div>
+                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700">天使之城與雙樂園</h3>
+                            <p class="text-sm text-gray-500 mt-1">迪士尼、環球影城、星光大道</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Content: Daily Details -->
+                <div class="w-full md:w-2/3 p-6 md:p-8 overflow-y-auto custom-scroll bg-white relative">
+                    <div id="itinerary-details" class="space-y-8">
+                        <!-- Content injected via JS -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="highlights" class="mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-indigo-200 pb-2">
-                <span class="text-indigo-600 mr-2">🏛️🎢</span> 景點亮點 (Attraction Highlights)
-            </h2>
-
-            <div class="flex flex-wrap gap-3 mb-6">
-                <button data-filter="all" onclick="filterAttractions('all')" class="filter-btn bg-gray-800 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md transition-colors">
-                    ✨ 全部景點
-                </button>
-                <button data-filter="SF" onclick="filterAttractions('SF')" class="filter-btn bg-white text-gray-600 border px-4 py-2 rounded-full text-sm font-semibold transition-colors hover:bg-blue-50 hover:text-blue-600">
-                    🌉 舊金山 (SF)
-                </button>
-                <button data-filter="PCH" onclick="filterAttractions('PCH')" class="filter-btn bg-white text-gray-600 border px-4 py-2 rounded-full text-sm font-semibold transition-colors hover:bg-yellow-50 hover:text-yellow-600">
-                    🌊 一號公路 (PCH)
-                </button>
-                <button data-filter="LA" onclick="filterAttractions('LA')" class="filter-btn bg-white text-gray-600 border px-4 py-2 rounded-full text-sm font-semibold transition-colors hover:bg-purple-50 hover:text-purple-600">
-                    🎬 洛杉磯 (LA)
-                </button>
-                <button data-filter="Yosemite" onclick="filterAttractions('Yosemite')" class="filter-btn bg-white text-gray-600 border px-4 py-2 rounded-full text-sm font-semibold transition-colors hover:bg-green-50 hover:text-green-600">
-                    🌲 優勝美地 (Yosemite)
-                </button>
+        <!-- Section 3: Highlights -->
+        <section id="highlights" class="scroll-mt-20">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">🏛️ 精選景點探索</h2>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
+                    探索本次旅程的必訪亮點。**點擊下方景點卡片即可前往官方網站。**
+                </p>
             </div>
 
-            <div id="attraction-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                </div>
+            <!-- Filters: Added Yosemite Button -->
+            <div class="flex flex-wrap justify-center gap-2 mb-8">
+                <button onclick="filterAttractions('all')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-800 text-white shadow-md hover:bg-gray-700 transition-colors active-filter" data-filter="all">全部顯示</button>
+                <button onclick="filterAttractions('SF')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 transition-colors" data-filter="SF">🌉 舊金山</button>
+                <button onclick="filterAttractions('Yosemite')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-green-50 hover:text-green-600 transition-colors" data-filter="Yosemite">🌲 優勝美地</button>
+                <button onclick="filterAttractions('PCH')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-yellow-50 hover:text-yellow-600 transition-colors" data-filter="PCH">🌊 一號公路</button>
+                <button onclick="filterAttractions('LA')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-purple-50 hover:text-purple-600 transition-colors" data-filter="LA">🎬 洛杉磯</button>
+            </div>
+
+            <!-- Grid -->
+            <div id="attraction-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Content injected via JS -->
+            </div>
         </section>
 
     </main>
 
-    <footer class="bg-gray-800 text-white p-6 mt-10">
-        <div class="max-w-7xl mx-auto text-center text-sm">
-            <p>&copy; 2025 美國西岸旅遊行程規劃 | 僅供參考</p>
+    <footer class="bg-gray-900 text-white py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-2xl mb-4">🇺🇸</p>
+            <p class="text-gray-400">祝您的 2026 美西之旅充滿美好回憶！</p>
+            <div class="mt-8 text-xs text-gray-600">
+                Generated from Travel Booklet Source Data
+            </div>
         </div>
     </footer>
 
-
     <script>
-        // --- 旅遊數據源 ---
-        
+        // --- Data Storage ---
+
         const flightData = {
             outbound: [
-                { leg: "TPE 桃園 (12:00) ➜ HKG 香港 (13:55)", number: "CX403", date: "3/1 (六) 12:00", arr: "3/1 (六) 13:55", note: "轉機" },
-                { leg: "HKG 香港 (17:00) ➜ SFO 舊金山 (14:00)", number: "CX872", date: "3/1 (六) 17:00", arr: "3/1 (六) 14:00", note: "直飛 (時差)" }
+                { leg: "TPE ➜ HKG", date: "2/26 20:15", arr: "22:00", note: "轉機", number: "CX531" }, 
+                { leg: "HKG ➜ SFO", date: "2/26 01:00 (+1)", arr: "21:15 (2/26)", note: "需調整時差", number: "CX872" }
             ],
             inbound: [
-                { leg: "LAX 洛杉磯 (22:15) ➜ TPE 桃園 (05:20+2)", number: "CX883", date: "3/9 (日) 22:15", arr: "3/11 (二) 05:20", note: "直飛" }
+                { leg: "LAX ➜ HKG", date: "3/09 22:15", arr: "05:05 (3/11)", note: "跨越國際換日線", number: "CX883" },
+                { leg: "HKG ➜ TPE", date: "3/11 08:00", arr: "上午", note: "抵達溫暖的家", number: "CX488" }
             ]
         };
 
         const accommodationData = {
-            sf: { city: "舊金山 (SF)", dates: "3/1 - 3/3 (2晚)", name: "Riu Plaza Fisherman's Wharf", address: "2500 Mason St, San Francisco, CA", mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.858062297105798" },
-            carmel: { city: "PCH Day 1", dates: "3/3 - 3/4 (1晚)", name: "隆恩橡木酒店 (Lone Oak Inn)", address: "2224 N Fremont St, Monterey, CA", mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.858062297105799" },
-            morro_bay: { city: "PCH Day 2", dates: "3/4 - 3/5 (1晚)", name: "海港屋酒店 (Harbor House Inn)", address: "1098 Front St, Morro Bay, CA", mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848050" },
-            la: { city: "洛杉磯 (LA)", dates: "3/5 - 3/9 (4晚)", name: "The Hollywood Franklin Hotel near Universal Studios", address: "6451 Franklin Ave, Los Angeles, CA", mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848051" }
+            sf: {
+                name: "Riu Plaza Fisherman's Wharf",
+                dates: "2/26 - 3/3 (5 晚)",
+                city: "舊金山",
+                address: "2500 Mason Street, 漁人碼頭, 舊金山, CA 94133, 美國",
+                mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166",
+                status: "已確認 (含早餐)",
+                icon: "🌉",
+            },
+            pch_carmel: {
+                name: "隆恩橡木酒店 (Lone Oak Inn)",
+                dates: "3/3 (1 晚)",
+                city: "蒙特雷/卡梅爾 (PCH)",
+                address: "2221 North Fremont Street, 蒙特雷, CA 93940, 美國",
+                mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579", 
+                status: "已確認 (2 間房, 不含餐點)",
+                icon: "🌲",
+            }, 
+            pch_morro: {
+                name: "海港屋酒店 (Harbor House Inn)",
+                dates: "3/4 (1 晚)",
+                city: "莫羅貝 (PCH)",
+                address: "1095 Main Street, 莫羅貝, CA 93442, 美國",
+                mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805", 
+                status: "已確認 (海景豪華房)",
+                icon: "🌊",
+            },
+            la_hollywood: {
+                name: "The Hollywood Franklin Hotel near Universal Studios",
+                dates: "3/5 - 3/9 (4 晚)",
+                city: "好萊塢 (洛杉磯)",
+                address: "6141 Franklin Avenue, 好萊塢, 洛杉磯, CA 90028, 美國",
+                mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599",
+                status: "已確認 (總計 4 晚)",
+                icon: "🎬",
+            }
         };
 
+        // NEW: 景點快速查找地圖
+        let attractionMap = {};
+
+        // 景點資訊 (Attractions data) - 已整合所有 PCH 景點
+        const attractions = [
+            // --- 舊金山 (SF) 景點 ---
+            { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "舊金山最著名的象徵。這座橘紅色的懸索橋橫跨金門海峽，無論是在霧中若隱若現還是晴天下的鮮豔，都是旅人的必看之處。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/" }, 
+            { name: "漁人碼頭與 39 號碼頭", city: "SF", type: "Food", desc: "舊金山人氣最旺的觀光區，充滿商店、餐廳和街頭藝人。最著名的莫過於棲息在浮筒上的野生海獅。必嚐酸麵包蛤蜊濃湯。", short_desc: "人氣觀光區，必看野生海獅與享用酸麵包濃湯。", icon: "🦀", url: "https://www.fishermanswharf.org/" },
+            { name: "惡魔島 Alcatraz", city: "SF", type: "History", desc: "曾是關押全美最危險罪犯（如卡彭）的聯邦監獄。島上充滿神祕色彩，提供世界級的導覽系統。需提早數月訂票。", short_desc: "傳奇聯邦監獄，充滿神祕色彩與歷史故事。", icon: "🏝️", url: "https://www.alcatrazcruises.com/" },
+            { name: "九曲花街 Lombard St", city: "SF", type: "Photo", desc: "世界上最彎曲的街道。為了緩衝極度陡峭的坡度而設計了八個急轉彎，路旁種滿繡球花，景緻迷人。", short_desc: "世界上最彎曲的街道，繡球花與急轉彎的視覺饗宴。", icon: "🌸", url: "https://www.sftravel.com/article/guide-to-lombard-street" },
+            { name: "彩繪女士 Painted Ladies", city: "SF", type: "Photo", desc: "舊金山最具代表性的維多利亞式排屋，背景正是現代化的市中心高樓大廈，呈現出古典與現代的完美對比。", short_desc: "經典維多利亞式排屋，阿拉莫廣場的絕美明信片景緻。", icon: "🏠", url: "https://www.sftravel.com/article/guide-alamo-square-painted-ladies" },
+            { name: "渡輪大廈 Ferry Building", city: "SF", type: "Food", desc: "舊金山的美食殿堂。這座歷史悠久的渡輪站內進駐了許多在地手工藝品、精品咖啡、乳酪與特色美食。", short_desc: "歷史悠久的美食殿堂，匯集在地農產與精品咖啡。", icon: "⛴️", url: "https://www.ferrybuildingmarketplace.com/" },
+            { name: "叮叮車 Cable Car", city: "SF", type: "Fun", desc: "世界上唯一仍在運行的手動纜車系統，也是舊金山的移動名片。搭乘它穿梭在陡坡間，極具復古情懷。", short_desc: "體驗世界唯一手動纜車，穿梭陡坡的復古情懷。", icon: "🚋", url: "https://www.sfmta.com/getting-around/muni/cable-cars" },
+            { name: "藝術宮", city: "SF", type: "Photo", desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", short_desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", icon: "🏛️", url: "https://palaceoffinearts.com/" },
+            { name: "Chase Center", city: "SF", type: "Fun", desc: "金州勇士隊主場，現代化且熱血沸騰。", short_desc: "金州勇士隊主場，現代化且熱血沸騰。", icon: "🏀", url: "https://www.chasecenter.com/" },
+            
+            // --- 優勝美地 (Yosemite) 景點 (New!) ---
+            { name: "隧道景觀 Tunnel View", city: "Yosemite", type: "Photo", desc: "進入優勝美地谷地時最經典的觀景台。從這裡可以一次飽覽酋長岩、新娘面紗瀑布和半圓頂三大地標，是攝影愛好者的天堂。", short_desc: "優勝美地象徵性視角，一次飽覽三大地標。", icon: "🏞️", url: "https://www.nps.gov/yose/planyourvisit/tunnelview.htm" },
+            { name: "酋長岩 El Capitan", city: "Yosemite", type: "Nature", desc: "世界上最大的單塊花崗岩巨石，垂直高度超過 900 公尺。雖然遊客不能攀登，但從谷底仰望其氣勢，已足夠令人震撼。", short_desc: "全球最大單塊花崗岩，攀岩者的夢想聖地。", icon: "🧗", url: "https://www.nps.gov/yose/planyourvisit/elcapitan.htm" },
+            { name: "優勝美地瀑布 Yosemite Falls", city: "Yosemite", type: "Nature", desc: "由上、中、下三段瀑布組成，總落差達 739 公尺，是北美最高的瀑布之一。春末夏初雪水融化時，水量最大，氣勢最為磅礡。", short_desc: "北美最高瀑布之一，春季水量最為壯觀。", icon: "🌊", url: "https://www.nps.gov/yose/planyourvisit/waterfalls.htm" },
+            { name: "半圓頂 Half Dome", city: "Yosemite", type: "Nature", desc: "優勝美地最著名的地標，形狀像一顆被切開的巨大圓頂。它代表著優勝美地的精神——堅毅與壯麗。從谷底或冰川點遠眺皆極為壯觀。", short_desc: "優勝美地精神象徵，獨特半圓形花崗岩地標。", icon: "⛰️", url: "https://www.nps.gov/yose/planyourvisit/halfdome.htm" },
+
+            // --- 舊金山到卡梅爾 PCH 景點 ---
+            { name: "鴿子點燈塔", city: "PCH", type: "History", desc: "建於 1871 年，是美國西海岸最高的燈塔之一。戶外園區全天開放，是經典的海岸攝影據點。", short_desc: "經典海岸燈塔，美國西海岸最高之一。", icon: "💡", url: "https://www.parks.ca.gov/?page_id=533" },
+            { name: "鯊魚鰭灣", city: "PCH", type: "Nature", desc: "因海中巨石形狀酷似鯊魚背鰭而得名。擁有原始的自然美感與獨特的海蝕洞景觀。", short_desc: "形狀酷似鯊魚背鰭的巨石海灘。", icon: "🦈", url: "https://www.californiacoastline.org/cgi-bin/image.cgi?image=4583&mode=big&options=0" },
+            { name: "聖塔克魯茲碼頭與樂園", city: "PCH", type: "Fun", desc: "加州最古老的海濱遊樂園，擁有百年歷史的木質過山車。碼頭下方常有成群海獅休憩。", short_desc: "加州最古老海濱樂園，經典木質過山車。", icon: "🎡", url: "https://beachboardwalk.com/" },
+            { name: "蒙特雷灣水族館", city: "PCH", type: "Nature", desc: "全美最受推崇的水族館，必看巨型海藻森林與海獺餵食秀。座落於歷史罐頭廠街。", short_desc: "全美頂尖水族館，巨型海藻森林景觀。", icon: "🐠", url: "https://www.montereybayaquarium.org/" },
+            { name: "17-Mile Drive", city: "PCH", type: "Nature", desc: "私人景觀公路，欣賞碧海藍天、孤柏樹、海豹與豪華住宅。需付入園費$12.25/車。", short_desc: "海岸線私人景觀公路，必看孤柏與鳥岩。", icon: "🌲", url: "https://www.pebblebeach.com/17-mile-drive/" },
+            { name: "卡梅爾小鎮", city: "PCH", type: "Culture", desc: "充滿歐式童話氛圍的藝術小鎮，擁有薑餅屋般的房舍和潔白沙灘，適合散步與藝廊之旅。", short_desc: "歐式童話藝術小鎮，無霓虹燈與速食店。", icon: "🏡", url: "https://www.carmelcalifornia.com/" },
+
+            // --- 卡梅爾到皮斯莫比奇 PCH 景點 ---
+            { name: "羅伯斯角州立自然保護區 Point Lobos", city: "PCH", type: "Nature", desc: "被譽為「加州州立公園系統中的皇冠」。這裡有豐富的海鳥、海豹與海獺生態，以及壯觀的海蝕景觀。", short_desc: "加州皇冠級自然保護區，觀賞海獺海豹。", icon: "🦭", url: "https://www.parks.ca.gov/?page_id=571" },
+            { name: "Bixby Bridge", city: "PCH", type: "Photo", desc: "一號公路最具代表性的攝影點。巨大的單跨混凝土拱橋完工於 1932 年，橫跨在陡峭的斷崖深谷之間。", short_desc: "一號公路最著名的單拱橋，懸崖絕景。", icon: "🌉", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10924" },
+            { name: "菲佛海灘 Pfeiffer Beach", city: "PCH", type: "Photo", desc: "隱藏在山谷中的秘境海灘。著名的「紫色」沙灘與海上巨大的 Keyhole Rock 石洞拱門。", short_desc: "欣賞 Keyhole Rock 與獨特的紫色沙灘。", icon: "💜", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10921" },
+            { name: "麥克威瀑布 McWay Falls", city: "PCH", type: "Nature", desc: "加州極少數直接落入海灘的瀑布。碧綠的海水配上細白的瀑布，美得像一幅畫。", short_desc: "世外桃源般的海岸瀑布，寶石色海灣。", icon: "💧", url: "https://www.parks.ca.gov/?page_id=570" },
+            { name: "赫氏古堡 Hearst Castle", city: "PCH", type: "History", desc: "報業大亨赫斯特的私人領地，融合地中海風情與無數歐洲骨董，極盡奢華。", short_desc: "極致奢華的私人莊園，融合歐洲藝術。", icon: "🏰", url: "https://hearstcastle.org/" },
+            { name: "象鼻海豹灘 Elephant Seal Rookery", city: "PCH", type: "Nature", desc: "全年都可以在此觀賞到成百上千隻巨大的象鼻海豹在沙灘上休息、換毛或育雛。", short_desc: "免費生態觀察點，觀賞成群象鼻海豹。", icon: "🐘", url: "https://www.elephantseal.org/" },
+            { name: "月光石海灘 Moonstone Beach", city: "PCH", type: "Nature", desc: "以海灘上散布的小玉石得名。擁有風景極佳的濱海木棧道，適合悠閒散步。", short_desc: "以小玉石聞名，擁有絕美濱海木棧道。", icon: "💎", url: "https://visitcambriaca.com/moonstone-beach/" },
+            { name: "莫羅貝與莫羅岩 Morro Rock", city: "PCH", type: "Photo", desc: "巨大的海上岩漿岩矗立在海港入口。碼頭區充滿了海鮮餐廳與水上活動。", short_desc: "巨型海上岩漿岩地標，海鮮美食碼頭。", icon: "🌋", url: "https://www.morrobay.org/" },
+            { name: "皮斯莫比奇 Pismo Beach", city: "PCH", type: "Fun", desc: "這段旅程的終點，是一個充滿陽光氣息的海邊渡假小鎮。以廣大的沙灘和沙丘活動聞名。", short_desc: "海邊渡假小鎮，沙灘碼頭與沙丘活動。", icon: "🏖️", url: "https://experiencepismobeach.com/" },
+
+            // --- PCH 終段景點 ---
+            { name: "丹麥村 Solvang", city: "PCH", type: "Culture", desc: "由丹麥移民建立，完美保留了丹麥建築風格與文化。隨處可見巨大的風車、傳統木造房屋以及傳統服飾的木偶裝飾。", short_desc: "充滿北歐童話氣息的丹麥移民小鎮，經典風車地標。", icon: "🇩🇰", url: "https://solvangusa.com/" },
+            { name: "聖塔芭芭拉 Santa Barbara", city: "PCH", type: "Culture", desc: "被譽為「美西的蔚藍海岸」，城市規定所有建築必須維持紅瓦、白牆的西班牙殖民風格，散發著優雅的度假氛圍。", short_desc: "具備紅瓦白牆西班牙風格的優雅海岸城市，必登法院鐘樓。", icon: "🇪🇸", url: "https://santabarbaraca.com/" },
+
+            // --- 洛杉磯 (LA) 景點 ---
+            { name: "聖塔莫尼卡碼頭 Santa Monica Pier", city: "LA", type: "Fun", desc: "這不僅是一號公路接近尾聲的經典站點，也是傳奇「母親之路」66 號公路的終點站。碼頭充滿了復古的海濱遊樂設施與熱鬧氛圍。", short_desc: "66號公路終點，經典海濱樂園與摩天輪。", icon: "🎠", url: "https://www.santamonicapier.org/" },
+            { name: "迪士尼樂園", city: "LA", type: "Fun", desc: "元祖樂園，充滿童話與魔法。建議使用 Genie+。", short_desc: "元祖樂園，充滿童話與魔法。", icon: "🎢", url: "https://disneyland.disney.go.com/" },
+            { name: "好萊塢環球影城 Universal Studios", city: "LA", type: "Fun", desc: "全球首座環球影城，結合真實片場與遊樂設施。必玩：超級任天堂世界（馬力歐賽車）、Studio Tour（玩命關頭/大白鯊）、哈利波特禁忌之旅。建議購買 Express Pass 省時。", short_desc: "電影主題樂園，必玩任天堂世界與片場導覽。", icon: "🎬", url: "https://www.universalstudioshollywood.com/" },
+            { name: "華納兄弟影城 Warner Bros. Tour", city: "LA", type: "Culture", desc: "相較於環球影城，提供更具知性深度的片場參觀。走入《六人行》咖啡館、《蝙蝠俠》道具間與真實製片廠。需提前預約。", short_desc: "深度片場參觀，走入六人行與蝙蝠俠場景。", icon: "🎥", url: "https://www.wbstudiotour.com/" },
+            { name: "格里斐斯天文台 Griffith Observatory", city: "LA", type: "Photo", desc: "洛杉磯地標，《樂來越愛你》(La La Land) 取景地。戶外露台可眺望好萊塢標誌與絕美市景夕陽。Samuel Oschin 天象館秀需現場購票。", short_desc: "俯瞰 LA 夜景與好萊塢標誌的最佳地點。", icon: "🔭", url: "https://griffithobservatory.org/" },
+            { name: "好萊塢星光大道 Walk of Fame", city: "LA", type: "History", desc: "尋找鑲嵌在人行道上的粉紅星形獎章，參觀 TCL 中國劇院（明星手腳印）與杜比劇院。建議上午前往避開人潮。", short_desc: "尋找心儀明星的星星與手印。", icon: "⭐", url: "https://www.walkoffame.com/" },
+        ];
+        
         const itineraryData = {
             phase1: {
-                title: "Phase 1: 舊金山灣區",
+                title: "Phase 1: 三藩市漫遊與NBA",
                 days: [
-                    { date: "3/1 (六)", loc: "舊金山", act: "抵達、漁人碼頭與市區觀光", detail: "下午：抵達 SFO 機場、取車前往 **漁人碼頭** 飯店 Check-in。晚上：Pier 39 **海獅觀賞**、晚餐享用波丁酸麵包湯 (Boudin Sourdough)。", transport: "🚕 Uber/Lyft (SFO ➜ 飯店)。", attractionKey: "漁人碼頭 Pier 39", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "3/2 (日)", loc: "舊金山", act: "金門大橋與惡魔島 (需預約)", detail: "上午：前往 **惡魔島 (Alcatraz)** 參觀 (船票需提早預訂)。下午：**金門大橋** 觀景台拍照。傍晚：九曲花街 (Lombard Street)、纜車體驗 (Cable Car)。", transport: "🚋 Cable Car / Uber/Lyft / 步行。", attractionKey: "金門大橋 Golden Gate Bridge", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "3/3 (一)", loc: "舊金山", act: "渡輪大廈與購物，準備南下", detail: "上午：飯店退房。前往 **渡輪大廈** (Ferry Building) 享用早午餐與購物。下午：Market Street 區域自由購物。**傍晚：市區租車點取車**，準備隔日南下 PCH。", transport: "步行 / Uber/Lyft ➜ 市區租車點。", attractionKey: "渡輪大廈 Ferry Building Marketplace", hotel: "Riu Plaza Fisherman's Wharf" }
+                    { date: "2/26 (四)", loc: "舊金山", act: "抵達與時差調適", detail: "21:15 SFO 抵達、前往 Riu Plaza Fisherman's Wharf、休息調適時差。", transport: "Shared Shuttle 或 Uber/Lyft (費用較高但最方便)。", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "上午：惡魔島參觀。<br>午餐：漁人碼頭<br>下午：Lombard Street (纜車體驗)、前往藝術宮。<br>晚餐<br>晚上：藝術宮湖畔欣賞夕陽、返回飯店。", transport: "惡魔島：碼頭步行。九曲花街/藝術宮： Powell-Hyde 纜車 🚋。", attractionKey: "惡魔島 Alcatraz", hotel: "Riu Plaza Fisherman's Wharf" }, 
+                    { date: "2/28 (六)", loc: "舊金山", act: "NBA 賽事日", detail: "上午：悠閒早午餐、Ferry Building 散步。<br>下午：前往 Chase Center 周邊用晚餐。<br>午晚餐<br>晚上：17:30 觀賞 NBA 勇士隊 vs 湖人隊。", transport: "Ferry Building： MUNI 巴士。Chase Center： MUNI T-Line 輕軌直達。賽後： MUNI 或 Uber/Lyft 回飯店。", attractionKey: "Chase Center", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "3/1 (日)", loc: "舊金山/周邊", act: "內陸自然探索 (優勝美地)", detail: "<strong>06:30 – 07:30</strong> 舊金山市區上車 (視地點而定，請準時)<br><strong>07:30 – 11:30</strong> 乘車前往優勝美地 (中途休息 20-30 分)<br><strong>11:30 – 12:00</strong> 抵達國家公園 (經南側或西側入口)<br><strong>12:00 – 16:30</strong> 優勝美地谷深度探索 (自由午餐)<br><strong>16:30 – 17:00</strong> 觀賞 Tunnel View (重點觀景台)<br><strong>17:00 – 21:30</strong> 返回舊金山 (中途休息，晚餐時段抵達)", transport: "旅行社提供交通車。", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "3/2 (一)", loc: "舊金山", act: "城市文化巡禮", detail: "上午：聯合廣場逛街、前往唐人街午餐。下午：搭車前往金門大橋北邊 Vista Point 拍照。晚上：順路回程經 Crissy Field、晚餐、自由活動。", transport: "纜車/唐人街： Powell-Mason 纜車 🚋。金門大橋： 從唐人街搭 Uber/Lyft 直達。", attractionKey: "金門大橋 Golden Gate", hotel: "Riu Plaza Fisherman's Wharf" }
                 ]
             },
             phase2: {
@@ -259,7 +507,7 @@
                     // PCH Day 1 (SF-Carmel)
                     { date: "3/3 (二)", loc: "PCH Day 1 (SF➜Carmel)", act: "一號公路經典海岸線 (200km)", detail: "上午：飯店退房、市區取車。啟程沿著 1 號公路南下。**自駕路況重點：出發前務必確認 Caltrans 路況以防坍方。<BR>路線：舊金山 → 半月灣 → 聖塔克魯茲 → 蒙特瑞 → 17-Mile Drive → 卡梅爾小鎮 (約200KM)。<BR>晚上：入住卡梅爾/蒙特雷區域飯店。", transport: "🚗 租車/自駕 (務必在市區取車)。", attractionKey: "卡梅爾小鎮", hotel: "隆恩橡木酒店 (Lone Oak Inn)" },
                     // PCH Day 2 (Carmel-Morro Bay) 
-                    { date: "3/4 (三)", loc: "PCH Day 2 (Carmel➜Morro Bay)", act: "Big Sur 巨岩海岸奇景與古堡", detail: "上午：**第一站：羅伯斯角州立自然保護區** 健行賞海獺。**第二站：比克斯比大橋** 拍照。途經：**菲佛海灘** (紫色沙灘，可選擇停留)。**第三站：麥克威瀑布** 觀景台。下午：**第四站：赫氏古堡** (需預約導覽) 參觀。**第五站：象鼻海豹灘** 觀賞海豹群。晚上：抵達並入住 Morro Bay 飯店。", transport: "🚗 自駕 (務必確認 Hwy 1 路況 Caltrans)。", attractionKey: "赫氏古堡 Hearst Castle", hotel: "海港屋酒店 (Harbor House Inn)" },
+                    { date: "3/4 (三)", loc: "PCH Day 2 (Carmel➜Morro Bay)", act: "Big Sur 巨岩海岸奇景與古堡", detail: "上午：**第一站：羅伯斯角州立自然保護區** 健行賞海獺。**第二站：比克斯比大橋** 拍照。途經：**菲佛海灘** (紫色沙灘，可選擇停留)。**第三站：麥克威瀑布** 觀景台。下午：**第四站：赫氏古堡** (需預約導覽) 參觀。**第五站：象鼻海豹灘** 觀賞海豹群。晚上：抵達並入住 Morro Bay 飯店。", transport: "🚗 自駕 (務必確認 Hwy 1 路況 Caltrans)。", attractionKey: "赫氏古堡 Hearst Castle", hotel: "海港屋酒店 (Harbor House Inn)" }, 
                     // PCH Day 3 (Morro Bay-LA) 
                     { date: "3/5 (四)", loc: "PCH Day 3 (Morro Bay➜LA)", act: "童話小鎮、西班牙海岸與 66 號公路終點", detail: "上午：飯店退房。在 Pismo Beach 附近享用早餐。**第一站 (內陸)：丹麥村 Solvang** (1.5 小時) 參觀風車、品嚐丹麥甜點。**第二站 (海岸)：聖塔芭芭拉** (2 小時) 登頂法院鐘樓，並在碼頭附近午餐。下午：沿海岸線南下。晚上：抵達洛杉磯，前往 **聖塔莫尼卡碼頭** (Route 66 終點) 賞夕陽與晚餐，入住飯店。", transport: "🚗 自駕 (進入洛杉磯前交通會明顯變慢，請預留緩衝時間)。", attractionKey: "聖塔莫尼卡碼頭 Santa Monica Pier", hotel: "The Hollywood Franklin Hotel near Universal Studios" }
                 ]
@@ -275,32 +523,6 @@
             }
         };
 
-        const attractions = [
-            { name: "金門大橋 Golden Gate Bridge", icon: "🌉", city: "SF", type: "Photo", short_desc: "世界著名地標，建議在 Battery Spencer 觀景台拍攝。", desc: "這座標誌性的紅色橋樑是舊金山的象徵，最佳觀賞點包括 Battery Spencer 和 Crissy Field。", url: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848052" },
-            { name: "漁人碼頭 Pier 39", icon: "⚓", city: "SF", type: "Food", short_desc: "海獅群聚集地，有很多紀念品店和海鮮餐廳。", desc: "著名的旅遊區，有著熱鬧的商店、餐廳和成群的海獅。必嚐酸麵包湯。", url: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848053" },
-            { name: "渡輪大廈 Ferry Building Marketplace", icon: "🛍️", city: "SF", type: "Food", short_desc: "高級美食市場，適合購買手信和享用精緻早午餐。", desc: "位於海灣旁的歷史建築，現在是一個充滿美食、咖啡和農產品的高級市場。", url: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848054" },
-            
-            { name: "卡梅爾小鎮", icon: "🏘️", city: "PCH", type: "Photo", short_desc: "充滿歐洲風情的童話小鎮，藝術畫廊與特色小屋。", desc: "一個充滿童話色彩和藝術氛圍的海邊小鎮，街道上都是精品店、餐廳和畫廊。", url: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848055" },
-            { name: "赫氏古堡 Hearst Castle", icon: "🏰", city: "PCH", type: "History", short_desc: "奢華的歐式古堡與羅馬泳池，需提前預約導覽。", desc: "報業鉅子威廉·蘭道夫·赫斯特的豪華莊園，擁有驚人的建築和藝術收藏。", url: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848056" },
-            { name: "聖塔莫尼卡碼頭 Santa Monica Pier", icon: "🎡", city: "LA", type: "Fun", short_desc: "66 號公路終點，有遊樂園和海邊餐廳。", desc: "西海岸歷史最悠久的碼頭之一，設有太陽能摩天輪、遊樂設施和海鮮餐廳。", url: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848057" },
-            
-            { name: "迪士尼樂園", icon: "👑", city: "LA", type: "Fun", short_desc: "全球第一座迪士尼樂園，充滿經典童話魅力。", desc: "華特·迪士尼創建的第一個主題樂園，提供獨特的經典遊樂設施和角色見面會。", url: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848058" },
-            { name: "格里斐斯天文台 Griffith Observatory", icon: "🔭", city: "LA", type: "Culture", short_desc: "俯瞰好萊塢標誌和洛杉磯市景的最佳地點。", desc: "位於山頂，不僅是天文學博物館，更是觀賞好萊塢標誌和洛杉磯全景的絕佳地點。", url: "https://www.google.com/maps?q=35.36818125561934,-120.850159227848059" },
-            { name: "好萊塢環球影城 Universal Studios", icon: "🎬", city: "LA", type: "Fun", short_desc: "體驗電影特效、Studio Tour 和最新的超級任天堂世界。", desc: "結合了電影工作室和主題樂園，提供驚險刺激的遊樂設施和幕後工作室之旅。", url: "https://www.google.com/maps?q=34.10539309099251,-118.323472738265990" },
-            
-            { name: "優勝美地國家公園", icon: "🌲", city: "Yosemite", type: "Nature", short_desc: "巨大的花崗岩、瀑布和巨型紅杉。", desc: "以其壯麗的花崗岩懸崖、瀑布和清澈溪流聞名，是自然愛好者的天堂。", url: "https://www.google.com/maps?q=34.10539309099251,-118.323472738265991" },
-            { name: "麥克威瀑布 McWay Falls", icon: "💧", city: "PCH", type: "Nature", short_desc: "從懸崖直衝海灘的潮汐瀑布，非常稀有。", desc: "位於 Big Sur 朱莉婭·菲佛·伯恩斯州立公園內，是少數幾個直接流入海洋的潮汐瀑布之一。", url: "https://www.google.com/maps?q=34.10539309099251,-118.323472738265992" }
-        ];
-
-        let attractionMap = {};
-        
-        // 【新增】顏色配置物件：統一管理每個階段的樣式，使 renderItinerary 更簡潔
-        const phaseColors = {
-            phase1: { title: '舊金山', primary: 'bg-blue-500', pin: 'border-blue-400', lineColor: 'border-blue-300', locColor: 'text-blue-600', locBg: 'bg-blue-100' },
-            phase2: { title: '加州一號公路', primary: 'bg-yellow-500', pin: 'border-yellow-500', lineColor: 'border-yellow-400', locColor: 'text-yellow-600', locBg: 'bg-yellow-100' },
-            phase3: { title: '洛杉磯', primary: 'bg-purple-500', pin: 'border-purple-500', lineColor: 'border-purple-400', locColor: 'text-purple-600', locBg: 'bg-purple-100' }
-        };
-
         // --- Core Functions ---
 
         function createAttractionMap() {
@@ -309,7 +531,6 @@
                 return map;
             }, {});
         }
-        
         function weatherIcon(code) {
           if (code === 0) return "☀️";
           if ([1, 2].includes(code)) return "🌤️";
@@ -319,61 +540,41 @@
           if ([71, 73, 75].includes(code)) return "❄️";
           return "🌡️";
         }
-        
         function wearAdvice(maxTemp) {
           if (maxTemp >= 28) return "👕 炎熱，短袖為主，注意防曬";
           if (maxTemp >= 22) return "🧥 舒適，薄長袖或襯衫";
           if (maxTemp >= 16) return "🧶 微涼，建議薄外套";
           return "🧣 偏冷，外套或保暖層";
         }
-        
-        // 【優化】加入 try...catch 錯誤處理，提升穩定性
         async function fetch3DayWeather(lat, lon, containerId, wearId) {
-            const container = document.getElementById(containerId);
-            const wear = document.getElementById(wearId);
-
-            try {
-                // 使用 open-meteo 的 API
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto`;
-                const res = await fetch(url);
-                
-                if (!res.ok) {
-                    throw new Error(`Weather API HTTP error! Status: ${res.status}`);
-                }
-                
-                const data = await res.json();
-                
-                // 清除舊內容並開始渲染
-                if(container) container.innerHTML = "";
-                
-                data.daily.time.forEach((date, i) => {
-                    const card = document.createElement("div");
-                    card.className = "weather-card";
-                    
-                    card.innerHTML = `
-                         <div class="weather-icon">${weatherIcon(data.daily.weathercode[i])}</div>
-                         <div class="weather-date">${new Date(date).toLocaleDateString().slice(5)}</div>
-                         <div class="weather-temp">
-                           ${data.daily.temperature_2m_max[i]}° /
-                           ${data.daily.temperature_2m_min[i]}°
-                         </div>
-                    `;
-                    if(container) container.appendChild(card);
-                });
-                
-                // 渲染穿搭建議
-                if(wear) wear.innerText = wearAdvice(data.daily.temperature_2m_max[0]);
-                
-            } catch (error) {
-                console.error("Weather fetch failed:", error);
-                if(container) container.innerHTML = `<div class="col-span-3 text-center text-xs p-1 bg-red-50 text-red-600 rounded-lg">⚠️ 載入失敗</div>`;
-                if(wear) wear.innerText = "載入失敗，建議備妥保暖衣物。";
-            }
-        }
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto`;
+          const res = await fetch(url);
+          const data = await res.json();
         
+          const container = document.getElementById(containerId);
+          container.innerHTML = "";
+        
+          data.daily.time.forEach((date, i) => {
+            const card = document.createElement("div");
+            card.className = "weather-card";
+        
+            card.innerHTML = `
+              <div class="weather-icon">${weatherIcon(data.daily.weathercode[i])}</div>
+              <div class="weather-date">${new Date(date).toLocaleDateString()}</div>
+              <div class="weather-temp">
+                ${data.daily.temperature_2m_max[i]}° /
+                ${data.daily.temperature_2m_min[i]}°
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        
+          document.getElementById(wearId).innerText =
+            wearAdvice(data.daily.temperature_2m_max[0]);
+        }
         function loadCurrentLocationWeather() {
           if (!navigator.geolocation) {
-            document.getElementById("current-city").innerText = "定位不可用";
+            document.getElementById("current-city").innerText = "無法取得定位";
             return;
           }
         
@@ -384,12 +585,6 @@
             document.getElementById("current-city").innerText = "依目前定位";
         
             fetch3DayWeather(lat, lon, "weather-current", "wear-current");
-          }, (error) => {
-            // 定位失敗的處理
-            console.error("Geolocation error:", error);
-            document.getElementById("current-city").innerText = "定位失敗";
-            document.getElementById("weather-current").innerHTML = `<div class="col-span-3 text-center text-xs p-1 bg-red-50 text-red-600 rounded-lg">需授權位置</div>`;
-            document.getElementById("wear-current").innerText = "請授權位置資訊";
           });
         }
 
@@ -398,13 +593,13 @@
             renderFlightTable('outbound');
             renderAccommodation(); // 渲染住宿資訊
             renderWeatherChart();
-            renderItinerary('phase2'); // 預設顯示 PCH 階段 (中間段)
+            renderItinerary('phase1'); // 預設顯示 舊金山 階段
             renderAttractions('all'); // 預設渲染所有景點
-            loadCurrentLocationWeather(); 
-            // San Francisco (37.7749 N, -122.4194 W)
+            loadCurrentLocationWeather();       
+            // San Francisco
             fetch3DayWeather(37.7749, -122.4194, "weather-sf", "wear-sf");
             
-            // Los Angeles (34.0522 N, -118.2437 W)
+            // Los Angeles
             fetch3DayWeather(34.0522, -118.2437, "weather-la", "wear-la");
 
         }
@@ -413,17 +608,16 @@
             document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
         }
 
-        // --- Logistics Logic ---
+        // --- Logistics Logic (Functions remain the same) ---
 
         function switchFlightTab(type) {
-            // ... (Flight tab switching logic remains the same)
-            document.getElementById('btn-outbound').classList.remove('bg-white', 'shadow', 'text-gray-900', 'text-gray-500');
-            document.getElementById('btn-inbound').classList.remove('bg-white', 'shadow', 'text-gray-900', 'text-gray-500');
-            document.getElementById('btn-outbound').classList.add('text-gray-500', 'hover:bg-gray-200');
-            document.getElementById('btn-inbound').classList.add('text-gray-500', 'hover:bg-gray-200');
+            document.getElementById('btn-outbound').classList.remove('bg-white', 'shadow', 'text-gray-900');
+            document.getElementById('btn-inbound').classList.remove('bg-white', 'shadow', 'text-gray-900');
+            document.getElementById('btn-outbound').classList.add('text-gray-500');
+            document.getElementById('btn-inbound').classList.add('text-gray-500');
 
             const activeBtn = document.getElementById(`btn-${type}`);
-            activeBtn.classList.remove('text-gray-500', 'hover:bg-gray-200');
+            activeBtn.classList.remove('text-gray-500');
             activeBtn.classList.add('bg-white', 'shadow', 'text-gray-900');
 
             renderFlightTable(type);
@@ -443,9 +637,11 @@
                         <div class="flex-grow">
                             <div class="flex items-center space-x-2 mb-1">
                                 <span class="font-bold text-gray-800">${flight.leg}</span>
+                                <!-- 顯示航班號碼 -->
                                 <span class="text-sm font-semibold text-blue-700 bg-blue-200 px-2 py-0.5 rounded-lg">國泰 ${flight.number}</span>
                             </div>
                             <div class="flex justify-between items-center mb-1">
+                                <!-- 顯示備註資訊 -->
                                 <span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">${flight.note}</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-sm text-gray-600">
@@ -457,7 +653,7 @@
                 `;
             });
 
-            // --- 國泰航空報到資訊 ---
+            // --- 國泰航空報到資訊 (Cathay Pacific Check-in) ---
             html += `
                 <div class="mt-6 p-4 border border-teal-200 bg-teal-50 rounded-xl space-y-3">
                     <h4 class="text-base font-bold text-teal-800 flex items-center">
@@ -486,17 +682,18 @@
             container.innerHTML = html;
         }
 
+        // 渲染住宿資訊
         function renderAccommodation() {
             const container = document.getElementById('accommodation-content');
             
+            // Convert object to array for easy iteration
             const accommodations = Object.values(accommodationData);
 
             let html = '';
             accommodations.forEach((hotel) => {
                 let colorClass = '';
                 if (hotel.city.includes('舊金山')) colorClass = 'border-blue-500 bg-blue-50 text-blue-800';
-                else if (hotel.city.includes('PCH Day 1')) colorClass = 'border-yellow-500 bg-yellow-50 text-yellow-800';
-                else if (hotel.city.includes('PCH Day 2')) colorClass = 'border-yellow-500 bg-yellow-50 text-yellow-800';
+                else if (hotel.city.includes('PCH')) colorClass = 'border-yellow-500 bg-yellow-50 text-yellow-800';
                 else colorClass = 'border-purple-500 bg-purple-50 text-purple-800';
 
                 html += `
@@ -565,7 +762,7 @@
 
         // --- Itinerary Logic ---
 
-        // 【優化】修改地圖 URL 生成：PCH 使用路線模式，城市使用搜尋模式，提升實用性
+        // NEW: 地圖 URL 生成函數
         function generatePhaseMapUrl(phaseKey) {
             let poiList = [];
 
@@ -580,16 +777,17 @@
                     "Chase Center, San Francisco"
                 ];
             } else if (phaseKey === 'phase2') {
-                // 一號公路 (長距離)：使用路線模式 (Directions)
-                const route = ["San Francisco", "Carmel-by-the-Sea", "Morro Bay, CA", "Santa Monica Pier, Los Angeles"];
-                const start = route[0];
-                const end = route[route.length - 1];
-                // 中間點作為途經點
-                const waypoints = route.slice(1, -1).join('|'); 
-                
-                // 使用 Google Maps 路線連結
-                return `https://www.google.com/maps?q=34.10539309099251,-118.323472738265993{encodeURIComponent(start)}/${encodeURIComponent(end)}?waypoints=${encodeURIComponent(waypoints)}&travelmode=driving`;
-
+                // 一號公路：住宿 + 關鍵景點
+                poiList = [
+                    "Carmel-by-the-Sea", 
+                    "Point Lobos State Natural Reserve", 
+                    "Bixby Bridge", 
+                    "Hearst Castle", 
+                    "Elephant Seal Rookery", 
+                    "Morro Bay, CA", 
+                    "Solvang, CA", 
+                    "Santa Barbara, CA"
+                ];
             } else if (phaseKey === 'phase3') {
                 // 洛杉磯：住宿 + 關鍵景點
                 poiList = [
@@ -601,13 +799,14 @@
                     "Hollywood Walk of Fame"
                 ];
             }
-            
-            // Phase 1 and Phase 3 uses search mode
-            const query = poiList.join(' and '); 
-            // 標準的 Google Maps 搜尋連結
-            return `https://www.google.com/maps?q=34.10539309099251,-118.323472738265994{encodeURIComponent(query)}`;
+
+            // 使用 Google Maps Search API 的 query 參數來標記多個地點
+            const query = poiList.join(' and '); // 使用 ' and ' 作為分隔符在 Google Maps 查詢中效果較好
+            const baseUrl = "https://www.google.com/maps/search/?api=1&query=";
+            return baseUrl + encodeURIComponent(query);
         }
 
+        // 景點徽章顏色工具函數 (簡化，只用於行程中展示，不影響主要分類篩選)
         function getAttractionBadgeColor(type) {
             if (type === 'History') return 'bg-amber-100 text-amber-800';
             if (type === 'Nature') return 'bg-green-100 text-green-800';
@@ -648,23 +847,43 @@
             const container = document.getElementById('itinerary-details');
             const mapUrl = generatePhaseMapUrl(phaseKey); // Get the map URL
 
-            // 【優化】使用 phaseColors 取得樣式
-            const colors = phaseColors[phaseKey];
-            const primaryColorClass = colors.primary;
-            const hoverColorClass = colors.primary.replace('-500', '-600'); 
-            const { pinColor, lineColor, locColor, locBg } = colors;
+            // Determine primary color for map button and phase title underline
+            let primaryColorClass = 'bg-blue-500';
+            let hoverColorClass = 'hover:bg-blue-600';
+            let pinColor = 'border-blue-400';
+            let lineColor = 'border-blue-300';
+            let locColor = 'text-blue-600';
+            let locBg = 'bg-blue-100';
+
+
+            if (phaseKey === 'phase2') {
+                primaryColorClass = 'bg-yellow-500';
+                hoverColorClass = 'hover:bg-yellow-600';
+                pinColor = 'border-yellow-500';
+                lineColor = 'border-yellow-400';
+                locColor = 'text-yellow-600';
+                locBg = 'bg-yellow-100';
+            } else if (phaseKey === 'phase3') {
+                primaryColorClass = 'bg-purple-500';
+                hoverColorClass = 'hover:bg-purple-600';
+                pinColor = 'border-purple-500';
+                lineColor = 'border-purple-400';
+                locColor = 'text-purple-600';
+                locBg = 'bg-purple-100';
+            }
 
             // Generate HTML with animation
             let html = `
                 <div class="mb-6 animate-fade-in">
+                    <!-- NEW: 地圖連結按鈕 (整合自 dashboard 概念) -->
                     <a href="${mapUrl}" target="_blank" class="flex items-center justify-center p-3 mb-4 rounded-xl text-white font-bold ${primaryColorClass} ${hoverColorClass} transition-colors shadow-lg card-hover">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657A8 8 0 1117.657 16.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        🔍 地圖連結: 點擊查看 ${phase.title} 區域所有景點 / 路線
+                        🔍 地圖連結: 點擊查看 ${phase.title} 區域所有景點
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </a>
                     
                     <h3 class="text-2xl font-bold text-gray-900">${phase.title}</h3>
-                    <div class="h-1 w-20 ${primaryColorClass.replace('bg-', 'bg-')} mt-2 rounded-full"></div>
+                    <div class="h-1 w-20 ${phaseKey === 'phase2' ? 'bg-yellow-500' : phaseKey === 'phase3' ? 'bg-purple-500' : 'bg-blue-500'} mt-2 rounded-full"></div>
                 </div>
             `;
 
@@ -675,6 +894,7 @@
 
                 if (attraction) {
                     const badgeColor = getAttractionBadgeColor(attraction.type);
+                    // 景點類型中文翻譯
                     const typeLabel = attraction.type === 'History' ? '歷史地標' : 
                                       attraction.type === 'Nature' ? '自然景觀' : 
                                       attraction.type === 'Fun' ? '娛樂樂園' : 
@@ -686,12 +906,14 @@
                         <div class="mt-3 pt-3 border-t border-gray-100">
                             <div class="flex items-center space-x-2 mb-2">
                                 <div class="text-xl">${attraction.icon}</div>
-                                <button onclick="scrollToSection('highlights')" class="text-sm font-bold text-gray-800 underline hover:text-indigo-600 attraction-link cursor-pointer p-0 m-0 border-none bg-transparent flex items-center">
+                                <!-- 點擊景點名稱跳轉到 Highlights 區塊 -->
+                                <button onclick="scrollToSection('highlights')" class="text-sm font-bold text-gray-800 underline hover:text-yellow-600 attraction-link cursor-pointer p-0 m-0 border-none bg-transparent flex items-center">
                                     <span class="mr-1">景點亮點:</span>
                                     <span>${attraction.name}</span>
                                 </button>
                                 <span class="text-xs px-2 py-0.5 rounded-full font-bold ${badgeColor}">${typeLabel}</span>
                             </div>
+                            <!-- 使用 short_desc 簡短介紹 -->
                             <p class="text-xs text-gray-600 italic leading-relaxed">${attraction.short_desc}</p>
                         </div>
                     `;
@@ -701,15 +923,11 @@
                 let hotelHtml = '';
                 const currentHotel = Object.values(accommodationData).find(h => h.name === day.hotel);
                 if (currentHotel) {
-                       hotelHtml = `<span class="text-xs text-gray-500 bg-yellow-50 border border-yellow-200 inline-block px-2 py-1 rounded ml-2">🏠 ${currentHotel.city}</span>`;
+                     hotelHtml = `<span class="text-xs text-gray-500 bg-yellow-50 border border-yellow-200 inline-block px-2 py-1 rounded ml-2">🏠 ${currentHotel.city}</span>`;
                 }
-                
-                // 【優化】處理 day.detail 內容，將 <BR> 轉為換行，將 **粗體** 轉為高亮顏色
-                let processedDetail = day.detail;
-                processedDetail = processedDetail.replace(/<BR>/g, '<br>');
-                // 使用當前 Phase 的 locColor 顏色類別來突出粗體字
-                processedDetail = processedDetail.replace(/\*\*(.*?)\*\*/g, `<span class="font-bold ${locColor}">$1</span>`); 
 
+                // Determine pin and line color based on phase
+                // Color variables already set above (pinColor, lineColor, locColor, locBg)
 
                 html += `
                     <div class="flex group relative pl-8 pb-8 last:pb-0 border-l-2 border-gray-200 last:border-0 hover:${lineColor} transition-colors">
@@ -725,10 +943,11 @@
                                 </span>
                             </div>
                             <h4 class="text-lg font-bold text-gray-800 mb-2">${day.act}</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-1">${day.detail}</p>
                             
-                            <p class="text-gray-600 text-sm leading-relaxed mb-1">${processedDetail}</p>
-                            
-                            ${attractionHtml} <div class="text-xs text-gray-500 bg-white border border-gray-200 inline-block px-2 py-1 rounded mt-3">
+                            ${attractionHtml} <!-- 注入景點資訊 -->
+
+                            <div class="text-xs text-gray-500 bg-white border border-gray-200 inline-block px-2 py-1 rounded mt-3">
                                 🚇 交通: ${day.transport}
                             </div>
                         </div>
@@ -744,7 +963,7 @@
         function filterAttractions(filter) {
             // Update active button state
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                // Clear all color classes
+                // Remove all color classes
                 btn.classList.remove('bg-gray-800', 'text-white', 'shadow-md');
                 btn.classList.remove('bg-white', 'text-gray-600', 'border', 'hover:bg-blue-50', 'hover:text-blue-600', 'hover:bg-yellow-50', 'hover:text-yellow-600', 'hover:bg-purple-50', 'hover:text-purple-600', 'hover:bg-green-50', 'hover:text-green-600');
                 
@@ -776,53 +995,55 @@
                 : attractions.filter(a => a.city === filter);
             
             let html = '';
-            if (filtered.length === 0) {
-                html = '<p class="col-span-full text-center text-gray-500 p-8">此階段尚無景點資訊，請查看其他區域。</p>';
-            } else {
-                filtered.forEach(item => {
-                    const badgeColor = getAttractionBadgeColor(item.type);
-                    const typeLabel = item.type === 'History' ? '歷史地標' : 
-                                        item.type === 'Nature' ? '自然景觀' : 
-                                        item.type === 'Fun' ? '娛樂樂園' : 
-                                        item.type === 'Food' ? '美食體驗' : 
-                                        item.type === 'Photo' ? '攝影打卡' : 
-                                        item.type === 'Culture' ? '文化藝術' : '其他';
+            filtered.forEach(item => {
+                // 使用共用函數獲取顏色 (用於卡片頂部的類型徽章)
+                const badgeColor = getAttractionBadgeColor(item.type);
+                const typeLabel = item.type === 'History' ? '歷史地標' : 
+                                  item.type === 'Nature' ? '自然景觀' : 
+                                  item.type === 'Fun' ? '娛樂樂園' : 
+                                  item.type === 'Food' ? '美食體驗' : 
+                                  item.type === 'Photo' ? '攝影打卡' : 
+                                  item.type === 'Culture' ? '文化藝術' : '其他';
 
-                    const cityLabel = item.city === 'SF' ? '舊金山' : item.city === 'LA' ? '洛杉磯' : item.city === 'Yosemite' ? '優勝美地' : '一號公路';
+                // 城市名稱轉換
+                const cityLabel = item.city === 'SF' ? '舊金山' : item.city === 'LA' ? '洛杉磯' : item.city === 'Yosemite' ? '優勝美地' : '一號公路';
 
-                    let areaBadgeClass = 'bg-gray-100 text-gray-600';
-                    if (item.city === 'SF') areaBadgeClass = 'bg-blue-100 text-blue-800';
-                    else if (item.city === 'PCH') areaBadgeClass = 'bg-yellow-100 text-yellow-800';
-                    else if (item.city === 'LA') areaBadgeClass = 'bg-purple-100 text-purple-800';
-                    else if (item.city === 'Yosemite') areaBadgeClass = 'bg-green-100 text-green-800';
+                // 城市顏色標籤
+                let areaBadgeClass = 'bg-gray-100 text-gray-600';
+                if (item.city === 'SF') areaBadgeClass = 'bg-blue-100 text-blue-800';
+                else if (item.city === 'PCH') areaBadgeClass = 'bg-yellow-100 text-yellow-800';
+                else if (item.city === 'LA') areaBadgeClass = 'bg-purple-100 text-purple-800';
+                else if (item.city === 'Yosemite') areaBadgeClass = 'bg-green-100 text-green-800';
 
-                    html += `
-                        <a href="${item.url}" target="_blank" rel="noopener noreferrer" 
-                            class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 card-hover flex flex-col h-full group block cursor-pointer"
-                            aria-label="前往 ${item.name} 官方網站">
-                            
-                            <div class="flex justify-between items-start mb-3">
-                                <div class="text-4xl">${item.icon}</div>
-                                <div class="flex space-x-2">
-                                    <span class="text-xs px-2 py-1 rounded-full font-bold ${badgeColor}">${typeLabel}</span>
-                                    <span class="text-xs px-2 py-1 rounded-full font-bold ${areaBadgeClass}">${cityLabel}</span>
-                                </div>
+                // 將卡片容器從 div 改為 <a> 標籤，並設定 href 和 target="_blank"
+                html += `
+                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" 
+                       class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 card-hover flex flex-col h-full group block cursor-pointer"
+                       aria-label="前往 ${item.name} 官方網站">
+                        
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="text-4xl">${item.icon}</div>
+                            <div class="flex space-x-2">
+                                <span class="text-xs px-2 py-1 rounded-full font-bold ${badgeColor}">${typeLabel}</span>
+                                <span class="text-xs px-2 py-1 rounded-full font-bold ${areaBadgeClass}">${cityLabel}</span>
                             </div>
-                            <h4 class="text-lg font-bold text-gray-900 mb-1">${item.name}</h4>
-                            <p class="text-sm text-gray-600 flex-grow mt-2">${item.desc}</p>
-                            
-                            <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
-                                <span class="text-sm font-semibold text-indigo-600 group-hover:text-indigo-800 transition-colors">
-                                    了解更多 (官方網站)
-                                </span>
-                                <svg class="w-4 h-4 text-indigo-500 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                </svg>
-                            </div>
-                        </a>
-                    `;
-                });
-            }
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-1">${item.name}</h4>
+                        <p class="text-sm text-gray-600 flex-grow mt-2">${item.desc}</p>
+                        
+                        <!-- 新增連結提示 -->
+                        <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-indigo-600 group-hover:text-indigo-800 transition-colors">
+                                了解更多 (官方網站)
+                            </span>
+                            <!-- 外部連結圖示 -->
+                            <svg class="w-4 h-4 text-indigo-500 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </div>
+                    </a>
+                `;
+            });
             container.innerHTML = html;
         }
 
