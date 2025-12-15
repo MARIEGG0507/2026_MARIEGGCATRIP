@@ -546,27 +546,47 @@
           if (maxTemp >= 16) return "🧶 微涼，建議薄外套";
           return "🧣 偏冷，外套或保暖層";
         }
+        // 【修改為】加入錯誤處理：
         async function fetch3DayWeather(lat, lon, containerId, wearId) {
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto`;
-          const res = await fetch(url);
-          const data = await res.json();
-        
-          const container = document.getElementById(containerId);
-          container.innerHTML = "";
-        
-          data.daily.time.forEach((date, i) => {
-            const card = document.createElement("div");
-            card.className = "weather-card";
-        
-            card.innerHTML = `
-              <div class="weather-icon">${weatherIcon(data.daily.weathercode[i])}</div>
-              <div class="weather-date">${new Date(date).toLocaleDateString()}</div>
-              <div class="weather-temp">
-                ${data.daily.temperature_2m_max[i]}° /
-                ${data.daily.temperature_2m_min[i]}°
-              </div>
-            `;
-            container.appendChild(card);
+            const container = document.getElementById(containerId);
+            const wear = document.getElementById(wearId);
+            
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto`;
+                const res = await fetch(url);
+                
+                if (!res.ok) {
+                    throw new Error(`Weather API HTTP error! Status: ${res.status}`);
+                }
+                
+                const data = await res.json();
+                
+                // 清除舊內容並開始渲染
+                container.innerHTML = "";
+                
+                data.daily.time.forEach((date, i) => {
+                    const card = document.createElement("div");
+                    card.className = "weather-card";
+                    
+                    card.innerHTML = `
+                         <div class="weather-icon">${weatherIcon(data.daily.weathercode[i])}</div>
+                         <div class="weather-date">${new Date(date).toLocaleDateString()}</div>
+                         <div class="weather-temp">
+                           ${data.daily.temperature_2m_max[i]}° /
+                           ${data.daily.temperature_2m_min[i]}°
+                         </div>
+                    `;
+                    container.appendChild(card);
+                });
+                
+                // 渲染穿搭建議
+                wear.innerText = wearAdvice(data.daily.temperature_2m_max[0]);
+                
+            } catch (error) {
+                console.error("Weather fetch failed:", error);
+                container.innerHTML = `<div class="p-3 bg-red-50 text-red-600 rounded-lg">⚠️ 天氣資訊載入失敗或無效。</div>`;
+                wear.innerText = "天氣載入失敗，建議備妥保暖衣物。";
+            }
           });
         
           document.getElementById(wearId).innerText =
@@ -603,7 +623,12 @@
             fetch3DayWeather(34.0522, -118.2437, "weather-la", "wear-la");
 
         }
-
+        // 【新增】在 flightData, accommodationData 等數據物件之後，添加此顏色配置
+        const phaseColors = {
+            phase1: { title: '舊金山', primary: 'bg-blue-500', pin: 'border-blue-400', lineColor: 'border-blue-300', locColor: 'text-blue-600', locBg: 'bg-blue-100' },
+            phase2: { title: '加州一號公路', primary: 'bg-yellow-500', pin: 'border-yellow-500', lineColor: 'border-yellow-400', locColor: 'text-yellow-600', locBg: 'bg-yellow-100' },
+            phase3: { title: '洛杉磯', primary: 'bg-purple-500', pin: 'border-purple-500', lineColor: 'border-purple-400', locColor: 'text-purple-600', locBg: 'bg-purple-100' }
+        };
         function scrollToSection(id) {
             document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
         }
@@ -777,33 +802,28 @@
                     "Chase Center, San Francisco"
                 ];
             } else if (phaseKey === 'phase2') {
-                // 一號公路：住宿 + 關鍵景點
-                poiList = [
-                    "Carmel-by-the-Sea", 
-                    "Point Lobos State Natural Reserve", 
-                    "Bixby Bridge", 
-                    "Hearst Castle", 
-                    "Elephant Seal Rookery", 
-                    "Morro Bay, CA", 
-                    "Solvang, CA", 
-                    "Santa Barbara, CA"
-                ];
-            } else if (phaseKey === 'phase3') {
-                // 洛杉磯：住宿 + 關鍵景點
-                poiList = [
-                    "The Hollywood Franklin Hotel, Los Angeles", 
-                    "Santa Monica Pier", 
-                    "Disneyland Park, Anaheim", 
-                    "Universal Studios Hollywood", 
-                    "Griffith Observatory", 
-                    "Hollywood Walk of Fame"
-                ];
+                // Phase 2 (PCH) 是長距離路線，使用 directions 模式
+                const route = ["San Francisco", "Carmel-by-the-Sea", "Morro Bay, CA", "Santa Monica Pier, Los Angeles"];
+                const start = route[0];
+                const end = route[route.length - 1];
+                // 中間點 (Carmel, Morro Bay)
+                const waypoints = route.slice(1, -1).join('|'); 
+                
+                // Google Maps 路線連結
+                return `https://www.google.com/maps?q=36.5970385420236,-121.858062297105794${encodeURIComponent(start)}/${encodeURIComponent(end)}?waypoints=${encodeURIComponent(waypoints)}&travelmode=driving`;
+                
+            } else {
+                // Phase 1 & 3 是城市內景點，使用 search 模式
+                const query = poiList.join(' and '); 
+                // Google Maps 搜尋連結
+                return `https://www.google.com/maps?q=36.5970385420236,-121.858062297105795${encodeURIComponent(query)}`;
+            }
             }
 
-            // 使用 Google Maps Search API 的 query 參數來標記多個地點
+        // 使用 Google Maps Search API 的 query 參數來標記多個地點
             const query = poiList.join(' and '); // 使用 ' and ' 作為分隔符在 Google Maps 查詢中效果較好
-            const baseUrl = "https://www.google.com/maps/search/?api=1&query=";
-            return baseUrl + encodeURIComponent(query);
+            const baseUrl = "https://www.google.com/maps/search/?api=1&query="; // 
+            return baseUrl + encodeURIComponent(query); // 
         }
 
         // 景點徽章顏色工具函數 (簡化，只用於行程中展示，不影響主要分類篩選)
@@ -846,31 +866,12 @@
             const phase = itineraryData[phaseKey];
             const container = document.getElementById('itinerary-details');
             const mapUrl = generatePhaseMapUrl(phaseKey); // Get the map URL
-
-            // Determine primary color for map button and phase title underline
-            let primaryColorClass = 'bg-blue-500';
-            let hoverColorClass = 'hover:bg-blue-600';
-            let pinColor = 'border-blue-400';
-            let lineColor = 'border-blue-300';
-            let locColor = 'text-blue-600';
-            let locBg = 'bg-blue-100';
-
-
-            if (phaseKey === 'phase2') {
-                primaryColorClass = 'bg-yellow-500';
-                hoverColorClass = 'hover:bg-yellow-600';
-                pinColor = 'border-yellow-500';
-                lineColor = 'border-yellow-400';
-                locColor = 'text-yellow-600';
-                locBg = 'bg-yellow-100';
-            } else if (phaseKey === 'phase3') {
-                primaryColorClass = 'bg-purple-500';
-                hoverColorClass = 'hover:bg-purple-600';
-                pinColor = 'border-purple-500';
-                lineColor = 'border-purple-400';
-                locColor = 'text-purple-600';
-                locBg = 'bg-purple-100';
-            }
+            
+            // 【新增】使用抽取的顏色配置
+            const colors = phaseColors[phaseKey];
+            const primaryColorClass = colors.primary;
+            const hoverColorClass = colors.primary.replace('-500', '-600'); // 保持 hover 效果
+            const { pinColor, lineColor, locColor, locBg } = colors;
 
             // Generate HTML with animation
             let html = `
@@ -891,6 +892,13 @@
                 // Check for linked attraction
                 const attraction = day.attractionKey ? attractionMap[day.attractionKey] : null;
                 let attractionHtml = '';
+                // 【新增】處理 day.detail 內容，將 <BR> 轉為換行，將 **粗體** 轉為高亮顏色
+                let processedDetail = day.detail;
+                // 1. 將 <BR> 轉為實際換行（在 HTML 內仍為 <br>）
+                processedDetail = processedDetail.replace(/<BR>/g, '<br>');
+                // 2. 將 **粗體** 轉為帶有特定顏色的高亮標籤
+                // 使用當前 Phase 的 locColor 顏色類別，並確保文本是粗體
+                processedDetail = processedDetail.replace(/\*\*(.*?)\*\*/g, `<span class="font-bold ${locColor}">$1</span>`);
 
                 if (attraction) {
                     const badgeColor = getAttractionBadgeColor(attraction.type);
@@ -943,7 +951,7 @@
                                 </span>
                             </div>
                             <h4 class="text-lg font-bold text-gray-800 mb-2">${day.act}</h4>
-                            <p class="text-gray-600 text-sm leading-relaxed mb-1">${day.detail}</p>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-1">${processedDetail}</p>
                             
                             ${attractionHtml} <!-- 注入景點資訊 -->
 
