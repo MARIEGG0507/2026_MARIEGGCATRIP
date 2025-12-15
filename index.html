@@ -1,186 +1,188 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>2026 美西舊金山與洛杉磯之旅</title>
-
-  <!-- 基本 SEO -->
-  <meta name="description" content="2026 美西舊金山與洛杉磯之旅：行程、景點、交通與天氣整理，含舊金山、優勝美地、一號公路、洛杉磯等。" />
-  https://mariegg0507.github.io/2026_MARIEGGCATRIP/
-  <meta name="theme-color" content="#d6b98c" />
-
-  <!-- OG / X (Twitter) Cards -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="2026 美西舊金山與洛杉磯之旅" />
-  <meta property="og:description" content="13 天 12 夜加州行：行程、景點、交通與天氣、住宿摘要。" />
-  <meta property="og:url" content="https://mariegg0507.github.io/2026_MARIEGGCATRIP/" />
-  <meta property="og:image" content="https://mariegg0507.github.io/2026_MARIEGGCATRIP/assets/cover.jpg" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="2026 美西舊金山與洛杉磯之旅" />
-  <meta name="twitter:description" content="行程與景點總覽、交通與天氣、住宿摘要。" />
-  <meta name="twitter:image" content="https://mariegg0507.github.io/2026_MARIEGGCATRIP/assets/cover.jpg" />
-
-  <!-- Favicon -->
-  /2026_MARIEGGCATRIP/assets/favicon.ico
-
-  <!-- Tailwind CDN（正式版建議改本地編譯與 purge） -->
-  https://cdn.tailwindcss.com</script>
-
-  <!-- Chart.js（若首頁無圖表，建議移除或動態載入） -->
-  https://cdn.jsdelivr.net/npm/chart.js</script>
-
-  <style>
-    /* ---------- Design Tokens ---------- */
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 美西舊金山與洛杉磯之旅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Chosen Palette: Earthy Calm */
     :root {
-      --bg-warm: #fbf7f2;
-      --card-bg: #ffffff;
-      --border-soft: #efe6d8;
+        /* 奶油系基底 */
+        --bg-warm: #fbf7f2;          /* 奶油白背景 */
+        --card-bg: #ffffff;
+        --border-soft: #efe6d8;
 
-      --text-primary: #3a3a3a;
-      --text-secondary: #6b6b6b;
+        /* 文字 */
+        --text-primary: #3a3a3a;
+        --text-secondary: #6b6b6b;
 
-      --accent-main: #d6b98c;       /* 奶茶金 */
-      --accent-main-dark: #c3a36f;
-      --accent-gold: #d6b98c;       /* 修正：補上未定義變數 */
+        /* 主視覺強調色（只留一組） */
+        --accent-main: #d6b98c;      /* 奶茶金 */
+        --accent-main-dark: #c3a36f;
 
-      --accent-soft-blue: #cfdde6;
-      --accent-soft-green: #d9e5d8;
-    }
-
+        /* 輔助色（低彩度） */
+        --accent-soft-blue: #cfdde6;
+        --accent-soft-green: #d9e5d8;
+        }
     body {
-      background-color: var(--bg-warm);
-      color: var(--text-primary);
-      font-family: system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, "Noto Sans TC", sans-serif;
+        background-color: var(--bg-warm);
+        color: var(--text-primary);
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     }
 
-    /* Card Hover */
-    .card-hover {
-      transition: transform .2s, box-shadow .2s;
-      will-change: transform;
-    }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
-    }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .tab-active {
+            border-bottom: 2px solid var(--accent-gold);
+            color: #d69e2e;
+            font-weight: bold;
+        }
+        .card-hover {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Custom Scrollbar for itinerary list */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+        /* Style for the clickable attraction name in itinerary */
+        .attraction-link {
+            transition: color 0.1s;
+        }
+        /* Keyframe for a subtle fade-in effect on itinerary change */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        /* ---------- 3-Day Weather (MUJI Style) ---------- */
+        
+        .weather-card {
+            background-color: #faf7f2;
+            border: 1px solid var(--border-soft);
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            min-width: 90px;
+        }
+        
+        .weather-icon {
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .weather-date {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+        
+        .weather-temp {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        /* ---------- Fix Weather Layout Overflow ---------- */
+        
+        #weather-3day .flex {
+            flex-wrap: wrap;          /* 允許換行 */
+            justify-content: flex-start;
+        }
+        
+        .weather-card {
+            flex: 1 1 calc(33.333% - 0.75rem);  /* 桌機三等分 */
+            min-width: 80px;          /* 降低最小寬 */
+            max-width: 100%;
+        }
+        
+        /* 手機優化 */
+        @media (max-width: 640px) {
+            .weather-card {
+                flex: 1 1 calc(50% - 0.75rem);  /* 兩張一排 */
+            }
+        }
 
-    /* Tabs */
-    .tab-active {
-      border-bottom: 2px solid var(--accent-gold);
-      color: #d69e2e;
-      font-weight: 700;
-    }
-
-    /* Chart Container */
-    .chart-container {
-      position: relative;
-      width: 100%;
-      max-width: 600px;
-      margin-inline: auto;
-      height: 300px;
-      max-height: 400px;
-    }
-    @media (min-width: 768px) {
-      .chart-container { height: 350px; }
-    }
-
-    /* Custom Scrollbar */
-    .custom-scroll::-webkit-scrollbar { width: 6px; }
-    .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
-    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
-    /* Firefox */
-    .custom-scroll { scrollbar-width: thin; scrollbar-color: #cbd5e0 #f1f1f1; }
-
-    /* Attraction Link */
-    .attraction-link { transition: color .1s; }
-
-    /* Fade-in Animation */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in { animation: fadeIn .5s ease-out; }
-    @media (prefers-reduced-motion: reduce) {
-      .animate-fade-in { animation: none; }
-    }
-
-    /* ---------- Weather (MUJI Style) ---------- */
-    .weather-card {
-      background-color: #faf7f2;
-      border: 1px solid var(--border-soft);
-      border-radius: 1rem;
-      padding: .75rem 1rem;
-      text-align: center;
-      min-width: 90px;
-      flex: 1 1 calc(33.333% - .75rem);
-      max-width: 100%;
-    }
-    .weather-icon { font-size: 1.4rem; margin-bottom: .25rem; }
-    .weather-date { font-size: .7rem; color: var(--text-secondary); margin-bottom: .25rem; } /* 修正變數 */
-    .weather-temp { font-size: .9rem; font-weight: 500; }
-
-    /* Weather Layout Overflow Fix */
-    #weather-3day .flex {
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: .75rem;
-    }
-    @media (max-width: 640px) {
-      .weather-card { flex: 1 1 calc(50% - .75rem); }
-    }
-  </style>
+    </style>
+    <!-- Application Structure Plan:
+         1. Hero Section: Title, Dates, and high-level trip stats (Days, Cities).
+         2. Navigation: Simple sticky sub-nav to jump between Logistics, Itinerary, and Highlights.
+         3. Logistics Hub: Interactive section for Flights (toggle View) and Essential Info (Cards). Includes a Weather Comparison Chart (Chart.js) to visualize clothing needs. NOW includes a 13-Day Daily Forecast and Accommodation Summary.
+         4. The Journey (Itinerary): A split-view interactive timeline. Left side lists the 3 major phases (SF, PCH, LA). Clicking a phase reveals detailed day-by-day activities on the right. (Daily itinerary includes Attraction Details.)
+         5. Destination Discovery (Attractions): A filterable grid of attraction cards.
+         6. Footer: Simple closing.
+    -->
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
     <!-- Hero Section -->
     <header class="bg-white shadow-sm border-b border-gray-100">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
-        <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl mb-2">
-          2026 美西舊金山與洛杉磯之旅
-        </h1>
-        <p class="text-lg text-gray-600 mb-6">
-          2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行
-        </p>
-    
-        <nav class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-sm font-medium text-gray-500"
-             aria-label="目的地快速連結">
-          https://www.sftravel.com/
-            <span class="text-2xl mb-1" aria-hidden="true">🌉</span>
-            <span>舊金山</span>
-          </a>
-    
-          https://www.nps.gov/yose/index.htm
-            <span class="text-2xl mb-1" aria-hidden="true">🌲</span>
-            <span>優勝美地</span>
-          </a>
-    
-          https://www.visitcalifornia.com/road-trips/highway-one-classic/
-            <span class="text-2xl mb-1" aria-hidden="true">🚗</span>
-            <span>一號公路</span>
-          </a>
-    
-          https://www.discoverlosangeles.com/
-            <span class="text-2xl mb-1" aria-hidden="true">🎬</span>
-            <span>洛杉磯</span>
-          </a>
-    
-          <!-- 若要導到站內行程頁，請調整 title/aria-label -->
-          /2026_MARIEGGCATRIP/disneyland_itinerary.html
-            <span class="text-2xl mb-1" aria-hidden="true">🏰</span>
-            <span>迪士尼樂園</span>
-          </a>
-    
-          /2026_MARIEGGCATRIP/universal_hollywood.html
-            <span class="text-2xl mb-1" aria-hidden="true">🎥</span>
-            <span>環球影城</span>
-          </a>
-        </nav>
-      </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl mb-2">
+                2026 美西舊金山與洛杉磯之旅
+            </h1>
+            <p class="text-lg text-gray-600 mb-6">
+                2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行
+            </p>
+            <!-- 可點擊的導航按鈕 (已連結至外部網站) -->
+            <!-- 調整 space-x 以適應更多項目 -->
+            <div class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-sm font-medium text-gray-500">
+                <a href="https://www.sftravel.com/" target="_blank" class="flex flex-col items-center hover:text-blue-600 hover:scale-110 transition-all cursor-pointer" title="前往舊金山旅遊局官網">
+                    <span class="text-2xl mb-1">🌉</span>
+                    <span>舊金山</span>
+                </a>
+                <a href="https://www.nps.gov/yose/index.htm" target="_blank" class="flex flex-col items-center hover:text-green-600 hover:scale-110 transition-all cursor-pointer" title="前往優勝美地國家公園官網">
+                    <span class="text-2xl mb-1">🌲</span>
+                    <span>優勝美地</span>
+                </a>
+                <a href="https://www.visitcalifornia.com/road-trips/highway-one-classic/" target="_blank" class="flex flex-col items-center hover:text-yellow-600 hover:scale-110 transition-all cursor-pointer" title="前往加州旅遊局-一號公路介紹">
+                    <span class="text-2xl mb-1">🚗</span>
+                    <span>一號公路</span>
+                </a>
+                <a href="https://www.discoverlosangeles.com/" target="_blank" class="flex flex-col items-center hover:text-purple-600 hover:scale-110 transition-all cursor-pointer" title="前往洛杉磯旅遊局官網">
+                    <span class="text-2xl mb-1">🎬</span>
+                    <span>洛杉磯</span>
+                </a>
+                <!-- 新增：迪士尼樂園 -->
+                <a href="disneyland_itinerary.html" target="_blank" class="flex flex-col items-center hover:text-red-600 hover:scale-110 transition-all cursor-pointer" title="前往迪士尼樂園官網">
+                    <span class="text-2xl mb-1">🏰</span>
+                    <span>迪士尼樂園</span>
+                </a>
+                <!-- 新增：環球影城 -->
+                <a href="universal_hollywood.html" target="_blank" class="flex flex-col items-center hover:text-orange-600 hover:scale-110 transition-all cursor-pointer" title="前往環球影城官網">
+                    <span class="text-2xl mb-1">🎥</span>
+                    <span>環球影城</span>
+                </a>
+            </div>
+        </div>
     </header>
-
 
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm">
