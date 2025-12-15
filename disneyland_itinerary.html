@@ -7,91 +7,26 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* Custom Scrollbar for horizontal lists */
-        .hide-scroll::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 400px;
-            }
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        body {
-            background-color: #f8fafc; /* Slate 50 - Warm Neutral Base */
-            color: #1e293b; /* Slate 800 */
-        }
-
-        /* --- Custom Timeline Styles for Itinerary View --- */
-        .timeline-item-itinerary {
-            position: relative;
-            padding: 0 0 1.5rem 2rem; /* Adjusted padding */
-            border-left: 2px solid #cbd5e1; /* Slate 300 for timeline line */
-        }
-        .timeline-item-itinerary::before {
-            content: '';
-            position: absolute;
-            left: -8px;
-            top: 0.5rem;
-            width: 14px;
-            height: 14px;
-            background-color: #6366f1; /* Indigo 500 dot */
-            border-radius: 50%;
-            border: 3px solid #f8fafc; /* Body background color rim */
-            z-index: 10;
-        }
-        .timeline-header-itinerary::before {
-            background-color: #ef4444; /* Red 500 for headers */
-            width: 18px;
-            height: 18px;
-            left: -10px;
-        }
-    </style>
-    <!-- Chosen Palette: Warm Neutrals (Slate/Stone) with Magical Blue and Sunset Orange Accents. Minimalistic and clean. -->
-    <!-- Application Structure Plan:
-        1. Hero Section: Brief intro and clear navigation between main views (Overview, Park Explorer, Food, Tips, Itinerary).
-        2. Dashboard View: High-level comparison of the two parks using charts.
-        3. Park Explorer View: Drill-down interface for Park -> Land -> Attraction.
-        4. Food Guide View: Card-based layout for must-eat items.
-        5. Tips View: Static checklists for strategy.
-        6. Itinerary View: Timeline for a highly efficient one-day dual-park plan.
-    -->
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="font-sans antialiased selection:bg-blue-200">
+<body class="font-sans antialiased selection:bg-orange-100 selection:text-orange-900">
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur shadow-sm border-b border-slate-200">
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm border-b border-[color:var(--border-soft)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-                        <i class="fa-brands fa-fort-awesome mr-2 text-blue-600"></i>加州迪士尼攻略
+                    <span class="text-2xl font-bold" style="color: var(--text-primary);">
+                        <i class="fa-brands fa-fort-awesome mr-2 text-[color:var(--accent-main)]"></i>加州迪士尼攻略
                     </span>
                 </div>
-                <div class="flex space-x-1 sm:space-x-8 items-center overflow-x-auto hide-scroll">
-                    <button onclick="switchView('dashboard')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-dashboard">總覽分析</button>
-                    <button onclick="switchView('explorer')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-explorer">園區探索</button>
-                    <button onclick="switchView('food')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-food">必吃美食</button>
-                    <button onclick="switchView('tips')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-tips">遊玩策略</button>
-                    <!-- NEW BUTTON FOR ITINERARY -->
-                    <button onclick="switchView('itinerary')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors" id="btn-itinerary">一日行程</button>
+                <!-- Updated Navigation Buttons Class logic -->
+                <div class="flex space-x-2 items-center overflow-x-auto hide-scroll">
+                    <button onclick="switchView('dashboard')" class="nav-btn px-3 py-3 text-sm font-medium text-slate-500 hover:text-[color:var(--accent-main)] transition-colors border-b-2 border-transparent" id="btn-dashboard">總覽分析</button>
+                    <button onclick="switchView('explorer')" class="nav-btn px-3 py-3 text-sm font-medium text-slate-500 hover:text-[color:var(--accent-main)] transition-colors border-b-2 border-transparent" id="btn-explorer">園區探索</button>
+                    <button onclick="switchView('food')" class="nav-btn px-3 py-3 text-sm font-medium text-slate-500 hover:text-[color:var(--accent-main)] transition-colors border-b-2 border-transparent" id="btn-food">必吃美食</button>
+                    <button onclick="switchView('tips')" class="nav-btn px-3 py-3 text-sm font-medium text-slate-500 hover:text-[color:var(--accent-main)] transition-colors border-b-2 border-transparent" id="btn-tips">遊玩策略</button>
+                    <button onclick="switchView('itinerary')" class="nav-btn px-3 py-3 text-sm font-medium text-slate-500 hover:text-[color:var(--accent-main)] transition-colors border-b-2 border-transparent" id="btn-itinerary">一日行程</button>
                 </div>
             </div>
         </div>
@@ -103,8 +38,8 @@
         <!-- DASHBOARD VIEW -->
         <div id="view-dashboard" class="space-y-8 animate-fade-in">
             <div class="text-center max-w-3xl mx-auto mb-10">
-                <h1 class="text-3xl font-bold text-slate-900 mb-4">兩大樂園風格解析</h1>
-                <p class="text-lg text-slate-600">
+                <h1 class="text-3xl font-bold mb-4" style="color: var(--text-primary);">兩大樂園風格解析</h1>
+                <p class="text-lg" style="color: var(--text-secondary);">
                     加州迪士尼度假區由「迪士尼樂園 (Disneyland Park)」與「迪士尼加州冒險樂園 (Disney California Adventure)」組成。
                     本區塊透過數據分析幫助您快速理解兩者的差異，決定您的時間分配與遊玩重點。
                 </p>
@@ -112,9 +47,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <!-- Vibe Radar Chart -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[color:var(--border-soft)] card-hover">
                     <h3 class="text-lg font-semibold text-slate-800 mb-2 flex items-center">
-                        <i class="fa-solid fa-chart-radar text-purple-500 mr-2"></i> 風格雷達圖
+                        <i class="fa-solid fa-chart-radar text-[color:var(--accent-main)] mr-2"></i> 風格雷達圖
                     </h3>
                     <p class="text-sm text-slate-500 mb-4">比較兩個樂園在刺激度、情懷、IP 強度等方面的傾向。</p>
                     <div class="chart-container">
@@ -123,9 +58,9 @@
                 </div>
 
                 <!-- Attraction Type Doughnut -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-[color:var(--border-soft)] card-hover">
                     <h3 class="text-lg font-semibold text-slate-800 mb-2 flex items-center">
-                        <i class="fa-solid fa-chart-pie text-blue-500 mr-2"></i> 設施類型分佈
+                        <i class="fa-solid fa-chart-pie text-blue-400 mr-2"></i> 設施類型分佈
                     </h3>
                     <p class="text-sm text-slate-500 mb-4">了解園區內設施的屬性組成。</p>
                     <div class="chart-container">
@@ -136,9 +71,10 @@
 
             <!-- Park Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 hover:shadow-md transition-shadow">
+                <!-- Using inline styles to override Tailwind for the soft earthy bg -->
+                <div class="p-6 rounded-xl border hover:shadow-md transition-shadow card-hover" style="background-color: #f0f7ff; border-color: var(--border-soft);">
                     <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-2xl">🏰</div>
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm">🏰</div>
                         <div class="ml-4">
                             <h2 class="text-xl font-bold text-blue-900">迪士尼樂園</h2>
                             <span class="text-sm text-blue-600 font-medium">Disneyland Park</span>
@@ -151,9 +87,9 @@
                     </ul>
                 </div>
 
-                <div class="bg-orange-50 p-6 rounded-xl border border-orange-100 hover:shadow-md transition-shadow">
+                <div class="p-6 rounded-xl border hover:shadow-md transition-shadow card-hover" style="background-color: #fff7ed; border-color: var(--border-soft);">
                     <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-2xl">🎡</div>
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm">🎡</div>
                         <div class="ml-4">
                             <h2 class="text-xl font-bold text-orange-900">加州冒險樂園</h2>
                             <span class="text-sm text-orange-600 font-medium">Disney California Adventure</span>
@@ -170,15 +106,15 @@
 
         <!-- EXPLORER VIEW -->
         <div id="view-explorer" class="hidden space-y-6">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <h2 class="text-2xl font-bold text-slate-800 mb-4">深入園區探索</h2>
-                <p class="text-slate-600 mb-6">
+            <div class="bg-white rounded-xl shadow-sm border border-[color:var(--border-soft)] p-6">
+                <h2 class="text-2xl font-bold mb-4" style="color: var(--text-primary);">深入園區探索</h2>
+                <p class="mb-6" style="color: var(--text-secondary);">
                     請選擇樂園與區域，查看該區的必玩設施詳情與亮點。點擊不同的區域標籤可切換顯示內容。
                 </p>
                 
                 <!-- Park Toggle -->
                 <div class="flex justify-center mb-8">
-                    <div class="bg-slate-100 p-1 rounded-lg inline-flex">
+                    <div class="bg-[color:var(--bg-warm)] p-1 rounded-lg inline-flex border border-[color:var(--border-soft)]">
                         <button onclick="setPark('DL')" id="btn-park-dl" class="px-6 py-2 rounded-md text-sm font-semibold transition-all shadow-sm bg-white text-blue-600">
                             迪士尼樂園 (DL)
                         </button>
@@ -188,14 +124,13 @@
                     </div>
                 </div>
 
-                <!-- Lands Navigation (Horizontal Scroll) -->
+                <!-- Lands Navigation -->
                 <div class="relative">
                     <div class="overflow-x-auto hide-scroll pb-4" id="land-nav-container">
                         <div class="flex space-x-2" id="land-list">
                             <!-- JS Generated Land Buttons -->
                         </div>
                     </div>
-                    <!-- Fade indicators for scroll -->
                     <div class="absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-white pointer-events-none"></div>
                 </div>
             </div>
@@ -204,9 +139,9 @@
             <div id="land-content" class="animate-fade-in grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Left: Land Info -->
                 <div class="lg:col-span-1">
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sticky top-24">
-                        <h3 id="land-title" class="text-2xl font-bold text-slate-900 mb-2">區域名稱</h3>
-                        <p id="land-desc" class="text-slate-600 leading-relaxed mb-4">區域描述...</p>
+                    <div class="bg-white rounded-xl shadow-sm border border-[color:var(--border-soft)] p-6 sticky top-24">
+                        <h3 id="land-title" class="text-2xl font-bold mb-2" style="color: var(--text-primary);">區域名稱</h3>
+                        <p id="land-desc" class="leading-relaxed mb-4" style="color: var(--text-secondary);">區域描述...</p>
                         <div class="border-t border-slate-100 pt-4">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">特色標籤</span>
                             <div id="land-tags" class="flex flex-wrap gap-2 mt-2">
@@ -218,7 +153,7 @@
 
                 <!-- Right: Attractions Grid -->
                 <div class="lg:col-span-2 space-y-4">
-                    <h4 class="text-lg font-semibold text-slate-700 ml-1">必玩設施推薦</h4>
+                    <h4 class="text-lg font-semibold ml-1" style="color: var(--text-primary);">必玩設施推薦</h4>
                     <div id="attraction-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- JS Generated Attraction Cards -->
                     </div>
@@ -229,8 +164,8 @@
         <!-- FOOD VIEW -->
         <div id="view-food" class="hidden">
             <div class="text-center max-w-3xl mx-auto mb-10">
-                <h2 class="text-3xl font-bold text-slate-900 mb-4">雙樂園必吃美食指南</h2>
-                <p class="text-lg text-slate-600">
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--text-primary);">雙樂園必吃美食指南</h2>
+                <p class="text-lg" style="color: var(--text-secondary);">
                     迪士尼的體驗不僅在於遊樂設施，美食也是重頭戲！我們為您精選了兩個樂園中絕對不能錯過的經典小吃與特色餐廳。
                 </p>
                 <div class="mt-6 flex justify-center gap-4">
@@ -248,13 +183,13 @@
         <!-- TIPS VIEW -->
         <div id="view-tips" class="hidden max-w-4xl mx-auto space-y-8">
             <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-slate-900 mb-4">遊玩策略與小貼士</h2>
-                <p class="text-lg text-slate-600">掌握這些技巧，讓您的迪士尼之旅事半功倍。</p>
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--text-primary);">遊玩策略與小貼士</h2>
+                <p class="text-lg" style="color: var(--text-secondary);">掌握這些技巧，讓您的迪士尼之旅事半功倍。</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Strategy Card 1 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-400">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-400 card-hover">
                     <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-bolt text-yellow-500 mr-2"></i>Genie+ 與 快速通關</h3>
                     <ul class="space-y-3 text-slate-600">
                         <li class="flex items-start"><span class="mr-2">•</span> <strong>Genie+：</strong> 購買後可預約多項設施的 Lightning Lane。一次只能預約一項，需等待 2 小時冷卻或使用後才能再約。</li>
@@ -263,7 +198,7 @@
                 </div>
 
                 <!-- Strategy Card 2 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-400">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-400 card-hover">
                     <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-mobile-screen text-blue-500 mr-2"></i>善用官方 App</h3>
                     <ul class="space-y-3 text-slate-600">
                         <li class="flex items-start"><span class="mr-2">•</span> <strong>Mobile Order：</strong> 早上就先在 App 上選好中午要吃的時段和餐點，時間到直接去窗口領取，省去大排長龍。</li>
@@ -271,8 +206,8 @@
                     </ul>
                 </div>
 
-                <!-- Strategy Card 5: NEW PARKING INFO CARD -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-400">
+                <!-- Strategy Card 5 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-400 card-hover">
                     <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-square-parking text-red-500 mr-2"></i>停車與交通資訊</h3>
                     <ul class="space-y-3 text-slate-600">
                         <li class="flex items-start"><span class="mr-2">•</span> <strong>主要停車場：</strong> 米奇與朋友停車場 (Mickey & Friends) 和 皮克斯夥伴停車場 (Pixar Pals)，兩者車位極多。</li>
@@ -283,7 +218,7 @@
                 </div>
 
                 <!-- Strategy Card 3 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-400">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-400 card-hover">
                     <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-stopwatch text-green-500 mr-2"></i>時間管理</h3>
                     <ul class="space-y-3 text-slate-600">
                         <li class="flex items-start"><span class="mr-2">•</span> <strong>提早入園：</strong> 建議比開園時間提早 1.5 小時抵達，完成停車安檢。</li>
@@ -292,7 +227,7 @@
                 </div>
 
                 <!-- Strategy Card 4 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-400">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-400 card-hover">
                     <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-moon text-purple-500 mr-2"></i>夜間亮點</h3>
                     <ul class="space-y-3 text-slate-600">
                         <li class="flex items-start"><span class="mr-2">•</span> <strong>Cars Land：</strong> 晚上務必去欣賞霓虹燈亮起的瞬間。</li>
@@ -302,174 +237,203 @@
                 </div>
             </div>
         </div>
- <!-- 2. 一日行程 View (Hidden by default) -->
-        <div id="view-itinerary" class="view hidden bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-200">
-            <h1 class="text-4xl font-bold text-gray-900 mb-2 flex items-center">
-                <span class="disney-red text-5xl mr-3">🗓</span> 一日兩園區：逐時攻略 (2026/3/6 參考)
+
+        <!-- 2. 一日行程 View -->
+        <div id="view-itinerary" class="view hidden bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-[color:var(--border-soft)]">
+            <h1 class="text-4xl font-bold mb-2 flex items-center" style="color: var(--text-primary);">
+                <span class="text-5xl mr-3" style="color: #ef4444;">🗓</span> 一日兩園區：逐時攻略
             </h1>
-            <p class="text-lg text-gray-600 mb-8 pb-4 border-b">
+            <p class="text-lg mb-8 pb-4 border-b border-gray-200" style="color: var(--text-secondary);">
                 本行程適用於購買 **Park Hopper** 票券的遊客，以最大限度體驗兩個園區的精華。
             </p>
 
-            <!-- Timeline Container - Content copied from previous file version but now within the new view div -->
+            <!-- Timeline Container -->
             <div class="space-y-6">
 
-                <!-- Section 1: 早上黃金衝刺期 (DLP) -->
-                <div class="timeline-item timeline-header">
-                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                <!-- Section 1 -->
+                <div class="timeline-item-itinerary timeline-header-itinerary">
+                    <h2 class="text-2xl font-bold flex items-center" style="color: var(--text-primary);">
                         <i class="fa-solid fa-sun text-yellow-500 mr-2"></i> 🌅 07:00–10:30｜Disneyland Park（早上黃金 2 小時）
                     </h2>
                 </div>
 
                 <!-- Event: 交通與準備 -->
-                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">07:00–08:15</p>
-                    <h3 class="font-bold text-lg text-gray-800 mb-1">前往迪士尼</h3>
-                    <p class="text-gray-700">07:00 出發（避開 LA 早高峰），08:00–08:15 抵達停車場。</p>
-                    <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
-                        <li>走到入口、安檢、拍照。</li>
-                    </ul>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-slate-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">07:00–08:15</p>
+                        <h3 class="font-bold text-lg mb-1" style="color: var(--text-primary);">前往迪士尼</h3>
+                        <p style="color: var(--text-secondary);">07:00 出發（避開 LA 早高峰），08:00–08:15 抵達停車場。</p>
+                        <ul class="list-disc list-inside text-sm mt-2" style="color: var(--text-secondary);">
+                            <li>走到入口、安檢、拍照。</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Event: 入園衝刺 -->
-                <div class="timeline-item bg-blue-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">⏰ 08:30</p>
-                    <h3 class="font-bold text-xl disney-red mb-1">入園（開園）- 第一站衝刺</h3>
-                    <p class="text-gray-700 font-semibold">👉 Peter Pan’s Flight（第一優先！必衝設施）</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-blue-50 rounded-lg p-4 shadow-sm border border-blue-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">⏰ 08:30</p>
+                        <h3 class="font-bold text-xl mb-1" style="color: #ef4444;">入園（開園）- 第一站衝刺</h3>
+                        <p class="font-semibold" style="color: var(--text-primary);">👉 Peter Pan’s Flight（第一優先！必衝設施）</p>
+                    </div>
                 </div>
 
                 <!-- Event: 設施衝刺 -->
-                <div class="timeline-item bg-blue-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">08:30–10:30</p>
-                    <h3 class="font-bold text-lg text-gray-800 mb-1">Disneyland Park 設施連擊</h3>
-                    <ul class="list-disc list-inside text-sm text-gray-800 space-y-1">
-                        <li>Indiana Jones Adventure</li>
-                        <li>Space Mountain (明日世界)</li>
-                        <li>Buzz Lightyear / Star Tours（視排隊情況）</li>
-                    </ul>
-                    <p class="mt-3 text-sm font-semibold text-red-600">📌 原則：早上不吃早餐、先衝設施；排隊超過 40 分鐘就跳過。</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-blue-50 rounded-lg p-4 shadow-sm border border-blue-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">08:30–10:30</p>
+                        <h3 class="font-bold text-lg mb-1" style="color: var(--text-primary);">Disneyland Park 設施連擊</h3>
+                        <ul class="list-disc list-inside text-sm space-y-1" style="color: var(--text-secondary);">
+                            <li>Indiana Jones Adventure</li>
+                            <li>Space Mountain (明日世界)</li>
+                            <li>Buzz Lightyear / Star Tours（視排隊情況）</li>
+                        </ul>
+                        <p class="mt-3 text-sm font-semibold text-red-600">📌 原則：早上不吃早餐、先衝設施；排隊超過 40 分鐘就跳過。</p>
+                    </div>
                 </div>
                 
-                <!-- Section 2: 經典補齊與午餐 (DLP) -->
-                <div class="timeline-item timeline-header">
-                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                <!-- Section 2 -->
+                <div class="timeline-item-itinerary timeline-header-itinerary">
+                    <h2 class="text-2xl font-bold flex items-center" style="color: var(--text-primary);">
                         <i class="fa-solid fa-mug-hot text-amber-500 mr-2"></i> ☕ 10:30–14:00｜經典補齊與轉換園區
                     </h2>
                 </div>
 
                 <!-- Event: 休息/早餐 -->
-                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">10:30–11:00</p>
-                    <h3 class="font-bold text-lg text-gray-800 mb-1">早餐 / 咖啡時間</h3>
-                    <p class="text-gray-700">Jolly Holiday Bakery（咖啡＋甜點）或 Main Street 拍照放鬆。</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-slate-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">10:30–11:00</p>
+                        <h3 class="font-bold text-lg mb-1" style="color: var(--text-primary);">早餐 / 咖啡時間</h3>
+                        <p style="color: var(--text-secondary);">Jolly Holiday Bakery（咖啡＋甜點）或 Main Street 拍照放鬆。</p>
+                    </div>
                 </div>
 
                 <!-- Event: 經典設施 -->
-                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">🏴‍☠️ 11:00–13:00</p>
-                    <h3 class="font-bold text-lg text-gray-800 mb-1">經典設施補齊</h3>
-                    <ul class="list-disc list-inside text-sm text-gray-800 space-y-1">
-                        <li>Pirates of the Caribbean (加勒比海盜)</li>
-                        <li>Haunted Mansion (鬼屋)</li>
-                        <li>It’s a Small World (小小世界 - 休息型)</li>
-                        <li>Disneyland Railroad（坐一小段休息）</li>
-                    </ul>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-slate-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">🏴‍☠️ 11:00–13:00</p>
+                        <h3 class="font-bold text-lg mb-1" style="color: var(--text-primary);">經典設施補齊</h3>
+                        <ul class="list-disc list-inside text-sm space-y-1" style="color: var(--text-secondary);">
+                            <li>Pirates of the Caribbean (加勒比海盜)</li>
+                            <li>Haunted Mansion (鬼屋)</li>
+                            <li>It’s a Small World (小小世界 - 休息型)</li>
+                            <li>Disneyland Railroad（坐一小段休息）</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Event: 午餐 -->
-                <div class="timeline-item bg-yellow-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">🍗 13:00–14:00</p>
-                    <h3 class="font-bold text-xl text-orange-600 mb-1">午餐時段 (建議 App 預約)</h3>
-                    <p class="text-gray-700"><strong>Plaza Inn（炸雞）⭐最推薦</strong> 或 Red Rose Taverne。</p>
-                    <p class="text-sm font-semibold text-gray-600 mt-2">👉 吃完慢慢走到隔壁園區 DCA。</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-yellow-50 rounded-lg p-4 shadow-sm border border-yellow-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">🍗 13:00–14:00</p>
+                        <h3 class="font-bold text-xl text-orange-600 mb-1">午餐時段 (建議 App 預約)</h3>
+                        <p class="text-gray-700"><strong>Plaza Inn（炸雞）⭐最推薦</strong> 或 Red Rose Taverne。</p>
+                        <p class="text-sm font-semibold text-gray-600 mt-2">👉 吃完慢慢走到隔壁園區 DCA。</p>
+                    </div>
                 </div>
 
-                <!-- Section 3: 下午刺激與皮克斯 (DCA) -->
-                <div class="timeline-item timeline-header">
-                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                <!-- Section 3 -->
+                <div class="timeline-item-itinerary timeline-header-itinerary">
+                    <h2 class="text-2xl font-bold flex items-center" style="color: var(--text-primary);">
                         <i class="fa-solid fa-car-side text-red-500 mr-2"></i> 🎢 14:00–17:00｜California Adventure (DCA) 刺激區
                     </h2>
                 </div>
                 
                 <!-- Event: 進入DCA -->
-                <div class="timeline-item bg-green-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">14:00</p>
-                    <h3 class="font-bold text-lg text-gray-800 mb-1">進入 Disney California Adventure (DCA)</h3>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-green-50 rounded-lg p-4 shadow-sm border border-green-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">14:00</p>
+                        <h3 class="font-bold text-lg mb-1" style="color: var(--text-primary);">進入 Disney California Adventure (DCA)</h3>
+                    </div>
                 </div>
 
                 <!-- Event: DCA刺激 -->
-                <div class="timeline-item bg-green-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">⚡ 14:00–16:30</p>
-                    <h3 class="font-bold text-lg text-gray-800 mb-1">刺激＋皮克斯區</h3>
-                    <ul class="list-disc list-inside text-sm text-gray-800 space-y-1">
-                        <li>Radiator Springs Racers（Cars Land 必玩）</li>
-                        <li>Toy Story Midway Mania (玩具總動員)</li>
-                        <li>Incredicoaster (超人特攻隊)</li>
-                        <li>WEB SLINGERS（蜘蛛人，漫威園區）</li>
-                    </ul>
-                    <p class="mt-3 text-sm font-semibold text-red-600">📌 下午排隊較長，記得善用 Lightning Lane / Single Rider。</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-green-50 rounded-lg p-4 shadow-sm border border-green-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">⚡ 14:00–16:30</p>
+                        <h3 class="font-bold text-lg mb-1" style="color: var(--text-primary);">刺激＋皮克斯區</h3>
+                        <ul class="list-disc list-inside text-sm space-y-1" style="color: var(--text-secondary);">
+                            <li>Radiator Springs Racers（Cars Land 必玩）</li>
+                            <li>Toy Story Midway Mania (玩具總動員)</li>
+                            <li>Incredicoaster (超人特攻隊)</li>
+                            <li>WEB SLINGERS（蜘蛛人，漫威園區）</li>
+                        </ul>
+                        <p class="mt-3 text-sm font-semibold text-red-600">📌 下午排隊較長，記得善用 Lightning Lane / Single Rider。</p>
+                    </div>
                 </div>
 
                 <!-- Event: 下午茶休息 -->
-                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">☕ 16:30–17:00</p>
-                    <h3 class="font-bold text-lg text-gray-800 mb-1">下午休息</h3>
-                    <p class="text-gray-700">Pixar Pier 吃冰 / 咖啡，補體力、充行動電源。</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-slate-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">☕ 16:30–17:00</p>
+                        <h3 class="font-bold text-lg mb-1" style="color: var(--text-primary);">下午休息</h3>
+                        <p style="color: var(--text-secondary);">Pixar Pier 吃冰 / 咖啡，補體力、充行動電源。</p>
+                    </div>
                 </div>
 
-                <!-- Section 4: 傍晚夜間高潮 (DCA & DLP) -->
-                <div class="timeline-item timeline-header">
-                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                <!-- Section 4 -->
+                <div class="timeline-item-itinerary timeline-header-itinerary">
+                    <h2 class="text-2xl font-bold flex items-center" style="color: var(--text-primary);">
                         <i class="fa-solid fa-moon text-indigo-600 mr-2"></i> 🌙 17:00–關園｜表演與煙火
                     </h2>
                 </div>
 
                 <!-- Event: 傍晚輕鬆 -->
-                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">🌇 17:00–18:30</p>
-                    <h3 class="font-bold text-lg text-gray-800 mb-1">傍晚拍照＋輕鬆設施</h3>
-                    <ul class="list-disc list-inside text-sm text-gray-800 space-y-1">
-                        <li>Pixar Pier 黃昏拍照 🌅</li>
-                        <li>Little Mermaid（休息型設施）</li>
-                        <li>Guardians of the Galaxy（想刺激可上）</li>
-                    </ul>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-slate-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">🌇 17:00–18:30</p>
+                        <h3 class="font-bold text-lg mb-1" style="color: var(--text-primary);">傍晚拍照＋輕鬆設施</h3>
+                        <ul class="list-disc list-inside text-sm space-y-1" style="color: var(--text-secondary);">
+                            <li>Pixar Pier 黃昏拍照 🌅</li>
+                            <li>Little Mermaid（休息型設施）</li>
+                            <li>Guardians of the Galaxy（想刺激可上）</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Event: 晚餐 -->
-                <div class="timeline-item bg-yellow-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">🍔 18:30–19:30</p>
-                    <h3 class="font-bold text-lg text-orange-600 mb-1">晚餐</h3>
-                    <p class="text-gray-700">Smoke Tree BBQ 或 Pym Test Kitchen（漫威）。</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-yellow-50 rounded-lg p-4 shadow-sm border border-yellow-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">🍔 18:30–19:30</p>
+                        <h3 class="font-bold text-lg text-orange-600 mb-1">晚餐</h3>
+                        <p class="text-gray-700">Smoke Tree BBQ 或 Pym Test Kitchen（漫威）。</p>
+                    </div>
                 </div>
 
                 <!-- Event: 水舞秀 -->
-                <div class="timeline-item bg-blue-100 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">🌊 20:00</p>
-                    <h3 class="font-bold text-xl text-blue-800 mb-1">World of Color (水舞秀)</h3>
-                    <p class="text-gray-700">非常推薦！可能需要 App 抽虛擬入場（當天確認）。</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-blue-50 rounded-lg p-4 shadow-sm border border-blue-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">🌊 20:00</p>
+                        <h3 class="font-bold text-xl text-blue-800 mb-1">World of Color (水舞秀)</h3>
+                        <p class="text-gray-700">非常推薦！可能需要 App 抽虛擬入場（當天確認）。</p>
+                    </div>
                 </div>
 
                 <!-- Event: 煙火 -->
-                <div class="timeline-item bg-red-100 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">🎆 21:00–22:00</p>
-                    <h3 class="font-bold text-xl disney-red mb-1">夜間煙火 (回 Disneyland Park)</h3>
-                    <p class="text-gray-700">夜拍城堡 ✨，看夜間煙火（時間以 App 公告為準）。</p>
-                    <p class="mt-2 text-sm font-semibold text-gray-600">📸 最佳位置：Sleeping Beauty Castle 前 或 It’s a Small World 正面。</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-red-50 rounded-lg p-4 shadow-sm border border-red-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">🎆 21:00–22:00</p>
+                        <h3 class="font-bold text-xl mb-1" style="color: #ef4444;">夜間煙火 (回 Disneyland Park)</h3>
+                        <p class="text-gray-700">夜拍城堡 ✨，看夜間煙火（時間以 App 公告為準）。</p>
+                        <p class="mt-2 text-sm font-semibold text-gray-600">📸 最佳位置：Sleeping Beauty Castle 前 或 It’s a Small World 正面。</p>
+                    </div>
                 </div>
 
                 <!-- Event: 購物散步 -->
-                <div class="timeline-item bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <p class="text-sm text-gray-500 font-semibold">🛍️ 22:00–關園</p>
-                    <h3 class="font-bold text-lg text-gray-800 mb-1">購物＋散步</h3>
-                    <p class="text-gray-700">Main Street 紀念品，人潮散去拍照超美。</p>
+                <div class="timeline-item-itinerary">
+                    <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-slate-100">
+                        <p class="text-sm font-semibold" style="color: var(--text-muted);">🛍️ 22:00–關園</p>
+                        <h3 class="font-bold text-lg mb-1" style="color: var(--text-primary);">購物＋散步</h3>
+                        <p style="color: var(--text-secondary);">Main Street 紀念品，人潮散去拍照超美。</p>
+                    </div>
                 </div>
                 
                 <!-- Section Summary -->
-                <div class="timeline-item timeline-header">
-                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                <div class="timeline-item-itinerary timeline-header-itinerary">
+                    <h2 class="text-2xl font-bold flex items-center" style="color: var(--text-primary);">
                         <i class="fa-solid fa-check-circle text-green-600 mr-2"></i> 🎯 成功關鍵總整理
                     </h2>
-                    <ul class="list-disc list-inside text-lg text-gray-700 font-semibold mt-3 space-y-2">
+                    <ul class="list-disc list-inside text-lg font-semibold mt-3 space-y-2" style="color: var(--text-primary);">
                         <li>✅ 早進場 (越早越好，利用黃金 2 小時)</li>
                         <li>✅ Peter Pan 一定最早玩 (人潮成長速度最快)</li>
                         <li>✅ 中午換園 (錯開人潮，高效遊玩)</li>
@@ -479,8 +443,6 @@
                 </div>
 
             </div> <!-- End Timeline Container -->
-                </div>
-            </div>
         </div>
 
     </main>
@@ -669,19 +631,24 @@
             switchView('dashboard'); // Start on dashboard
         });
 
-        // --- NAVIGATION LOGIC ---
+        // --- NAVIGATION LOGIC (Updated to use tab-active) ---
         function switchView(viewId) {
             // Hide all views
             ['dashboard', 'explorer', 'food', 'tips', 'itinerary'].forEach(id => {
+                const btn = document.getElementById(`btn-${id}`);
+                
+                // Hide view
                 document.getElementById(`view-${id}`).classList.add('hidden');
-                document.getElementById(`btn-${id}`).classList.remove('bg-blue-50', 'text-blue-600', 'bg-orange-50', 'text-orange-600');
-                document.getElementById(`btn-${id}`).classList.add('text-slate-700');
+                
+                // Reset Button Style (Remove active class)
+                btn.classList.remove('tab-active');
             });
 
             // Show selected view
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
-            document.getElementById(`btn-${viewId}`).classList.add('bg-blue-50', 'text-blue-600');
-            document.getElementById(`btn-${viewId}`).classList.remove('text-slate-700');
+            
+            // Set Active Button Style
+            document.getElementById(`btn-${viewId}`).classList.add('tab-active');
 
             // Specific initialization if needed
             if(viewId === 'explorer') {
@@ -834,7 +801,7 @@
 
             land.attractions.forEach(attr => {
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-xl shadow-md border border-slate-100 hover:border-blue-300 transition-colors group overflow-hidden';
+                card.className = 'bg-white rounded-xl shadow-md border border-[color:var(--border-soft)] hover:border-blue-300 transition-colors group overflow-hidden card-hover';
                 
                 // Image Placeholder
                 const imgUrl = getPlaceholderUrl(attr.imageText, 400, 180);
@@ -891,7 +858,7 @@
                     : '<span class="absolute top-3 right-3 bg-orange-100 text-orange-800 text-xs font-bold px-2 py-1 rounded-full">冒險樂園</span>';
                 
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-xl shadow-md border border-slate-100 relative hover:shadow-lg transition-shadow overflow-hidden';
+                card.className = 'bg-white rounded-xl shadow-md border border-[color:var(--border-soft)] relative hover:shadow-lg transition-shadow overflow-hidden card-hover';
                 
                 // Image Placeholder
                 const imgUrl = getPlaceholderUrl(item.imageText, 400, 160);
