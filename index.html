@@ -97,41 +97,18 @@
                     </div>
                 </div>
             
-                <section id="weather-forecast" class="mt-12">
-                <h3 class="text-2xl font-semibold text-center mb-6 text-gray-800">
-                    🗺️ 所在地區・未來 3 天天氣預報
-                </h3>
-            
-                <div class="grid md:grid-cols-3 gap-6">
-            
-                    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                        <h4 class="text-lg font-medium mb-1 text-gray-900">目前所在地</h4>
-                        <p class="text-sm text-gray-500 mb-4" id="current-city">定位中…</p>
-                        <div id="weather-current" class="flex gap-4">
-                            </div>
-                        <p id="wear-current" class="text-sm text-gray-600 mt-3">
-                            </p>
-                    </div>
-            
-                    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                        <h4 class="text-lg font-medium mb-1 text-gray-900">舊金山</h4>
-                        <p class="text-sm text-gray-500 mb-4">San Francisco</p>
-                        <div id="weather-sf" class="flex gap-4">
-                            </div>
-                        <p id="wear-sf" class="text-sm text-gray-600 mt-3">
-                            </p>
-                    </div>
-            
-                    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                        <h4 class="text-lg font-medium mb-1 text-gray-900">洛杉磯</h4>
-                        <p class="text-sm text-gray-500 mb-4">Los Angeles</p>
-                        <div id="weather-la" class="flex gap-4">
-                            </div>
-                        <p id="wear-la" class="text-sm text-gray-600 mt-3">
-                            </p>
+                <!-- Weather & Tips -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex flex-col">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">🌡️ 氣溫趨勢與穿著建議</h3>
+                    <div class="flex-grow flex flex-col justify-center">
+                        <div class="chart-container mb-4">
+                            <canvas id="weatherChart"></canvas>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg text-sm text-yellow-800 border border-yellow-100">
+                            <strong>💡 穿搭筆記：</strong> 舊金山溫差大且多風，建議「洋蔥式穿法」並攜帶防風外套；洛杉磯白天溫暖，可準備薄長袖。
+                        </div>
                     </div>
                 </div>
-            </section>
                 <!-- 3-Day Weather Forecast -->
                 <section id="weather-3day" class="mt-12">
                   <h3 class="text-2xl font-semibold text-center mb-6">
