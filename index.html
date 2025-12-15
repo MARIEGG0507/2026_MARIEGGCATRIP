@@ -5,18 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>2026 美西舊金山與洛杉磯之旅</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- 移除了 Chart.js，因為天氣圖表已移除，改用即時數據 -->
     
     <link rel="stylesheet" href="styles.css">    
     
     <!-- Application Structure Plan:
          1. Hero Section: Title, Dates, and high-level trip stats (Days, Cities).
          2. Navigation: Simple sticky sub-nav to jump between Logistics, Itinerary, and Highlights.
-         3. Logistics Hub: Interactive section for Flights (toggle View) and Essential Info (Cards). Includes a Weather Comparison Chart (Chart.js) to visualize clothing needs. NOW includes a 13-Day Daily Forecast and Accommodation Summary.
+         3. Logistics Hub: Interactive section for Flights (toggle View) and Essential Info (Cards). Includes a 13-Day Daily Forecast and Accommodation Summary.
          4. The Journey (Itinerary): A split-view interactive timeline. Left side lists the 3 major phases (SF, PCH, LA). Clicking a phase reveals detailed day-by-day activities on the right. (Daily itinerary includes Attraction Details.)
          5. Destination Discovery (Attractions): A filterable grid of attraction cards.
          6. Footer: Simple closing.
     -->
+    <style>
+        .weather-card {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            text-align: center;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            flex-grow: 1;
+            min-width: 90px;
+        }
+        .weather-card > div:first-child {
+            font-size: 1.5rem;
+        }
+    </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
@@ -81,7 +96,7 @@
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-900">🛫 行前準備與資訊</h2>
                 <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
-                    包含航班時間、必備文件檢查、以及當地天氣預測，協助您打包行李與規劃抵達事宜。
+                    包含航班時間、必備文件檢查、以及當地天氣預測。
                 </p>
             </div>
  
@@ -101,10 +116,10 @@
                     </div>
                 </div>
             
-                <!-- Weather & Tips -->
+                <!-- Weather & Tips (UPDATED SECTION) -->
                 <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                   <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">
-                      📍 所在地區・未來 3 天天氣
+                      📍 所在地區・未來 3 天天氣 **數據由 Gemini API 驅動**
                   </h3>
 
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -112,7 +127,11 @@
                       <div class="bg-gray-50 rounded-xl p-4 border">
                           <h4 class="text-lg font-medium mb-1">目前所在地</h4>
                           <p class="text-sm text-gray-500 mb-4" id="current-city">定位中…</p>
-                          <div id="weather-current" class="flex gap-4"></div>
+                          <!-- Weather Cards Container -->
+                          <div id="weather-current" class="flex gap-4">
+                            <div class="text-sm text-gray-500">載入中...</div>
+                          </div>
+                          <!-- Wear Advice -->
                           <p id="wear-current" class="text-sm text-gray-600 mt-3"></p>
                       </div>
 
@@ -120,7 +139,9 @@
                       <div class="bg-gray-50 rounded-xl p-4 border">
                           <h4 class="text-lg font-medium mb-1">舊金山</h4>
                           <p class="text-sm text-gray-500 mb-4">San Francisco</p>
-                          <div id="weather-sf" class="flex gap-4"></div>
+                          <div id="weather-sf" class="flex gap-4">
+                            <div class="text-sm text-gray-500">載入中...</div>
+                          </div>
                           <p id="wear-sf" class="text-sm text-gray-600 mt-3"></p>
                       </div>
 
@@ -128,7 +149,9 @@
                       <div class="bg-gray-50 rounded-xl p-4 border">
                           <h4 class="text-lg font-medium mb-1">洛杉磯</h4>
                           <p class="text-sm text-gray-500 mb-4">Los Angeles</p>
-                          <div id="weather-la" class="flex gap-4"></div>
+                          <div id="weather-la" class="flex gap-4">
+                            <div class="text-sm text-gray-500">載入中...</div>
+                          </div>
                           <p id="wear-la" class="text-sm text-gray-600 mt-3"></p>
                       </div>
                   </div>
@@ -267,60 +290,60 @@
             ]
         };
 
-const accommodationData = {
-    sf: {
-        city: "舊金山",
-        name: "Riu Plaza Fisherman's Wharf",
-        checkinDate: "2026-02-26",
-        checkoutDate: "2026-03-03",
-        checkin: "15:00 起",
-        checkout: "12:00 前",
-        room: "豪華加大雙人床房（2 張加大床）",
-        highlight: "🍳 含早餐｜🚭 禁菸房",
-        facilities: "高速網路、私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機",
-        address: "2500 Mason Street, San Francisco, CA 94133, USA",
-        mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166"
-    },
-    monterey: {
-        city: "蒙特雷",
-        name: "隆恩橡木酒店",
-        checkinDate: "2026-03-03",
-        checkoutDate: "2026-03-04",
-        checkin: "15:00～23:00",
-        checkout: "05:00～11:00",
-        room: "特大雙人床房 × 2 間",
-        highlight: "🍽️ 不含餐｜🚭 禁菸房",
-        facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣",
-        address: "2221 North Fremont Street, Monterey, CA 93940, USA",
-        mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579"
-    },
-    morro: {
-        city: "莫羅貝",
-        name: "海港屋酒店",
-        checkinDate: "2026-03-04",
-        checkoutDate: "2026-03-05",
-        checkin: "15:00 起",
-        checkout: "11:00 前",
-        room: "海景豪華特大床房 × 2 間",
-        highlight: "🌊 海景陽台｜🚭 禁菸房",
-        facilities: "私人陽台、海景、空調、微波爐、咖啡機、暖氣",
-        address: "1095 Main Street, Morro Bay, CA 93442, USA",
-        mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805"
-    },
-    la: {
-        city: "洛杉磯",
-        name: "Hollywood Franklin Hotel",
-        checkinDate: "2026-03-05",
-        checkoutDate: "2026-03-09",
-        checkin: "15:00 起",
-        checkout: "11:00 前",
-        room: "加大雙人床房（2 張加大床）",
-        highlight: "🎬 近環球影城｜🚭 禁菸房",
-        facilities: "游泳池、市景、空調、微波爐、咖啡機、保險箱",
-        address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA",
-        mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599"
-    }
-};
+        const accommodationData = {
+            sf: {
+                city: "舊金山",
+                name: "Riu Plaza Fisherman's Wharf",
+                checkinDate: "2026-02-26",
+                checkoutDate: "2026-03-03",
+                checkin: "15:00 起",
+                checkout: "12:00 前",
+                room: "豪華加大雙人床房（2 張加大床）",
+                highlight: "🍳 含早餐｜🚭 禁菸房",
+                facilities: "高速網路、私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機",
+                address: "2500 Mason Street, San Francisco, CA 94133, USA",
+                mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166"
+            },
+            monterey: {
+                city: "蒙特雷",
+                name: "隆恩橡木酒店",
+                checkinDate: "2026-03-03",
+                checkoutDate: "2026-03-04",
+                checkin: "15:00～23:00",
+                checkout: "05:00～11:00",
+                room: "特大雙人床房 × 2 間",
+                highlight: "🍽️ 不含餐｜🚭 禁菸房",
+                facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣",
+                address: "2221 North Fremont Street, Monterey, CA 93940, USA",
+                mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579"
+            },
+            morro: {
+                city: "莫羅貝",
+                name: "海港屋酒店",
+                checkinDate: "2026-03-04",
+                checkoutDate: "2026-03-05",
+                checkin: "15:00 起",
+                checkout: "11:00 前",
+                room: "海景豪華特大床房 × 2 間",
+                highlight: "🌊 海景陽台｜🚭 禁菸房",
+                facilities: "私人陽台、海景、空調、微波爐、咖啡機、暖氣",
+                address: "1095 Main Street, Morro Bay, CA 93442, USA",
+                mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805"
+            },
+            la: {
+                city: "洛杉磯",
+                name: "Hollywood Franklin Hotel",
+                checkinDate: "2026-03-05",
+                checkoutDate: "2026-03-09",
+                checkin: "15:00 起",
+                checkout: "11:00 前",
+                room: "加大雙人床房（2 張加大床）",
+                highlight: "🎬 近環球影城｜🚭 禁菸房",
+                facilities: "游泳池、市景、空調、微波爐、咖啡機、保險箱",
+                address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA",
+                mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599"
+            }
+        };
 
         // NEW: 景點快速查找地圖
         let attractionMap = {};
@@ -411,83 +434,202 @@ const accommodationData = {
 
         // --- Core Functions ---
 
+        // 全域變數，用於存放 Canvas 環境提供的 API Key
+        const apiKey = typeof __api_key !== 'undefined' ? __api_key : "";
+        const GEMINI_MODEL = "gemini-2.5-flash-preview-09-2025";
+        const API_BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+        /**
+         * 根據天氣狀況描述，回傳對應的 Emoji 圖示。
+         * @param {string} condition - 天氣狀況的簡短描述 (繁體中文)。
+         * @returns {string} - 對應的天氣 Emoji 圖示。
+         */
+        function weatherIcon(condition) {
+            if (!condition) return "🌡️";
+            if (condition.includes('晴')) return "☀️";
+            if (condition.includes('多雲') || condition.includes('陰')) return "☁️";
+            if (condition.includes('雨') || condition.includes('雷')) return "🌧️";
+            if (condition.includes('雪')) return "❄️";
+            if (condition.includes('霧')) return "🌫️";
+            if (condition.includes('風')) return "💨";
+            if (condition.includes('熱')) return "🔥";
+            return "🌡️";
+        }
+
+        /**
+         * 呼叫 Gemini API 取得即時天氣預報，並使用 Google Search Grounding。
+         * @param {string} location - 查詢地點 (城市名稱或座標)。
+         * @param {string} containerId - 放置天氣卡片的 DOM ID。
+         * @param {string} wearId - 放置服裝建議文字的 DOM ID。
+         * @param {boolean} [isCoord=false] - 標示 location 是否為座標。
+         */
+        async function fetchWeatherFromGemini(location, containerId, wearId, isCoord = false) {
+            const container = document.getElementById(containerId);
+            const wearText = document.getElementById(wearId);
+
+            // 1. 設定載入狀態
+            container.innerHTML = `<div class="text-sm text-gray-500">載入中...</div>`;
+            wearText.innerText = "正在取得服裝建議...";
+
+            const prompt = isCoord 
+                ? `使用 Google Search 查詢並提供座標為 ${location} 的城市名稱及其未來 3 天的天氣預報（最高溫、最低溫、天氣狀況）和服裝建議。所有資訊必須使用繁體中文。`
+                : `使用 Google Search 查詢並提供城市 ${location} 的未來 3 天的天氣預報（最高溫、最低溫、天氣狀況）和服裝建議。所有資訊必須使用繁體中文。`;
+            
+            const systemPrompt = "您是一個專業的天氣預報模型。請嚴格根據即時搜尋到的資料，以繁體中文提供未來三天的天氣預報，並以攝氏溫度 (°C) 報告。您必須且只能輸出 JSON 格式，嚴格遵守提供的 JSON Schema。";
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "city": { "type": "STRING", "description": "The determined city name (e.g., 舊金山, 洛杉磯)." },
+                            "current_wear_advice": { "type": "STRING", "description": "The overall dressing advice for the next 3 days, in Traditional Chinese." },
+                            "forecast": {
+                                "type": "ARRAY",
+                                "items": {
+                                    "type": "OBJECT",
+                                    "properties": {
+                                        "day": { "type": "STRING", "description": "e.g., '今天', '明天', '後天' or a date." },
+                                        "max_c": { "type": "INTEGER", "description": "Maximum temperature in Celsius." },
+                                        "min_c": { "type": "INTEGER", "description": "Minimum temperature in Celsius." },
+                                        "condition": { "type": "STRING", "description": "Brief weather description in Traditional Chinese (e.g., '晴天', '多雲', '有雨')." }
+                                    },
+                                    "propertyOrdering": ["day", "max_c", "min_c", "condition"]
+                                }
+                            }
+                        },
+                        propertyOrdering: ["city", "current_wear_advice", "forecast"]
+                    }
+                }
+            };
+
+            const apiUrl = `${API_BASE_URL}?key=${apiKey}`;
+            
+            // 嘗試機制 (Exponential backoff)
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 && attempt < 2) {
+                            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+                            continue; // 重試
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (!jsonText) {
+                        throw new Error("API did not return structured content.");
+                    }
+
+                    const weatherData = JSON.parse(jsonText);
+                    
+                    // 2. 渲染資料
+                    container.innerHTML = ""; // 清除載入狀態
+                    
+                    // 更新城市/地點名稱
+                    if (weatherData.city && containerId === 'weather-current') {
+                        document.getElementById('current-city').innerText = weatherData.city;
+                    }
+
+                    weatherData.forecast.forEach((dayData) => {
+                        const card = document.createElement("div");
+                        card.className = "weather-card text-center";
+                        
+                        const maxTemp = dayData.max_c !== undefined ? dayData.max_c : 'N/A';
+                        const minTemp = dayData.min_c !== undefined ? dayData.min_c : 'N/A';
+                        const conditionIcon = weatherIcon(dayData.condition);
+
+                        card.innerHTML = `
+                            <div class="text-3xl">${conditionIcon}</div>
+                            <div class="text-sm font-semibold">${dayData.day}</div>
+                            <div class="text-xs text-gray-500">${dayData.condition}</div>
+                            <div class="text-sm font-bold mt-1 text-gray-800">
+                                ${maxTemp}° / ${minTemp}°C
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+
+                    // 3. 渲染服裝建議
+                    wearText.innerText = weatherData.current_wear_advice || "未能提供服裝建議。";
+                    return; // 成功，退出函式
+
+                } catch (error) {
+                    console.error(`Error fetching weather for ${location}:`, error);
+                    container.innerHTML = `<div class="text-sm text-red-500">載入失敗。</div>`;
+                    wearText.innerText = `未能取得即時資料，請稍後再試。`;
+                    if (attempt === 2) {
+                         // 最後一次嘗試失敗
+                         break; 
+                    }
+                }
+            }
+        }
+
+        /**
+         * 透過瀏覽器定位取得目前座標，並呼叫 Gemini API 查詢天氣。
+         */
+        async function loadCurrentLocationWeather() {
+            document.getElementById("current-city").innerText = "定位中…";
+            const container = document.getElementById("weather-current");
+            const wearText = document.getElementById("wear-current");
+            container.innerHTML = `<div class="text-sm text-gray-500">正在取得位置及天氣...</div>`;
+            wearText.innerText = "正在取得服裝建議...";
+
+            if (!navigator.geolocation) {
+                document.getElementById("current-city").innerText = "定位失敗";
+                container.innerHTML = `<div class="text-sm text-red-500">您的瀏覽器不支援定位功能。</div>`;
+                wearText.innerText = "";
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(async pos => {
+                const lat = pos.coords.latitude.toFixed(4);
+                const lon = pos.coords.longitude.toFixed(4);
+
+                // 將座標傳遞給 Gemini，讓它判斷城市並預報
+                await fetchWeatherFromGemini(`${lat}, ${lon}`, "weather-current", "wear-current", true);
+
+            }, (error) => {
+                console.error("Geolocation error:", error);
+                document.getElementById("current-city").innerText = "定位失敗";
+                container.innerHTML = `<div class="text-sm text-red-500">定位權限被拒絕或發生錯誤。</div>`;
+                wearText.innerText = "無法取得目前所在地天氣。";
+            });
+        }
+
+
         function createAttractionMap() {
             attractionMap = attractions.reduce((map, item) => {
                 map[item.name] = item;
                 return map;
             }, {});
         }
-        function weatherIcon(code) {
-          if (code === 0) return "☀️";
-          if ([1, 2].includes(code)) return "🌤️";
-          if (code === 3) return "☁️";
-          if ([45, 48].includes(code)) return "🌫️";
-          if ([51, 53, 55, 61, 63, 65].includes(code)) return "🌧️";
-          if ([71, 73, 75].includes(code)) return "❄️";
-          return "🌡️";
-        }
-        function wearAdvice(maxTemp) {
-          if (maxTemp >= 28) return "👕 炎熱，短袖為主，注意防曬";
-          if (maxTemp >= 22) return "🧥 舒適，薄長袖或襯衫";
-          if (maxTemp >= 16) return "🧶 微涼，建議薄外套";
-          return "🧣 偏冷，外套或保暖層";
-        }
-        async function fetch3DayWeather(lat, lon, containerId, wearId) {
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto`;
-          const res = await fetch(url);
-          const data = await res.json();
-        
-          const container = document.getElementById(containerId);
-          container.innerHTML = "";
-        
-          data.daily.time.forEach((date, i) => {
-            const card = document.createElement("div");
-            card.className = "weather-card";
-        
-            card.innerHTML = `
-              <div class="weather-icon">${weatherIcon(data.daily.weathercode[i])}</div>
-              <div class="weather-date">${new Date(date).toLocaleDateString()}</div>
-              <div class="weather-temp">
-                ${data.daily.temperature_2m_max[i]}° /
-                ${data.daily.temperature_2m_min[i]}°
-              </div>
-            `;
-            container.appendChild(card);
-          });
-        
-          document.getElementById(wearId).innerText =
-            wearAdvice(data.daily.temperature_2m_max[0]);
-        }
-        function loadCurrentLocationWeather() {
-          if (!navigator.geolocation) {
-            document.getElementById("current-city").innerText = "無法取得定位";
-            return;
-          }
-        
-          navigator.geolocation.getCurrentPosition(async pos => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-        
-            document.getElementById("current-city").innerText = "依目前定位";
-        
-            fetch3DayWeather(lat, lon, "weather-current", "wear-current");
-          });
-        }
 
         function init() {
-            createAttractionMap(); // 呼叫新的地圖創建函數
+            createAttractionMap(); // 呼叫新的地圖創建函式
             renderFlightTable('outbound');
             renderAccommodation(); // 渲染住宿資訊
-            renderWeatherChart();
             renderItinerary('phase1'); // 預設顯示 舊金山 階段
             renderAttractions('all'); // 預設渲染所有景點
-            loadCurrentLocationWeather();       
-            // San Francisco
-            fetch3DayWeather(37.7749, -122.4194, "weather-sf", "wear-sf");
             
-            // Los Angeles
-            fetch3DayWeather(34.0522, -118.2437, "weather-la", "wear-la");
-
+            // --- NEW: 使用 Gemini API 獲取即時天氣 ---
+            loadCurrentLocationWeather();       
+            fetchWeatherFromGemini("San Francisco", "weather-sf", "wear-sf");
+            fetchWeatherFromGemini("Los Angeles", "weather-la", "wear-la");
+            // --- END NEW ---
         }
 
         function scrollToSection(id) {
@@ -600,7 +742,7 @@ const accommodationData = {
                     </div>
 
                     <!-- 飯店名稱 -->
-                    <h4 class="text-base font-bold mb-1">🏨 ${hotel.name}</h4>
+                    <h4 class="text-base font-bold mb-1"> ${hotel.name}</h4>
 
                     <!-- 城市 badge -->
                     <span class="inline-block text-xs font-bold px-2 py-1 rounded-full mb-2 ${cityStyle[hotel.city] || 'bg-gray-100 text-gray-600'}">
@@ -638,57 +780,13 @@ const accommodationData = {
             });
 
             container.innerHTML = html;
-}
-
-        function renderWeatherChart() {
-            const ctx = document.getElementById('weatherChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['早晨', '中午', '傍晚', '夜晚'],
-                    datasets: [
-                        {
-                            label: '舊金山 (SF) 氣溫 °C',
-                            data: [8, 14, 12, 9],
-                            borderColor: '#4299e1', // Ocean Blue
-                            backgroundColor: 'rgba(66, 153, 225, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: '洛杉磯 (LA) 氣溫 °C',
-                            data: [11, 21, 18, 12],
-                            borderColor: '#ed8936', // Warm Orange
-                            backgroundColor: 'rgba(237, 137, 54, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: { mode: 'index', intersect: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 0,
-                            max: 25,
-                            title: { display: true, text: '溫度 (°C)' }
-                        }
-                    }
-                }
-            });
         }
+
+        // 移除了 renderWeatherChart 函式
 
         // --- Itinerary Logic ---
 
-        // NEW: 地圖 URL 生成函數
+        // NEW: 地圖 URL 生成函式
         function generatePhaseMapUrl(phaseKey) {
             let poiList = [];
 
@@ -732,7 +830,7 @@ const accommodationData = {
             return baseUrl + encodeURIComponent(query);
         }
 
-        // 景點徽章顏色工具函數 (簡化，只用於行程中展示，不影響主要分類篩選)
+        // 景點徽章顏色工具函式 (簡化，只用於行程中展示，不影響主要分類篩選)
         function getAttractionBadgeColor(type) {
             if (type === 'History') return 'bg-amber-100 text-amber-800';
             if (type === 'Nature') return 'bg-green-100 text-green-800';
@@ -922,7 +1020,7 @@ const accommodationData = {
             
             let html = '';
             filtered.forEach(item => {
-                // 使用共用函數獲取顏色 (用於卡片頂部的類型徽章)
+                // 使用共用函式獲取顏色 (用於卡片頂部的類型徽章)
                 const badgeColor = getAttractionBadgeColor(item.type);
                 const typeLabel = item.type === 'History' ? '歷史地標' : 
                                   item.type === 'Nature' ? '自然景觀' : 
