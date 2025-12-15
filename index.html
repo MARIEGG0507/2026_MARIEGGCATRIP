@@ -1,145 +1,92 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 美西舊金山與洛杉磯之旅</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Chosen Palette: Earthy Calm */
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2026 美西舊金山與洛杉磯之旅</title>
+
+  <!-- 基本 SEO -->
+  <meta name="description" content="2026 美西舊金山與洛杉磯之旅：行程、景點、交通與天氣整理，含舊金山、優勝美地、一號公路、洛杉磯等。" />
+  https://mariegg0507.github.io/2026_MARIEGGCATRIP/
+  <meta name="theme-color" content="#d6b98c" />
+  /2026_MARIEGGCATRIP/assets/favicon.ico
+
+  <!-- OG / X Cards -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="2026 美西舊金山與洛杉磯之旅" />
+  <meta property="og:description" content="13 天 12 夜加州行：行程、景點、交通與天氣、住宿摘要。" />
+  <meta property="og:url" content="https://mariegg0507.github.io/2026_MARIEGGCATRIP/" />
+  <meta property="og:image" content="https://mariegg0507.github.io/2026_MARIEGGCATRIP/assets/cover.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="2026 美西舊金山與洛杉磯之旅" />
+  <meta name="twitter:description" content="行程與景點總覽、交通與天氣、住宿摘要。" />
+  <meta name="twitter:image" content="https://mariegg0507.github.io/2026_MARIEGGCATRIP/assets/cover.jpg" />
+
+  <!-- Tailwind / Chart.js 非阻塞載入 -->
+  https://cdn.tailwindcss.com</script>
+  https://cdn.jsdelivr.net/npm/chart.js</script>
+
+  <style>
     :root {
-        /* 奶油系基底 */
-        --bg-warm: #fbf7f2;          /* 奶油白背景 */
-        --card-bg: #ffffff;
-        --border-soft: #efe6d8;
+      --bg-warm: #fbf7f2;
+      --card-bg: #ffffff;
+      --border-soft: #efe6d8;
 
-        /* 文字 */
-        --text-primary: #3a3a3a;
-        --text-secondary: #6b6b6b;
+      --text-primary: #3a3a3a;
+      --text-secondary: #6b6b6b;
 
-        /* 主視覺強調色（只留一組） */
-        --accent-main: #d6b98c;      /* 奶茶金 */
-        --accent-main-dark: #c3a36f;
+      --accent-main: #d6b98c;
+      --accent-main-dark: #c3a36f;
 
-        /* 輔助色（低彩度） */
-        --accent-soft-blue: #cfdde6;
-        --accent-soft-green: #d9e5d8;
-        }
-    body {
-        background-color: var(--bg-warm);
-        color: var(--text-primary);
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --accent-soft-blue: #cfdde6;
+      --accent-soft-green: #d9e5d8;
+
+      /* 新增以修正未定義變數 */
+      --accent-gold: var(--accent-main);
+      --text-muted: var(--text-secondary);
     }
 
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
-        }
-        .tab-active {
-            border-bottom: 2px solid var(--accent-gold);
-            color: #d69e2e;
-            font-weight: bold;
-        }
-        .card-hover {
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        /* Custom Scrollbar for itinerary list */
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e0;
-            border-radius: 3px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #a0aec0;
-        }
-        /* Style for the clickable attraction name in itinerary */
-        .attraction-link {
-            transition: color 0.1s;
-        }
-        /* Keyframe for a subtle fade-in effect on itinerary change */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-        /* ---------- 3-Day Weather (MUJI Style) ---------- */
-        
-        .weather-card {
-            background-color: #faf7f2;
-            border: 1px solid var(--border-soft);
-            border-radius: 1rem;
-            padding: 0.75rem 1rem;
-            text-align: center;
-            min-width: 90px;
-        }
-        
-        .weather-icon {
-            font-size: 1.4rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .weather-date {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-bottom: 0.25rem;
-        }
-        
-        .weather-temp {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        /* ---------- Fix Weather Layout Overflow ---------- */
-        
-        #weather-3day .flex {
-            flex-wrap: wrap;          /* 允許換行 */
-            justify-content: flex-start;
-        }
-        
-        .weather-card {
-            flex: 1 1 calc(33.333% - 0.75rem);  /* 桌機三等分 */
-            min-width: 80px;          /* 降低最小寬 */
-            max-width: 100%;
-        }
-        
-        /* 手機優化 */
-        @media (max-width: 640px) {
-            .weather-card {
-                flex: 1 1 calc(50% - 0.75rem);  /* 兩張一排 */
-            }
-        }
+    body {
+      background-color: var(--bg-warm);
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, "Noto Sans TC", sans-serif;
+    }
 
-    </style>
-    <!-- Application Structure Plan:
-         1. Hero Section: Title, Dates, and high-level trip stats (Days, Cities).
-         2. Navigation: Simple sticky sub-nav to jump between Logistics, Itinerary, and Highlights.
-         3. Logistics Hub: Interactive section for Flights (toggle View) and Essential Info (Cards). Includes a Weather Comparison Chart (Chart.js) to visualize clothing needs. NOW includes a 13-Day Daily Forecast and Accommodation Summary.
-         4. The Journey (Itinerary): A split-view interactive timeline. Left side lists the 3 major phases (SF, PCH, LA). Clicking a phase reveals detailed day-by-day activities on the right. (Daily itinerary includes Attraction Details.)
-         5. Destination Discovery (Attractions): A filterable grid of attraction cards.
-         6. Footer: Simple closing.
-    -->
+    .chart-container { position: relative; width: 100%; max-width: 600px; margin-inline: auto; height: 300px; max-height: 400px; }
+    @media (min-width: 768px) { .chart-container { height: 350px; } }
+
+    .tab-active { border-bottom: 2px solid var(--accent-gold); color: #d69e2e; font-weight: 700; }
+
+    .card-hover { transition: transform 0.2s, box-shadow 0.2s; will-change: transform; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05); }
+
+    /* Scrollbar */
+    .custom-scroll::-webkit-scrollbar { width: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+    /* Firefox */
+    .custom-scroll { scrollbar-width: thin; scrollbar-color: #cbd5e0 #f1f1f1; }
+
+    .attraction-link { transition: color 0.1s; }
+
+    /* 動畫 */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+    .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+    @media (prefers-reduced-motion: reduce) { .animate-fade-in { animation: none; } }
+
+    /* Weather */
+    .weather-card { background-color: #faf7f2; border: 1px solid var(--border-soft); border-radius: 1rem; padding: .75rem 1rem; text-align: center; min-width: 90px; flex: 1 1 calc(33.333% - .75rem); max-width: 100%; }
+    .weather-icon { font-size: 1.4rem; margin-bottom: .25rem; }
+    .weather-date { font-size: .7rem; color: var(--text-secondary); margin-bottom: .25rem; }
+    .weather-temp { font-size: .9rem; font-weight: 500; }
+
+    #weather-3day .flex { flex-wrap: wrap; justify-content: flex-start; gap: .75rem; }
+    @media (max-width: 640px) { .weather-card { flex: 1 1 calc(50% - .75rem); } }
+  </style>
 </head>
+
 <body class="antialiased min-h-screen flex flex-col">
 
     <!-- Hero Section -->
