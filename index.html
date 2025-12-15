@@ -1,262 +1,123 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 美西舊金山與洛杉磯之旅</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <link rel="stylesheet" href="styles.css">    
-    
-    <!-- Application Structure Plan:
-         1. Hero Section: Title, Dates, and high-level trip stats (Days, Cities).
-         2. Navigation: Simple sticky sub-nav to jump between Logistics, Itinerary, and Highlights.
-         3. Logistics Hub: Interactive section for Flights (toggle View) and Essential Info (Cards). Includes a Weather Comparison Chart (Chart.js) to visualize clothing needs. NOW includes a 13-Day Daily Forecast and Accommodation Summary.
-         4. The Journey (Itinerary): A split-view interactive timeline. Left side lists the 3 major phases (SF, PCH, LA). Clicking a phase reveals detailed day-by-day activities on the right. (Daily itinerary includes Attraction Details.)
-         5. Destination Discovery (Attractions): A filterable grid of attraction cards.
-         6. Footer: Simple closing.
-    -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>2026 美西舊金山與洛杉磯之旅</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* 小型優化 */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 6px;
+}
+.weather-card {
+  text-align: center;
+  font-size: 0.875rem;
+}
+.weather-icon {
+  font-size: 1.5rem;
+}
+</style>
 </head>
-<body class="antialiased min-h-screen flex flex-col">
 
-    <!-- Hero Section -->
-    <header class="bg-white shadow-sm border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl mb-2">
-                2026 美西舊金山與洛杉磯之旅
-            </h1>
-            <p class="text-lg text-gray-600 mb-6">
-                2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行
-            </p>
-            
-            <nav aria-label="主要景點連結" class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-sm font-medium text-gray-500">
-                <a href="https://www.sftravel.com/" target="_blank" class="flex flex-col items-center hover:text-blue-600 hover:scale-110 transition-all cursor-pointer" title="前往舊金山旅遊局官網">
-                    <span class="text-2xl mb-1" aria-hidden="true">🌉</span>
-                    <span>舊金山</span>
-                </a>
-                <a href="https://www.nps.gov/yose/index.htm" target="_blank" class="flex flex-col items-center hover:text-green-600 hover:scale-110 transition-all cursor-pointer" title="前往優勝美地國家公園官網">
-                    <span class="text-2xl mb-1" aria-hidden="true">🌲</span>
-                    <span>優勝美地</span>
-                </a>
-                <a href="https://www.visitcalifornia.com/road-trips/highway-one-classic/" target="_blank" class="flex flex-col items-center hover:text-yellow-600 hover:scale-110 transition-all cursor-pointer" title="前往加州旅遊局-一號公路介紹">
-                    <span class="text-2xl mb-1" aria-hidden="true">🚗</span>
-                    <span>一號公路</span>
-                </a>
-                <a href="https://www.discoverlosangeles.com/" target="_blank" class="flex flex-col items-center hover:text-purple-600 hover:scale-110 transition-all cursor-pointer" title="前往洛杉磯旅遊局官網">
-                    <span class="text-2xl mb-1" aria-hidden="true">🎬</span>
-                    <span>洛杉磯</span>
-                </a>
-                <a href="disneyland_itinerary.html" target="_blank" class="flex flex-col items-center hover:text-red-600 hover:scale-110 transition-all cursor-pointer" title="前往迪士尼樂園官網">
-                    <span class="text-2xl mb-1" aria-hidden="true">🏰</span>
-                    <span>迪士尼樂園</span>
-                </a>
-                <a href="universal_hollywood.html" target="_blank" class="flex flex-col items-center hover:text-orange-600 hover:scale-110 transition-all cursor-pointer" title="前往環球影城官網">
-                    <span class="text-2xl mb-1" aria-hidden="true">🎥</span>
-                    <span>環球影城</span>
-                </a>
-            </nav>
-        </div>
-    </header>
+<body class="antialiased bg-gray-50">
 
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm">
-        <div class="max-w-7xl mx-auto px-4">
-            <ul class="flex justify-center space-x-8 h-12 items-center">
-                <li><button onclick="scrollToSection('logistics')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">行前準備 & 航班</button></li>
-                <li><button onclick="scrollToSection('itinerary')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">每日行程</button></li>
-                <li><button onclick="scrollToSection('highlights')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">景點探索</button></li>
-            </ul>
-        </div>
-    </nav>
+<!-- ================= HERO ================= -->
+<header class="bg-white border-b">
+  <div class="max-w-7xl mx-auto px-4 py-6 text-center">
+    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2">
+      2026 美西舊金山與洛杉磯之旅
+    </h1>
+    <p class="text-sm sm:text-lg text-gray-600 mb-6">
+      2/26 – 3/11 · 13 天 12 夜 · 加州夢幻行
+    </p>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-16">
+    <!-- ICON NAV -->
+    <div class="grid grid-cols-3 gap-4 sm:flex sm:justify-center sm:space-x-8 text-sm">
+      <a href="https://www.sftravel.com/" target="_blank" class="flex flex-col items-center hover:text-blue-600">
+        🌉<span>舊金山</span>
+      </a>
+      <a href="https://www.nps.gov/yose/index.htm" target="_blank" class="flex flex-col items-center hover:text-green-600">
+        🌲<span>優勝美地</span>
+      </a>
+      <a href="https://www.visitcalifornia.com/road-trips/highway-one-classic/" target="_blank" class="flex flex-col items-center hover:text-yellow-600">
+        🚗<span>一號公路</span>
+      </a>
+      <a href="https://www.discoverlosangeles.com/" target="_blank" class="flex flex-col items-center hover:text-purple-600">
+        🎬<span>洛杉磯</span>
+      </a>
+      <a href="disneyland_itinerary.html" target="_blank" class="flex flex-col items-center hover:text-red-600">
+        🏰<span>迪士尼</span>
+      </a>
+      <a href="universal_hollywood.html" target="_blank" class="flex flex-col items-center hover:text-orange-600">
+        🎥<span>環球影城</span>
+      </a>
+    </div>
+  </div>
+</header>
 
-        <!-- Section 1: Logistics Hub -->
-        <section id="logistics" class="scroll-mt-20">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-900">🛫 行前準備與資訊</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
-                    包含航班時間、必備文件檢查、以及當地天氣預測，協助您打包行李與規劃抵達事宜。
-                </p>
-            </div>
- 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Flight Info -->
-                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-800">✈️ 航班資訊</h3>
-                        <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
-                            <button onclick="switchFlightTab('outbound')" id="btn-outbound" class="px-3 py-1 rounded-md text-sm font-medium transition-colors bg-white shadow text-gray-900">去程</button>
-                            <button onclick="switchFlightTab('inbound')" id="btn-inbound" class="px-3 py-1 rounded-md text-sm font-medium transition-colors text-gray-500 hover:text-gray-900">回程</button>
-                        </div>
-                    </div>
-                    
-                    <div id="flight-content" class="space-y-4">
-                        <!-- Dynamic Content Loaded via JS -->
-                    </div>
-                </div>
-            
-                <!-- Weather & Tips -->
-                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex flex-col">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">🌡️ 氣溫趨勢與穿著建議</h3>
-                    <div class="flex-grow flex flex-col justify-center">
-                        <div class="chart-container mb-4">
-                            <canvas id="weatherChart"></canvas>
-                        </div>
-                        <div class="bg-yellow-50 p-4 rounded-lg text-sm text-yellow-800 border border-yellow-100">
-                            <strong>💡 穿搭筆記：</strong> 舊金山溫差大且多風，建議「洋蔥式穿法」並攜帶防風外套；洛杉磯白天溫暖，可準備薄長袖。
-                        </div>
-                    </div>
-                </div>
-                <!-- 3-Day Weather Forecast -->
-                <section id="weather-3day" class="mt-12">
-                  <h3 class="text-2xl font-semibold text-center mb-6">
-                    📍 所在地區・未來 3 天天氣
-                  </h3>
+<!-- ================= STICKY NAV ================= -->
+<nav class="sticky top-0 z-50 bg-white shadow-sm">
+  <div class="flex justify-around py-2 text-sm font-medium">
+    <button onclick="scrollToSection('logistics')" class="px-3 py-2">🛫 行前</button>
+    <button onclick="scrollToSection('itinerary')" class="px-3 py-2">🗺️ 行程</button>
+    <button onclick="scrollToSection('highlights')" class="px-3 py-2">🏛️ 景點</button>
+  </div>
+</nav>
 
-                  <div class="grid md:grid-cols-3 gap-6">
-                <!-- Current Location -->
-                  <div class="bg-white rounded-2xl p-6 shadow-lg border">
-                  <h4 class="text-lg font-medium mb-1">目前所在地</h4>
-                  <p class="text-sm text-gray-500 mb-4" id="current-city">定位中…</p>
-                  <div id="weather-current" class="flex gap-4"></div>
-                  <p id="wear-current" class="text-sm text-gray-600 mt-3"></p>
+<main class="max-w-7xl mx-auto px-4 py-8 space-y-16">
+
+<!-- ================= 行前 ================= -->
+<section id="logistics">
+  <h2 class="text-2xl font-bold text-center mb-6">🛫 行前準備</h2>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-xl p-4 shadow">
+      <h3 class="font-bold mb-2">✈️ 航班資訊</h3>
+      <div id="flight-content"></div>
     </div>
 
-                <!-- San Francisco -->
-                  <div class="bg-white rounded-2xl p-6 shadow-lg border">
-                  <h4 class="text-lg font-medium mb-1">舊金山</h4>
-                  <p class="text-sm text-gray-500 mb-4">San Francisco</p>
-                  <div id="weather-sf" class="flex gap-4"></div>
-                  <p id="wear-sf" class="text-sm text-gray-600 mt-3"></p>
+    <div class="bg-white rounded-xl p-4 shadow">
+      <h3 class="font-bold mb-2">🌡️ 氣溫趨勢</h3>
+      <canvas id="weatherChart" class="h-48"></canvas>
     </div>
-
-                <!-- Los Angeles -->
-                  <div class="bg-white rounded-2xl p-6 shadow-lg border">
-                  <h4 class="text-lg font-medium mb-1">洛杉磯</h4>
-                  <p class="text-sm text-gray-500 mb-4">Los Angeles</p>
-                  <div id="weather-la" class="flex gap-4"></div>
-                  <p id="wear-la" class="text-sm text-gray-600 mt-3"></p>
-     </div>
   </div>
 </section>
-            </div>
 
-            <!-- ACCOMMODATION SUMMARY -->
-            <div class="mt-8 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                    <span class="mr-2 text-2xl">🏨</span> 住宿規劃
-                </h3>
-                <div id="accommodation-content" class="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Dynamic Content Loaded via JS -->
-                </div>
-            </div>
-            
-            <!-- Essential Checklist Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-                <article class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                    <div class="text-2xl mb-2" aria-hidden="true">📄</div>
-                    <h4 class="font-bold text-blue-900">證件檢查</h4>
-                    <p class="text-sm text-blue-800 mt-1">護照、ESTA、國際駕照、台灣駕照正本。</p>
-                </article>
-                <article class="bg-green-50 p-4 rounded-xl border border-green-100">
-                    <div class="text-2xl mb-2" aria-hidden="true">💵</div>
-                    <h4 class="font-bold text-green-900">貨幣小費</h4>
-                    <p class="text-sm text-green-800 mt-1">使用 USD。餐廳小費約 15-20%。標價不含稅。</p>
-                </article>
-                <article class="bg-purple-50 p-4 rounded-xl border border-purple-100">
-                    <div class="text-2xl mb-2" aria-hidden="true">📱</div>
-                    <h4 class="font-bold text-purple-900">網路通訊</h4>
-                    <p class="text-sm text-purple-800 mt-1">提前購買 SIM 卡或租借 Wi-Fi 機。時區慢 16 小時。</p>
-                </article>
-                <article class="bg-red-50 p-4 rounded-xl border border-red-100">
-                    <div class="text-2xl mb-2" aria-hidden="true">🚗</div>
-                    <h4 class="font-bold text-red-900">交通須知</h4>
-                    <p class="text-sm text-red-800 mt-1">SF搭大眾運輸；LA搭Uber；PCH自駕前查路況。</p>
-                </article>
-            </div>
+<!-- ================= 行程 ================= -->
+<section id="itinerary">
+  <h2 class="text-2xl font-bold text-center mb-6">🗺️ 13 天行程</h2>
 
+  <!-- 手機版 Phase Selector -->
+  <div class="flex gap-2 overflow-x-auto mb-4 md:hidden">
+    <button onclick="renderItinerary('phase1')" class="px-4 py-2 bg-blue-100 rounded-full">SF</button>
+    <button onclick="renderItinerary('phase2')" class="px-4 py-2 bg-yellow-100 rounded-full">PCH</button>
+    <button onclick="renderItinerary('phase3')" class="px-4 py-2 bg-purple-100 rounded-full">LA</button>
+  </div>
 
-        </section>
+  <div class="bg-white rounded-xl shadow p-4">
+    <div id="itinerary-details" class="space-y-6"></div>
+  </div>
+</section>
 
-        <!-- Section 2: Itinerary -->
-        <section id="itinerary" class="scroll-mt-20">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-900">🗺️ 13 天旅程規劃</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
-                    行程分為三大主題階段。點選左側階段可查看每日詳細安排與**相關景點亮點**。
-                </p>
-            </div>
+<!-- ================= 景點 ================= -->
+<section id="highlights">
+  <h2 class="text-2xl font-bold text-center mb-6">🏛️ 精選景點</h2>
+  <div id="attraction-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</section>
 
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row h-[600px]">
-                <!-- Sidebar: Phases -->
-                <div class="w-full md:w-1/3 bg-gray-50 border-r border-gray-200 overflow-y-auto custom-scroll">
-                    <div class="p-4 space-y-2">
-                        <button onclick="renderItinerary('phase1')" id="nav-phase1" class="w-full text-left p-4 rounded-xl transition-all border-l-4 border-blue-500 bg-white shadow-sm hover:bg-blue-50 group">
-                            <div class="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">Phase 1 · 2/26 - 3/2</div>
-                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-blue-700">三藩市漫遊與NBA</h3>
-                            <p class="text-sm text-gray-500 mt-1">金門大橋、惡魔島、NBA 賽事</p>
-                        </button>
+</main>
 
-                        <button onclick="renderItinerary('phase2')" id="nav-phase2" class="w-full text-left p-4 rounded-xl transition-all border-l-4 border-transparent hover:border-yellow-500 hover:bg-yellow-50 group">
-                            <div class="text-xs font-bold text-yellow-600 uppercase tracking-wider mb-1">Phase 2 · 3/3 - 3/5</div>
-                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-yellow-700">加州一號公路</h3>
-                            <p class="text-sm text-gray-500 mt-1">絕美海岸自駕、赫氏古堡</p>
-                        </button>
-
-                        <button onclick="renderItinerary('phase3')" id="nav-phase3" class="w-full text-left p-4 rounded-xl transition-all border-l-4 border-transparent hover:border-purple-500 hover:bg-purple-50 group">
-                            <div class="text-xs font-bold text-purple-500 uppercase tracking-wider mb-1">Phase 3 · 3/6 - 3/9</div>
-                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700">天使之城與雙樂園</h3>
-                            <p class="text-sm text-gray-500 mt-1">迪士尼、環球影城、星光大道</p>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Content: Daily Details -->
-                <div class="w-full md:w-2/3 p-6 md:p-8 overflow-y-auto custom-scroll bg-white relative">
-                    <div id="itinerary-details" class="space-y-8">
-                        <!-- Content injected via JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 3: Highlights -->
-        <section id="highlights" class="scroll-mt-20">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-900">🏛️ 精選景點探索</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
-                    探索本次旅程的必訪亮點。**點擊下方景點卡片即可前往官方網站。**
-                </p>
-            </div>
-
-            <!-- Filters: Added Yosemite Button -->
-            <div class="flex flex-wrap justify-center gap-2 mb-8">
-                <button onclick="filterAttractions('all')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-800 text-white shadow-md hover:bg-gray-700 transition-colors active-filter" data-filter="all">全部顯示</button>
-                <button onclick="filterAttractions('SF')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 transition-colors" data-filter="SF">🌉 舊金山</button>
-                <button onclick="filterAttractions('Yosemite')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-green-50 hover:text-green-600 transition-colors" data-filter="Yosemite">🌲 優勝美地</button>
-                <button onclick="filterAttractions('PCH')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-yellow-50 hover:text-yellow-600 transition-colors" data-filter="PCH">🌊 一號公路</button>
-                <button onclick="filterAttractions('LA')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-purple-50 hover:text-purple-600 transition-colors" data-filter="LA">🎬 洛杉磯</button>
-            </div>
-
-            <!-- Grid -->
-            <div id="attraction-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Content injected via JS -->
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="bg-gray-900 text-white py-12 mt-12">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-2xl mb-4">🇺🇸</p>
-            <p class="text-gray-400">祝您的 2026 美西之旅充滿美好回憶！</p>
-            <div class="mt-8 text-xs text-gray-600">
-                Generated from Travel Booklet Source Data
-            </div>
-        </div>
-    </footer>
+<footer class="bg-gray-900 text-white text-center py-6">
+  <p class="text-sm text-gray-400">祝你有一趟超棒的 2026 美西之旅 🇺🇸</p>
+</footer>
 
     <script>
         // --- Data Storage ---
@@ -924,7 +785,7 @@
 
         // Initialize App
         window.addEventListener('DOMContentLoaded', init);
-
+        document.addEventListener("DOMContentLoaded", init);
     </script>
 </body>
 </html>
