@@ -134,17 +134,20 @@
                   </div>
               </div>               
             </div>
-
             <!-- ACCOMMODATION SUMMARY -->
             <div class="mt-8 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+
                 <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                     <span class="mr-2 text-2xl">🏨</span> 住宿規劃
                 </h3>
-                <div id="accommodation-content" class="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                <!-- ⭐ 正確的 grid 容器 -->
+                <div id="accommodation-content"
+                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Dynamic Content Loaded via JS -->
                 </div>
-            </div>
-            
+
+            </div>           
             <!-- Essential Checklist Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
                 <article class="bg-blue-50 p-4 rounded-xl border border-blue-100">
@@ -264,44 +267,60 @@
             ]
         };
 
-        const accommodationData = {
-            sf: {
-                name: "Riu Plaza Fisherman's Wharf",
-                dates: "2/26 - 3/3 (5 晚)",
-                city: "舊金山",
-                address: "2500 Mason Street, 漁人碼頭, 舊金山, CA 94133, 美國",
-                mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166",
-                status: "已確認 (含早餐)",
-                icon: "🌉",
-            },
-            pch_carmel: {
-                name: "隆恩橡木酒店 (Lone Oak Inn)",
-                dates: "3/3 (1 晚)",
-                city: "蒙特雷/卡梅爾 (PCH)",
-                address: "2221 North Fremont Street, 蒙特雷, CA 93940, 美國",
-                mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579", 
-                status: "已確認 (2 間房, 不含餐點)",
-                icon: "🌲",
-            }, 
-            pch_morro: {
-                name: "海港屋酒店 (Harbor House Inn)",
-                dates: "3/4 (1 晚)",
-                city: "莫羅貝 (PCH)",
-                address: "1095 Main Street, 莫羅貝, CA 93442, 美國",
-                mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805", 
-                status: "已確認 (海景豪華房)",
-                icon: "🌊",
-            },
-            la_hollywood: {
-                name: "The Hollywood Franklin Hotel near Universal Studios",
-                dates: "3/5 - 3/9 (4 晚)",
-                city: "好萊塢 (洛杉磯)",
-                address: "6141 Franklin Avenue, 好萊塢, 洛杉磯, CA 90028, 美國",
-                mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599",
-                status: "已確認 (總計 4 晚)",
-                icon: "🎬",
-            }
-        };
+const accommodationData = {
+    sf: {
+        city: "舊金山",
+        name: "Riu Plaza Fisherman's Wharf",
+        checkinDate: "2026-02-26",
+        checkoutDate: "2026-03-03",
+        checkin: "15:00 起",
+        checkout: "12:00 前",
+        room: "豪華加大雙人床房（2 張加大床）",
+        highlight: "🍳 含早餐｜🚭 禁菸房",
+        facilities: "高速網路、私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機",
+        address: "2500 Mason Street, San Francisco, CA 94133, USA",
+        mapLink: "https://maps.google.com/?q=2500+Mason+Street,+San+Francisco"
+    },
+    monterey: {
+        city: "蒙特雷",
+        name: "隆恩橡木酒店",
+        checkinDate: "2026-03-03",
+        checkoutDate: "2026-03-04",
+        checkin: "15:00～23:00",
+        checkout: "05:00～11:00",
+        room: "特大雙人床房 × 2 間",
+        highlight: "🍽️ 不含餐｜🚭 禁菸房",
+        facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣",
+        address: "2221 North Fremont Street, Monterey, CA 93940, USA",
+        mapLink: "https://maps.google.com/?q=2221+North+Fremont+Street,+Monterey"
+    },
+    morro: {
+        city: "莫羅貝",
+        name: "海港屋酒店",
+        checkinDate: "2026-03-04",
+        checkoutDate: "2026-03-05",
+        checkin: "15:00 起",
+        checkout: "11:00 前",
+        room: "海景豪華特大床房 × 2 間",
+        highlight: "🌊 海景陽台｜🚭 禁菸房",
+        facilities: "私人陽台、海景、空調、微波爐、咖啡機、暖氣",
+        address: "1095 Main Street, Morro Bay, CA 93442, USA",
+        mapLink: "https://maps.google.com/?q=1095+Main+Street,+Morro+Bay"
+    },
+    la: {
+        city: "洛杉磯",
+        name: "Hollywood Franklin Hotel",
+        checkinDate: "2026-03-05",
+        checkoutDate: "2026-03-09",
+        checkin: "15:00 起",
+        checkout: "11:00 前",
+        room: "加大雙人床房（2 張加大床）",
+        highlight: "🎬 近環球影城｜🚭 禁菸房",
+        facilities: "游泳池、市景、空調、微波爐、咖啡機、保險箱",
+        address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA",
+        mapLink: "https://maps.google.com/?q=6141+Franklin+Avenue,+Hollywood"
+    }
+};
 
         // NEW: 景點快速查找地圖
         let attractionMap = {};
@@ -552,34 +571,74 @@
         // 渲染住宿資訊
         function renderAccommodation() {
             const container = document.getElementById('accommodation-content');
-            
-            // Convert object to array for easy iteration
             const accommodations = Object.values(accommodationData);
-
             let html = '';
-            accommodations.forEach((hotel) => {
-                let colorClass = '';
-                if (hotel.city.includes('舊金山')) colorClass = 'border-blue-500 bg-blue-50 text-blue-800';
-                else if (hotel.city.includes('PCH')) colorClass = 'border-yellow-500 bg-yellow-50 text-yellow-800';
-                else colorClass = 'border-purple-500 bg-purple-50 text-purple-800';
+
+            const tripStart = new Date("2026-02-26");
+
+            const cityStyle = {
+                "舊金山": "bg-blue-100 text-blue-800",
+                "蒙特雷": "bg-yellow-100 text-yellow-800",
+                "莫羅貝": "bg-green-100 text-green-800",
+                "洛杉磯": "bg-purple-100 text-purple-800"
+            };
+
+            accommodations.forEach(hotel => {
+                const checkin = new Date(hotel.checkinDate);
+                const checkout = new Date(hotel.checkoutDate);
+
+                const nights = Math.round((checkout - checkin) / (1000 * 60 * 60 * 24));
+                const dayIndex = Math.round((checkin - tripStart) / (1000 * 60 * 60 * 24)) + 1;
 
                 html += `
-                    <div class="p-4 rounded-xl border-l-4 ${colorClass} shadow-inner">
-                        <h4 class="text-base font-bold mb-1">
-                            ${hotel.city} <span class="text-sm font-medium">(${hotel.dates})</span>
-                        </h4>
-                        <p class="text-sm font-semibold mb-1">${hotel.name}</p>
-                        <p class="text-xs italic">📍 地址: ${hotel.address}</p>
-                        <a href="${hotel.mapLink !== '#' ? hotel.mapLink : 'javascript:void(0)'}" target="_blank" class="text-xs font-medium ${hotel.mapLink !== '#' ? 'text-gray-700 hover:underline' : 'text-gray-400 cursor-default'} inline-flex items-center mt-2">
-                            ${hotel.mapLink !== '#' ? '查看地圖' : '地圖連結待補'}
-                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                        </a>
+                <div class="bg-white rounded-2xl border shadow-sm p-5 flex flex-col justify-between">
+
+                    <!-- 上方標籤 -->
+                    <div class="flex justify-between items-center mb-3 text-xs">
+                        <span class="font-bold text-red-600">Day ${dayIndex}</span>
+                        <span class="text-gray-500">${nights} 晚</span>
                     </div>
+
+                    <!-- 飯店名稱 -->
+                    <h4 class="text-base font-bold mb-1">🏨 ${hotel.name}</h4>
+
+                    <!-- 城市 badge -->
+                    <span class="inline-block text-xs font-bold px-2 py-1 rounded-full mb-2 ${cityStyle[hotel.city] || 'bg-gray-100 text-gray-600'}">
+                        ${hotel.city}
+                    </span>
+
+                    <!-- 日期 -->
+                    <p class="text-xs text-gray-600 mb-2">
+                        📅 ${hotel.checkinDate} → ${hotel.checkoutDate}
+                    </p>
+
+                    <!-- 房型 -->
+                    <p class="text-sm text-gray-700 mb-1">
+                        🛏️ ${hotel.room}
+                    </p>
+
+                    <!-- 重點 -->
+                    <p class="text-xs text-gray-500 mb-3">
+                        ${hotel.highlight}
+                    </p>
+
+                    <!-- 地址 -->
+                    <p class="text-xs text-gray-500 mb-3">
+                        📍 ${hotel.address}
+                    </p>
+
+                    <!-- 地圖 -->
+                    <a href="${hotel.mapLink}" target="_blank"
+                       class="text-sm text-blue-600 font-medium hover:underline">
+                       查看 Google 地圖 →
+                    </a>
+
+                </div>
                 `;
             });
-            
+
             container.innerHTML = html;
-        }
+}
 
         function renderWeatherChart() {
             const ctx = document.getElementById('weatherChart').getContext('2d');
