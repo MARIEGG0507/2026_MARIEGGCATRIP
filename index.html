@@ -6,8 +6,7 @@
     <title>2026 美西舊金山與洛杉磯之旅</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 移除了 Chart.js，因為天氣圖表已移除，改用即時數據 -->
-    
+    <!-- 移除了 Chart.js，因為天氣圖表已移除，改用即時數據 -->    
     <link rel="stylesheet" href="styles.css">    
     
     <!-- Application Structure Plan:
@@ -432,182 +431,133 @@
             }
         };
 
-        // --- Core Functions ---
+         // --- Helper Functions for Gemini API ---
 
-        // 全域變數，用於存放 Canvas 環境提供的 API Key
-        const apiKey = typeof __api_key !== 'undefined' ? __api_key : "";
-        const GEMINI_MODEL = "gemini-2.5-flash-preview-09-2025";
-        const API_BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
-
-        /**
-         * 根據天氣狀況描述，回傳對應的 Emoji 圖示。
-         * @param {string} condition - 天氣狀況的簡短描述 (繁體中文)。
-         * @returns {string} - 對應的天氣 Emoji 圖示。
-         */
-        function weatherIcon(condition) {
-            if (!condition) return "🌡️";
-            if (condition.includes('晴')) return "☀️";
-            if (condition.includes('多雲') || condition.includes('陰')) return "☁️";
-            if (condition.includes('雨') || condition.includes('雷')) return "🌧️";
-            if (condition.includes('雪')) return "❄️";
-            if (condition.includes('霧')) return "🌫️";
-            if (condition.includes('風')) return "💨";
-            if (condition.includes('熱')) return "🔥";
-            return "🌡️";
-        }
-
-        /**
-         * 呼叫 Gemini API 取得即時天氣預報，並使用 Google Search Grounding。
-         * @param {string} location - 查詢地點 (城市名稱或座標)。
-         * @param {string} containerId - 放置天氣卡片的 DOM ID。
-         * @param {string} wearId - 放置服裝建議文字的 DOM ID。
-         * @param {boolean} [isCoord=false] - 標示 location 是否為座標。
-         */
-        async function fetchWeatherFromGemini(location, containerId, wearId, isCoord = false) {
-            const container = document.getElementById(containerId);
-            const wearText = document.getElementById(wearId);
-
-            // 1. 設定載入狀態
-            container.innerHTML = `<div class="text-sm text-gray-500">載入中...</div>`;
-            wearText.innerText = "正在取得服裝建議...";
-
-            const prompt = isCoord 
-                ? `使用 Google Search 查詢並提供座標為 ${location} 的城市名稱及其未來 3 天的天氣預報（最高溫、最低溫、天氣狀況）和服裝建議。所有資訊必須使用繁體中文。`
-                : `使用 Google Search 查詢並提供城市 ${location} 的未來 3 天的天氣預報（最高溫、最低溫、天氣狀況）和服裝建議。所有資訊必須使用繁體中文。`;
-            
-            const systemPrompt = "您是一個專業的天氣預報模型。請嚴格根據即時搜尋到的資料，以繁體中文提供未來三天的天氣預報，並以攝氏溫度 (°C) 報告。您必須且只能輸出 JSON 格式，嚴格遵守提供的 JSON Schema。";
-
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                tools: [{ "google_search": {} }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            "city": { "type": "STRING", "description": "The determined city name (e.g., 舊金山, 洛杉磯)." },
-                            "current_wear_advice": { "type": "STRING", "description": "The overall dressing advice for the next 3 days, in Traditional Chinese." },
-                            "forecast": {
-                                "type": "ARRAY",
-                                "items": {
-                                    "type": "OBJECT",
-                                    "properties": {
-                                        "day": { "type": "STRING", "description": "e.g., '今天', '明天', '後天' or a date." },
-                                        "max_c": { "type": "INTEGER", "description": "Maximum temperature in Celsius." },
-                                        "min_c": { "type": "INTEGER", "description": "Minimum temperature in Celsius." },
-                                        "condition": { "type": "STRING", "description": "Brief weather description in Traditional Chinese (e.g., '晴天', '多雲', '有雨')." }
-                                    },
-                                    "propertyOrdering": ["day", "max_c", "min_c", "condition"]
-                                }
-                            }
-                        },
-                        propertyOrdering: ["city", "current_wear_advice", "forecast"]
-                    }
-                }
-            };
-
-            const apiUrl = `${API_BASE_URL}?key=${apiKey}`;
-            
-            // 嘗試機制 (Exponential backoff)
-            for (let attempt = 0; attempt < 3; attempt++) {
+        // Exponential backoff for retrying API calls
+        async function fetchWithBackoff(url, options, maxRetries = 5) {
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
                 try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
+                    const response = await fetch(url, options);
                     if (!response.ok) {
-                        if (response.status === 429 && attempt < 2) {
-                            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
-                            continue; // 重試
+                        if (response.status === 429 && attempt < maxRetries - 1) {
+                            throw new Error('Rate limit exceeded, retrying...');
                         }
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-
-                    const result = await response.json();
-                    const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                    if (!jsonText) {
-                        throw new Error("API did not return structured content.");
-                    }
-
-                    const weatherData = JSON.parse(jsonText);
-                    
-                    // 2. 渲染資料
-                    container.innerHTML = ""; // 清除載入狀態
-                    
-                    // 更新城市/地點名稱
-                    if (weatherData.city && containerId === 'weather-current') {
-                        document.getElementById('current-city').innerText = weatherData.city;
-                    }
-
-                    weatherData.forecast.forEach((dayData) => {
-                        const card = document.createElement("div");
-                        card.className = "weather-card text-center";
-                        
-                        const maxTemp = dayData.max_c !== undefined ? dayData.max_c : 'N/A';
-                        const minTemp = dayData.min_c !== undefined ? dayData.min_c : 'N/A';
-                        const conditionIcon = weatherIcon(dayData.condition);
-
-                        card.innerHTML = `
-                            <div class="text-3xl">${conditionIcon}</div>
-                            <div class="text-sm font-semibold">${dayData.day}</div>
-                            <div class="text-xs text-gray-500">${dayData.condition}</div>
-                            <div class="text-sm font-bold mt-1 text-gray-800">
-                                ${maxTemp}° / ${minTemp}°C
-                            </div>
-                        `;
-                        container.appendChild(card);
-                    });
-
-                    // 3. 渲染服裝建議
-                    wearText.innerText = weatherData.current_wear_advice || "未能提供服裝建議。";
-                    return; // 成功，退出函式
-
+                    return response;
                 } catch (error) {
-                    console.error(`Error fetching weather for ${location}:`, error);
-                    container.innerHTML = `<div class="text-sm text-red-500">載入失敗。</div>`;
-                    wearText.innerText = `未能取得即時資料，請稍後再試。`;
-                    if (attempt === 2) {
-                         // 最後一次嘗試失敗
-                         break; 
+                    if (attempt === maxRetries - 1) {
+                        console.error("Fetch failed after all retries:", error);
+                        throw error;
                     }
+                    const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
                 }
             }
         }
 
-        /**
-         * 透過瀏覽器定位取得目前座標，並呼叫 Gemini API 查詢天氣。
-         */
-        async function loadCurrentLocationWeather() {
-            document.getElementById("current-city").innerText = "定位中…";
-            const container = document.getElementById("weather-current");
-            const wearText = document.getElementById("wear-current");
-            container.innerHTML = `<div class="text-sm text-gray-500">正在取得位置及天氣...</div>`;
-            wearText.innerText = "正在取得服裝建議...";
+        // Renamed function to display weather data (formerly renderWeather)
+        function displayWeatherForecast(data, elementId) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
 
-            if (!navigator.geolocation) {
-                document.getElementById("current-city").innerText = "定位失敗";
-                container.innerHTML = `<div class="text-sm text-red-500">您的瀏覽器不支援定位功能。</div>`;
-                wearText.innerText = "";
-                return;
+            // 1. 生成 HTML 預報卡片 (溫度/圖標)
+            container.innerHTML = data.map(d => `
+                <div class="text-center flex-1">
+                    <p class="text-sm text-gray-500">${d.day}</p>
+                    <div class="text-3xl my-1">${d.icon}</div>
+                    <p class="text-xl font-bold text-gray-800">${d.temp}°C</p>
+                </div>
+            `).join('');
+            
+            // 2. 動態生成穿搭建議
+            const wearElement = document.getElementById(`wear-${elementId.split('-')[1]}`);
+            if (wearElement) {
+                // 簡單地結合每天的穿搭建議作為總結
+                const allWear = data.map(d => d.wear).join('、');
+                wearElement.innerHTML = `<span class="font-bold text-gray-700">三日穿搭總結:</span> ${allWear}。`;
+            }
+        }
+
+        // Core function to fetch real-time weather using Gemini API
+        async function fetchRealTimeWeather(city, elementId, displayName) {
+            const currentCityElement = document.getElementById('current-city');
+            const wearElement = document.getElementById(`wear-${elementId.split('-')[1]}`);
+            const container = document.getElementById(elementId);
+
+            if (elementId === 'weather-current' && currentCityElement) {
+                currentCityElement.textContent = `${displayName || city} (定位/預設)`;
             }
 
-            navigator.geolocation.getCurrentPosition(async pos => {
-                const lat = pos.coords.latitude.toFixed(4);
-                const lon = pos.coords.longitude.toFixed(4);
+            // Set loading state
+            if (container) {
+                container.innerHTML = '<div class="text-gray-500 col-span-3 text-center w-full text-sm">載入中...</div>';
+            }
+            if (wearElement) {
+                wearElement.textContent = '獲取即時資訊中...';
+            }
+            
+            // Construct the prompt for structured, real-time data
+            const userQuery = `請使用 Google 搜尋獲取今日及未來兩日共 3 天的 ${city} 天氣預報。請以 **攝氏** 溫度報告。
+                **請按照以下嚴格的 '|' 分隔符號格式輸出單一字串，不要包含其他文字或換行：**
+                Day1|Temp1|Icon1|Wear1;Day2|Temp2|Icon2|Wear2;Day3|Temp3|Icon3|Wear3
+                其中：
+                - Day: 今日/明天/後天 (Today/Tomorrow/Day After)
+                - Temp: 預計最高溫數字 (e.g., 25)
+                - Icon: 使用單一的中文表情符號 (e.g., ☀️, ☁️, 🌧️, ❄️)
+                - Wear: 簡短的穿搭建議 (e.g., 輕便T恤)
+                範例輸出：今日|28|☀️|短袖襯衫;明天|25|☁️|薄外套;後天|20|🌧️|雨具和長袖`;
 
-                // 將座標傳遞給 Gemini，讓它判斷城市並預報
-                await fetchWeatherFromGemini(`${lat}, ${lon}`, "weather-current", "wear-current", true);
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: { parts: [{ text: "你是一位精準的氣象播報員，只能輸出要求的 '|' 分隔格式字串。不需要任何前言或解釋。" }] }
+            };
 
-            }, (error) => {
-                console.error("Geolocation error:", error);
-                document.getElementById("current-city").innerText = "定位失敗";
-                container.innerHTML = `<div class="text-sm text-red-500">定位權限被拒絕或發生錯誤。</div>`;
-                wearText.innerText = "無法取得目前所在地天氣。";
-            });
+            try {
+                const response = await fetchWithBackoff(apiUrlTemplate, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+                // Parse the structured text output
+                const daysRaw = text.split(';');
+                if (daysRaw.length < 3) {
+                    throw new Error("無法解析天氣數據，LLM 輸出格式不正確。");
+                }
+
+                const parsedForecast = daysRaw.slice(0, 3).map(dayStr => {
+                    const parts = dayStr.split('|').map(p => p.trim());
+                    if (parts.length === 4) {
+                        return {
+                            day: parts[0],
+                            temp: parseInt(parts[1].match(/\d+/)?.[0] || '0', 10), // Ensure we only get the number
+                            icon: parts[2],
+                            wear: parts[3]
+                        };
+                    }
+                    return null;
+                }).filter(item => item !== null);
+
+                if (parsedForecast.length === 3) {
+                    displayWeatherForecast(parsedForecast, elementId);
+                } else {
+                    throw new Error("數據解析後不足 3 天。");
+                }
+                
+            } catch (error) {
+                console.error(`Error fetching weather for ${city}:`, error);
+                if (container) {
+                    container.innerHTML = '<div class="text-red-500 col-span-3 text-center w-full text-sm">數據獲取失敗 🚫</div>';
+                }
+                if (wearElement) {
+                    wearElement.textContent = '無法獲取即時資訊，請檢查連線或稍後重試。';
+                }
+            }
         }
 
 
