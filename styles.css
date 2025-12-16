@@ -121,3 +121,88 @@ body {
         flex: 1 1 calc(50% - 0.75rem); /* 兩張一排 */
     }
 }
+<style>
+/* ===== Mobile UX Optimizations ===== */
+@media (max-width: 768px) {
+
+  /* Hero 字級縮小 */
+  h1 {
+    font-size: 1.8rem !important;
+    line-height: 1.25;
+  }
+
+  /* Sticky Nav 變成可滑動 */
+  nav ul {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start !important;
+  }
+
+  nav ul li {
+    flex-shrink: 0;
+  }
+
+  /* 主內容 padding 縮小 */
+  main {
+    padding-top: 1rem !important;
+  }
+
+  /* 行程區塊：取消左右分欄，改上下 */
+  #itinerary .flex {
+    flex-direction: column !important;
+    height: auto !important;
+  }
+
+  /* Phase sidebar 改成橫向滑動 */
+  #itinerary .md\\:w-1\\/3 {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e5e7eb;
+    overflow-x: auto;
+    display: flex;
+  }
+
+  #itinerary .md\\:w-1\\/3 > div {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  #itinerary button[id^="nav-phase"] {
+    min-width: 260px;
+  }
+
+  /* 行程內容 padding 縮小 */
+  #itinerary-details {
+    padding: 0.5rem !important;
+  }
+
+  /* 每日卡片 */
+  #itinerary-details .p-5 {
+    padding: 1rem !important;
+  }
+
+  /* 天氣卡片允許橫滑 */
+  #weather-current,
+  #weather-sf,
+  #weather-la {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .weather-card {
+    min-width: 72px;
+  }
+
+  /* 景點卡片字距 */
+  #attraction-grid p {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  /* Footer 縮小 */
+  footer {
+    padding: 2rem 1rem;
+  }
+}
+</style>
