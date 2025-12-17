@@ -23,10 +23,10 @@
     <header class="bg-white shadow-sm border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
             <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl mb-2">
-                2026 美西｜舊金山與洛杉磯之旅
+                美西舊金山與洛杉磯之旅
             </h1>
             <p class="text-lg text-gray-600 mb-6">
-                2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行
+                2026年 2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行
             </p>                       
         </div>
     </header>
@@ -1039,9 +1039,10 @@ const accommodationData = {
         window.addEventListener('DOMContentLoaded', init);
 
     </script>
+        <!-- 捲動至頂部按鈕 (Scroll to Top Button) - 實現透明底 -->
     <button onclick="window.scrollTo({top:0,behavior:'smooth'})"
-      class="fixed bottom-4 right-4 z-50 bg-gray-800 text-white w-12 h-12 rounded-full shadow-lg md:hidden">
-      ⬆️
+        class="fixed bottom-4 right-4 z-50 bg-transparent text-indigo-600 w-12 h-12 rounded-full shadow-lg border-2 border-indigo-400 flex items-center justify-center md:hidden transition-all duration-300 hover:bg-indigo-100/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+        <span class="text-2xl">⬆️</span>
     </button>
 </body>
 </html>
