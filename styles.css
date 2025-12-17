@@ -1,208 +1,179 @@
-/* Chosen Palette: Earthy Calm */
+/* ==========================================================================
+   Palette: Earthy Calm (優化版)
+   ========================================================================== */
 :root {
-    /* 奶油系基底 */
-    --bg-warm: #fbf7f2;       /* 奶油白背景 */
-    --card-bg: #ffffff;
-    --border-soft: #efe6d8;
+    /* 1. 基礎色 (Base Colors) */
+    --color-bg-body: #fbf7f2;         /* 奶油白背景 */
+    --color-bg-card: #ffffff;         /* 卡片背景 */
+    --color-bg-secondary: #faf7f2;    /* 略深/暖的背景 (用於區塊分隔) */
+    --color-border-soft: #efe6d8;     /* 柔和邊框 */
+    --color-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 
-    /* 文字 */
-    --text-primary: #3a3a3a;
-    --text-secondary: #6b6b6b;
+    /* 2. 文字色 (Text Colors) */
+    --color-text-primary: #3a3a3a;    
+    --color-text-secondary: #6b6b6b;  
+    --color-text-muted: #a09a93;      /* 靜音/提示文字 */
+    --color-text-link-hover: #1e70bf; 
 
-    /* 主視覺強調色（已修正使用 --accent-main） */
-    --accent-main: #d6b98c;       /* 奶茶金 */
-    --accent-main-dark: #c3a36f;
+    /* 3. 主題色 (Accent Colors) */
+    --color-accent-main: #d6b98c;     /* 奶茶金 */
+    --color-accent-main-dark: #c3a36f;
+    --color-accent-main-text: #a4855d;
 
-    /* 輔助色（低彩度） */
-    --accent-soft-blue: #cfdde6;
-    --accent-soft-green: #d9e5d8;
+    /* 4. 輔助色 (Utility Colors) */
+    --color-utility-blue: #cfdde6;    
+    --color-utility-green: #d9e5d8;   
 }
+
+/* ==========================================================================
+   A. 全域樣式 (Global Styles)
+   ========================================================================== */
 body {
-    background-color: var(--bg-warm);
-    color: var(--text-primary);
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--color-bg-body);
+    color: var(--color-text-primary);
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
 }
 
-.chart-container {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    height: 300px;
-    max-height: 400px;
-}
-@media (min-width: 768px) {
-    .chart-container {
-        height: 350px;
-    }
-}
-.tab-active {
-    /* **注意：確保這裡的變數名稱與 :root 中定義的一致** */
-    border-bottom: 2px solid var(--accent-main); /* 修正自 --accent-gold */
-    color: #d69e2e; /* Tailwind yellow-600 */
-    font-weight: bold;
-}
-.card-hover {
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-.card-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-/* Custom Scrollbar for itinerary list */
+/* 捲軸優化 */
 .custom-scroll::-webkit-scrollbar {
     width: 6px;
 }
 .custom-scroll::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--color-bg-body);
 }
 .custom-scroll::-webkit-scrollbar-thumb {
-    background: #cbd5e0;
+    background: var(--color-border-soft);
     border-radius: 3px;
 }
 .custom-scroll::-webkit-scrollbar-thumb:hover {
-    background: #a0aec0;
+    background: var(--color-text-muted);
 }
-/* Style for the clickable attraction name in itinerary */
+
+/* ==========================================================================
+   B. 元件樣式 (Components)
+   ========================================================================== */
+
+/* 活躍標籤 */
+.tab-active {
+    border-bottom: 3px solid var(--color-accent-main-dark);
+    color: var(--color-accent-main-text); 
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+}
+
+/* 卡片懸停 */
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--color-shadow);
+}
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* 景點連結 */
 .attraction-link {
-    transition: color 0.1s;
+    transition: color 0.2s ease;
 }
-/* Keyframe for a subtle fade-in effect on itinerary change */
+.attraction-link:hover {
+    color: var(--color-accent-main-text);
+    text-decoration: underline;
+}
+
+/* 天氣卡片 */
+.weather-card {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-soft);
+    border-radius: 0.5rem;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+}
+.weather-icon { font-size: 1.6rem; margin-bottom: 0.25rem; }
+.weather-date { font-size: 0.75rem; color: var(--color-text-muted); }
+.weather-temp { font-size: 1rem; font-weight: 600; }
+
+/* 圖表容器 */
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    height: 320px;
+}
+
+/* ==========================================================================
+   C. 動畫 (Animations)
+   ========================================================================== */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
-}
-/* ---------- 3-Day Weather (MUJI Style) ---------- */
-
-.weather-card {
-    background-color: #faf7f2;
-    border: 1px solid var(--border-soft);
-    border-radius: 1rem;
-    padding: 0.75rem 1rem;
-    text-align: center;
-    min-width: 90px;
+    animation: fadeIn 0.6s ease-out;
 }
 
-.weather-icon {
-    font-size: 1.4rem;
-    margin-bottom: 0.25rem;
-}
-
-.weather-date {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    margin-bottom: 0.25rem;
-}
-
-.weather-temp {
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-/* ---------- Fix Weather Layout Overflow ---------- */
-
-#weather-3day .flex {
-    flex-wrap: wrap;       /* 允許換行 */
-    justify-content: flex-start;
-}
-
-.weather-card {
-    flex: 1 1 calc(33.333% - 0.75rem); /* 桌機三等分 */
-    min-width: 80px;         /* 降低最小寬 */
-    max-width: 100%;
-}
-
-/* 手機優化 */
-@media (max-width: 640px) {
-    .weather-card {
-        flex: 1 1 calc(50% - 0.75rem); /* 兩張一排 */
-    }
-}
-<style>
-/* ===== Mobile UX Optimizations ===== */
+/* ==========================================================================
+   D. 響應式優化 (Mobile UX Optimizations)
+   ========================================================================== */
 @media (max-width: 768px) {
+    /* 標題縮小 */
+    h1 { font-size: 1.8rem !important; }
 
-  /* Hero 字級縮小 */
-  h1 {
-    font-size: 1.8rem !important;
-    line-height: 1.25;
-  }
+    /* 導航列改為橫向滑動 */
+    nav ul {
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start !important;
+        gap: 1rem;
+        padding-bottom: 0.5rem;
+    }
+    nav ul li { flex-shrink: 0; }
 
-  /* Sticky Nav 變成可滑動 */
-  nav ul {
-    flex-wrap: nowrap !important;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    justify-content: flex-start !important;
-  }
+    /* 行程區塊改為垂直排列 */
+    #itinerary .flex { flex-direction: column !important; height: auto !important; }
+    
+    /* 階段導航橫向滾動 */
+    #itinerary .md\:w-1\/3 {
+        width: 100% !important;
+        border-right: none !important;
+        border-bottom: 1px solid var(--color-border-soft);
+        overflow-x: auto;
+        display: flex;
+        padding-bottom: 0.5rem;
+    }
+    #itinerary button[id^="nav-phase"] { min-width: 220px; flex-shrink: 0; }
 
-  nav ul li {
-    flex-shrink: 0;
-  }
+    /* 天氣卡片橫滑 */
+    #weather-current, #weather-sf, #weather-la, #weather-3day .flex {
+        overflow-x: auto;
+        display: flex;
+        gap: 0.5rem;
+        padding-bottom: 0.5rem;
+        flex-wrap: nowrap !important;
+    }
+    .weather-card { min-width: 75px; flex: 0 0 auto; }
 
-  /* 主內容 padding 縮小 */
-  main {
-    padding-top: 1rem !important;
-  }
-
-  /* 行程區塊：取消左右分欄，改上下 */
-  #itinerary .flex {
-    flex-direction: column !important;
-    height: auto !important;
-  }
-
-  /* Phase sidebar 改成橫向滑動 */
-  #itinerary .md\\:w-1\\/3 {
-    width: 100% !important;
-    border-right: none !important;
-    border-bottom: 1px solid #e5e7eb;
-    overflow-x: auto;
-    display: flex;
-  }
-
-  #itinerary .md\\:w-1\\/3 > div {
-    display: flex;
-    gap: 0.75rem;
-  }
-
-  #itinerary button[id^="nav-phase"] {
-    min-width: 260px;
-  }
-
-  /* 行程內容 padding 縮小 */
-  #itinerary-details {
-    padding: 0.5rem !important;
-  }
-
-  /* 每日卡片 */
-  #itinerary-details .p-5 {
-    padding: 1rem !important;
-  }
-
-  /* 天氣卡片允許橫滑 */
-  #weather-current,
-  #weather-sf,
-  #weather-la {
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
-  }
-
-  .weather-card {
-    min-width: 72px;
-  }
-
-  /* 景點卡片字距 */
-  #attraction-grid p {
-    font-size: 0.875rem;
-    line-height: 1.5;
-  }
-
-  /* Footer 縮小 */
-  footer {
-    padding: 2rem 1rem;
-  }
+    /* 圖表高度調整 */
+    .chart-container { height: 280px; }
 }
-</style>
+
+/* 置頂按鈕樣式 */
+.scroll-to-top-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 50;
+    background-color: transparent;
+    color: #4f46e5;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    border: 2px solid #a5b4fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
