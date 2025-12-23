@@ -10,11 +10,12 @@
     
     <!-- Application Structure Plan:
          1. Hero Section: Title, Dates, and high-level trip stats (Days, Cities).
-         2. Navigation: Simple sticky sub-nav to jump between Logistics, Itinerary, and Highlights.
-         3. Logistics Hub: Interactive section for Flights (toggle View) and Essential Info (Cards). Includes a Weather Comparison Chart (Chart.js) to visualize clothing needs. NOW includes a 13-Day Daily Forecast and Accommodation Summary.
-         4. The Journey (Itinerary): A split-view interactive timeline. Left side lists the 3 major phases (SF, PCH, LA). Clicking a phase reveals detailed day-by-day activities on the right. (Daily itinerary includes Attraction Details.)
-         5. Destination Discovery (Attractions): A filterable grid of attraction cards.
-         6. Footer: Simple closing.
+         2. Navigation: Simple sticky sub-nav to jump between Logistics, Itinerary, Dining, and Highlights.
+         3. Logistics Hub: Interactive section for Flights (toggle View) and Essential Info (Cards).
+         4. The Journey (Itinerary): A split-view interactive timeline.
+         5. Dining Guide: A filterable grid of restaurant recommendations. (NEW)
+         6. Destination Discovery (Attractions): A filterable grid of attraction cards.
+         7. Footer: Simple closing.
     -->
 </head>
 <body class="antialiased min-h-screen flex flex-col">
@@ -44,6 +45,13 @@
               <li>
                   <button onclick="scrollToSection('itinerary')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">
                      🗺️ 每日行程
+                  </button>
+              </li>
+
+              <!-- NEW: Dining Nav Item -->
+              <li>
+                  <button onclick="scrollToSection('dining')" class="text-gray-600 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors">
+                     🍽️ 美食推薦
                   </button>
               </li>
 
@@ -110,7 +118,6 @@
                           <p class="text-sm text-gray-500 mb-4" id="current-city">定位中…</p>
                           <div id="weather-current" class="flex gap-4"></div>
                           <p id="wear-current" class="text-sm text-gray-600 mt-3"></p>
-                          <!-- 移除：原先的「數據由 Gemini API 驅動」文字，避免誤導 -->
                       </div>
 
                       <!-- San Francisco -->
@@ -221,6 +228,29 @@
             </div>
         </section>
 
+        <!-- NEW Section: Dining Guide (Inserted before Highlights) -->
+        <section id="dining" class="scroll-mt-20">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">🍽️ 精選餐廳推薦清單</h2>
+                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
+                    從舊金山的經典酸麵包濃湯到洛杉磯的必吃漢堡，為您精選在地風味。
+                </p>
+            </div>
+
+            <!-- Dining Filters -->
+            <div class="flex flex-wrap justify-center gap-2 mb-8">
+                 <button onclick="filterDining('all')" class="dining-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-800 text-white shadow-md hover:bg-gray-700 transition-colors" data-filter="all">全部</button>
+                 <button onclick="filterDining('SF')" class="dining-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 transition-colors" data-filter="SF">🌉 舊金山</button>
+                 <button onclick="filterDining('PCH')" class="dining-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-yellow-50 hover:text-yellow-600 transition-colors" data-filter="PCH">🌊 一號公路</button>
+                 <button onclick="filterDining('LA')" class="dining-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-purple-50 hover:text-purple-600 transition-colors" data-filter="LA">🍔 洛杉磯</button>
+            </div>
+
+            <!-- Dining Grid -->
+            <div id="dining-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Content injected via JS -->
+            </div>
+        </section>
+
         <!-- Section 3: Highlights -->
         <section id="highlights" class="scroll-mt-20">
             <div class="text-center mb-8">
@@ -230,7 +260,7 @@
                 </p>
             </div>
 
-            <!-- Filters: Added Yosemite Button -->
+            <!-- Filters -->
             <div class="flex flex-wrap justify-center gap-2 mb-8">
                 <button onclick="filterAttractions('all')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-800 text-white shadow-md hover:bg-gray-700 transition-colors active-filter" data-filter="all">全部顯示</button>
                 <button onclick="filterAttractions('SF')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 transition-colors" data-filter="SF">🌉 舊金山</button>
@@ -271,65 +301,85 @@
             ]
         };
 
-const accommodationData = {
-    sf: {
-        city: "舊金山",
-        name: "Riu Plaza Fisherman's Wharf",
-        checkinDate: "2026-02-26",
-        checkoutDate: "2026-03-03",
-        checkin: "15:00 起",
-        checkout: "12:00 前",
-        room: "豪華加大雙人床房（2 張加大床）",
-        highlight: "🍳 含早餐｜🚭 禁菸房",
-        facilities: "高速網路、私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機",
-        address: "2500 Mason Street, San Francisco, CA 94133, USA",
-        mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166"
-    },
-    monterey: {
-        city: "蒙特雷",
-        name: "隆恩橡木酒店",
-        checkinDate: "2026-03-03",
-        checkoutDate: "2026-03-04",
-        checkin: "15:00～23:00",
-        checkout: "05:00～11:00",
-        room: "特大雙人床房 × 2 間",
-        highlight: "🍽️ 不含餐｜🚭 禁菸房",
-        facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣",
-        address: "2221 North Fremont Street, Monterey, CA 93940, USA",
-        mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579"
-    },
-    morro: {
-        city: "莫羅貝",
-        name: "海港屋酒店",
-        checkinDate: "2026-03-04",
-        checkoutDate: "2026-03-05",
-        checkin: "15:00 起",
-        checkout: "11:00 前",
-        room: "海景豪華特大床房 × 2 間",
-        highlight: "🌊 海景陽台｜🚭 禁菸房",
-        facilities: "私人陽台、海景、空調、微波爐、咖啡機、暖氣",
-        address: "1095 Main Street, Morro Bay, CA 93442, USA",
-        mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805"
-    },
-    la: {
-        city: "洛杉磯",
-        name: "Hollywood Franklin Hotel",
-        checkinDate: "2026-03-05",
-        checkoutDate: "2026-03-09",
-        checkin: "15:00 起",
-        checkout: "11:00 前",
-        room: "加大雙人床房（2 張加大床）",
-        highlight: "🎬 近環球影城｜🚭 禁菸房",
-        facilities: "游泳池、市景、空調、微波爐、咖啡機、保險箱",
-        address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA",
-        mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599"
-    }
-};
+        const accommodationData = {
+            sf: {
+                city: "舊金山",
+                name: "Riu Plaza Fisherman's Wharf",
+                checkinDate: "2026-02-26",
+                checkoutDate: "2026-03-03",
+                checkin: "15:00 起",
+                checkout: "12:00 前",
+                room: "豪華加大雙人床房（2 張加大床）",
+                highlight: "🍳 含早餐｜🚭 禁菸房",
+                facilities: "高速網路、私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機",
+                address: "2500 Mason Street, San Francisco, CA 94133, USA",
+                mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166"
+            },
+            monterey: {
+                city: "蒙特雷",
+                name: "隆恩橡木酒店",
+                checkinDate: "2026-03-03",
+                checkoutDate: "2026-03-04",
+                checkin: "15:00～23:00",
+                checkout: "05:00～11:00",
+                room: "特大雙人床房 × 2 間",
+                highlight: "🍽️ 不含餐｜🚭 禁菸房",
+                facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣",
+                address: "2221 North Fremont Street, Monterey, CA 93940, USA",
+                mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579"
+            },
+            morro: {
+                city: "莫羅貝",
+                name: "海港屋酒店",
+                checkinDate: "2026-03-04",
+                checkoutDate: "2026-03-05",
+                checkin: "15:00 起",
+                checkout: "11:00 前",
+                room: "海景豪華特大床房 × 2 間",
+                highlight: "🌊 海景陽台｜🚭 禁菸房",
+                facilities: "私人陽台、海景、空調、微波爐、咖啡機、暖氣",
+                address: "1095 Main Street, Morro Bay, CA 93442, USA",
+                mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805"
+            },
+            la: {
+                city: "洛杉磯",
+                name: "Hollywood Franklin Hotel",
+                checkinDate: "2026-03-05",
+                checkoutDate: "2026-03-09",
+                checkin: "15:00 起",
+                checkout: "11:00 前",
+                room: "加大雙人床房（2 張加大床）",
+                highlight: "🎬 近環球影城｜🚭 禁菸房",
+                facilities: "游泳池、市景、空調、微波爐、咖啡機、保險箱",
+                address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA",
+                mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599"
+            }
+        };
+
+        // NEW: 餐廳資料 (Dining Data)
+        const diningData = [
+            // SF
+            { name: "Fog Harbor Fish House", city: "SF", type: "Seafood", desc: "漁人碼頭排隊名店，海鮮品質極佳，必點蒜味烤蟹與海鮮拼盤。", icon: "🦀", url: "https://fogharbor.com/" },
+            { name: "Boudin Bakery", city: "SF", type: "Classic", desc: "舊金山酸麵包創始店，蛤蜊濃湯 (Clam Chowder) 是觀光客必嚐經典。", icon: "🥣", url: "https://boudinbakery.com/" },
+            { name: "Hog Island Oyster Co.", city: "SF", type: "Seafood", desc: "位於 Ferry Building 內，提供最新鮮的生蠔與絕美海灣景觀。", icon: "🦪", url: "https://hogislandoysters.com/" },
+            { name: "In-N-Out Burger", city: "SF", type: "FastFood", desc: "加州必吃漢堡！漁人碼頭分店是唯一有這家分店的觀光區。", icon: "🍔", url: "https://www.in-n-out.com/" },
+            
+            // PCH
+            { name: "Dametra Cafe", city: "PCH", type: "Mediterranean", desc: "卡梅爾排名第一的地中海料理，氣氛歡樂，經常有現場音樂演奏。", icon: "🥗", url: "https://dametracafe.com/" },
+            { name: "Passionfish", city: "PCH", type: "Seafood", desc: "太平洋叢林市 (Pacific Grove) 評價極高的海鮮餐廳，強調永續漁法。", icon: "🐟", url: "https://www.passionfish.net/" },
+            { name: "Nepenthe", city: "PCH", type: "View", desc: "Big Sur 懸崖上的景觀餐廳，擁有無敵海景，適合享用漢堡與薯條。", icon: "🌅", url: "https://www.nepenthe.com/" },
+            
+            // LA
+            { name: "The Boiling Crab", city: "LA", type: "Seafood", desc: "手抓海鮮的始祖，路易斯安那肯瓊風味，重口味愛好者天堂。", icon: "🦐", url: "https://theboilingcrab.com/" },
+            { name: "Grand Central Market", city: "LA", type: "Market", desc: "洛杉磯美食集散地，包含 Eggslut、Tacos 等多樣化平價選擇。", icon: "🌮", url: "https://www.grandcentralmarket.com/" },
+            { name: "BCD Tofu House", city: "LA", type: "Korean", desc: "韓國城知名的 24 小時嫩豆腐煲，附贈無限續的小菜與石鍋飯。", icon: "🥘", url: "http://bcdtofu.com/" },
+            { name: "In-N-Out Burger", city: "LA", type: "FastFood", desc: "加州精神象徵。洛杉磯分店眾多，Animal Style 薯條是內行點法。", icon: "🍟", url: "https://www.in-n-out.com/" }
+        ];
 
         // NEW: 景點快速查找地圖
         let attractionMap = {};
 
-        // 景點資訊 (Attractions data) - 已整合所有 PCH 景點
+        // 景點資訊 (Attractions data)
         const attractions = [
             // --- 舊金山 (SF) 景點 ---
             { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "舊金山最著名的象徵。這座橘紅色的懸索橋橫跨金門海峽，無論是在霧中若隱若現還是晴天下的鮮豔，都是旅人的必看之處。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/" }, 
@@ -342,7 +392,7 @@ const accommodationData = {
             { name: "藝術宮", city: "SF", type: "Photo", desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", short_desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", icon: "🏛️", url: "https://palaceoffinearts.com/" },
             { name: "Chase Center", city: "SF", type: "Fun", desc: "金州勇士隊主場，現代化且熱血沸騰。", short_desc: "金州勇士隊主場，現代化且熱血沸騰。", icon: "🏀", url: "https://www.chasecenter.com/" },
             
-            // --- 優勝美地 (Yosemite) 景點 (New!) ---
+            // --- 優勝美地 (Yosemite) 景點 ---
             { name: "隧道景觀 Tunnel View", city: "Yosemite", type: "Photo", desc: "進入優勝美地谷地時最經典的觀景台。從這裡可以一次飽覽酋長岩、新娘面紗瀑布和半圓頂三大地標，是攝影愛好者的天堂。", short_desc: "優勝美地象徵性視角，一次飽覽三大地標。", icon: "🏞️", url: "https://www.nps.gov/yose/planyourvisit/tunnelview.htm" },
             { name: "酋長岩 El Capitan", city: "Yosemite", type: "Nature", desc: "世界上最大的單塊花崗岩巨石，垂直高度超過 900 公尺。雖然遊客不能攀登，但從谷底仰望其氣勢，已足夠令人震撼。", short_desc: "全球最大單塊花崗岩，攀岩者的夢想聖地。", icon: "🧗", url: "https://www.nps.gov/yose/planyourvisit/elcapitan.htm" },
             { name: "優勝美地瀑布 Yosemite Falls", city: "Yosemite", type: "Nature", desc: "由上、中、下三段瀑布組成，總落差達 739 公尺，是北美最高的瀑布之一。春末夏初雪水融化時，水量最大，氣勢最為磅礡。", short_desc: "北美最高瀑布之一，春季水量最為壯觀。", icon: "🌊", url: "https://www.nps.gov/yose/planyourvisit/waterfalls.htm" },
@@ -356,7 +406,7 @@ const accommodationData = {
             { name: "17-Mile Drive", city: "PCH", type: "Nature", desc: "私人景觀公路，欣賞碧海藍天、孤柏樹、海豹與豪華住宅。需付入園費$12.25/車。", short_desc: "海岸線私人景觀公路，必看孤柏與鳥岩。", icon: "🌲", url: "https://www.pebblebeach.com/17-mile-drive/" },
             { name: "卡梅爾小鎮", city: "PCH", type: "Culture", desc: "充滿歐式童話氛圍的藝術小鎮，擁有薑餅屋般的房舍和潔白沙灘，適合散步與藝廊之旅。", short_desc: "歐式童話藝術小鎮，無霓虹燈與速食店。", icon: "🏡", url: "https://www.carmelcalifornia.com/" },
 
-            // --- 卡梅爾到皮斯莫比奇 PCH 景點 ---
+            // --- PCH 景點 ---
             { name: "羅伯斯角州立自然保護區 Point Lobos", city: "PCH", type: "Nature", desc: "被譽為「加州州立公園系統中的皇冠」。這裡有豐富的海鳥、海豹與海獺生態，以及壯觀的海蝕景觀。", short_desc: "加州皇冠級自然保護區，觀賞海獺海豹。", icon: "🦭", url: "https://www.parks.ca.gov/?page_id=571" },
             { name: "Bixby Bridge", city: "PCH", type: "Photo", desc: "一號公路最具代表性的攝影點。巨大的單跨混凝土拱橋完工於 1932 年，橫跨在陡峭的斷崖深谷之間。", short_desc: "一號公路最著名的單拱橋，懸崖絕景。", icon: "🌉", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10924" },
             { name: "菲佛海灘 Pfeiffer Beach", city: "PCH", type: "Photo", desc: "隱藏在山谷中的秘境海灘。著名的「紫色」沙灘與海上巨大的 Keyhole Rock 石洞拱門。", short_desc: "欣賞 Keyhole Rock 與獨特的紫色沙灘。", icon: "💜", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10921" },
@@ -548,6 +598,7 @@ const accommodationData = {
             // renderWeatherChart(); // 備用圖表已註釋掉，不影響主功能
             renderItinerary('phase1'); // 預設顯示 舊金山 階段
             renderAttractions('all'); // 預設渲染所有景點
+            renderDining('all'); // NEW: 預設渲染所有餐廳
             
             // ** 修正後的定位和天氣載入 **
             loadCurrentLocationWeather();       
@@ -561,12 +612,12 @@ const accommodationData = {
         }
 
         function scrollToSection(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const nav = document.querySelector('nav');
-    const offset = nav ? nav.offsetHeight + 8 : 0; // nav 高度 + 微調
-    const y = el.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top: y, behavior: 'smooth' });
+            const el = document.getElementById(id);
+            if (!el) return;
+            const nav = document.querySelector('nav');
+            const offset = nav ? nav.offsetHeight + 8 : 0; // nav 高度 + 微調
+            const y = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
         }
 
         // --- 航班 Tab + 渲染 ---
@@ -945,7 +996,74 @@ const accommodationData = {
 
             container.innerHTML = html;
         }
-// --- Attraction Logic ---
+
+        // --- NEW: Dining Logic ---
+        function filterDining(filter) {
+            document.querySelectorAll('.dining-filter-btn').forEach(btn => {
+                // Reset styles
+                btn.classList.remove('bg-gray-800', 'text-white', 'shadow-md');
+                btn.classList.remove('bg-white', 'text-gray-600', 'border', 'hover:bg-blue-50', 'hover:text-blue-600', 'hover:bg-yellow-50', 'hover:text-yellow-600', 'hover:bg-purple-50', 'hover:text-purple-600', 'hover:bg-green-50', 'hover:text-green-600');
+                
+                // Default non-active
+                btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+
+                if (btn.dataset.filter === filter) {
+                    // Active state
+                    btn.classList.add('bg-gray-800', 'text-white', 'shadow-md');
+                    btn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                } else {
+                    // Hover states
+                    if (btn.dataset.filter === 'SF') btn.classList.add('hover:bg-blue-50', 'hover:text-blue-600');
+                    if (btn.dataset.filter === 'PCH') btn.classList.add('hover:bg-yellow-50', 'hover:text-yellow-600');
+                    if (btn.dataset.filter === 'LA') btn.classList.add('hover:bg-purple-50', 'hover:text-purple-600');
+                }
+            });
+            renderDining(filter);
+        }
+
+        function renderDining(filter) {
+            const container = document.getElementById('dining-grid');
+            
+            const filtered = filter === 'all' 
+                ? diningData 
+                : diningData.filter(d => d.city === filter);
+            
+            let html = '';
+            filtered.forEach(item => {
+                // Determine city styles for badge
+                let areaBadgeClass = 'bg-gray-100 text-gray-600';
+                let cityLabel = '地區';
+                
+                if (item.city === 'SF') { areaBadgeClass = 'bg-blue-100 text-blue-800'; cityLabel = '舊金山'; }
+                else if (item.city === 'PCH') { areaBadgeClass = 'bg-yellow-100 text-yellow-800'; cityLabel = '一號公路'; }
+                else if (item.city === 'LA') { areaBadgeClass = 'bg-purple-100 text-purple-800'; cityLabel = '洛杉磯'; }
+
+                html += `
+                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" 
+                       class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 card-hover flex flex-col h-full group block cursor-pointer"
+                       aria-label="前往 ${item.name} 餐廳網站">
+                        
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="text-4xl">${item.icon}</div>
+                            <span class="text-xs px-2 py-1 rounded-full font-bold ${areaBadgeClass}">${cityLabel}</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-1">${item.name}</h4>
+                        <p class="text-sm text-gray-600 flex-grow mt-2">${item.desc}</p>
+                        
+                        <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-green-600 group-hover:text-green-800 transition-colors">
+                                查看餐廳資訊
+                            </span>
+                            <svg class="w-4 h-4 text-green-500 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </div>
+                    </a>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
         // --- Attraction Logic ---
 
         function filterAttractions(filter) {
