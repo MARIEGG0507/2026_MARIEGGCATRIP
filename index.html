@@ -6,70 +6,276 @@
     <title>2026 美西｜舊金山與洛杉磯之旅</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <link rel="stylesheet" href="styles.css">    
-    
-    <!-- Application Structure Plan:
-         1. Hero Section: Title, Dates, and high-level trip stats (Days, Cities).
-         2. Navigation: Simple sticky sub-nav to jump between Logistics, Itinerary, Dining, and Highlights.
-         3. Logistics Hub: Interactive section for Flights (toggle View) and Essential Info (Cards).
-         4. The Journey (Itinerary): A split-view interactive timeline.
-         5. Dining Guide: A filterable grid of restaurant recommendations. (NEW)
-         6. Destination Discovery (Attractions): A filterable grid of attraction cards.
-         7. Footer: Simple closing.
+    <!-- 
+      Application Structure:
+      Based on "Earthy Calm" Palette by User.
+      Fused into the existing layout.
     -->
+    <style>
+        /* ==========================================================================
+           Palette: Earthy Calm (優化版)
+           ========================================================================== */
+        :root {
+            /* 1. 基礎色 (Base Colors) */
+            --color-bg-body: #fbf7f2;         /* 奶油白背景 */
+            --color-bg-card: #ffffff;         /* 卡片背景 */
+            --color-bg-secondary: #faf7f2;    /* 略深/暖的背景 (用於區塊分隔) */
+            --color-border-soft: #efe6d8;     /* 柔和邊框 */
+            --color-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+            /* 2. 文字色 (Text Colors) */
+            --color-text-primary: #3a3a3a;    
+            --color-text-secondary: #6b6b6b;  
+            --color-text-muted: #a09a93;      /* 靜音/提示文字 */
+            --color-text-link-hover: #d6b98c; /* 連結懸停改為奶茶金 */
+
+            /* 3. 主題色 (Accent Colors) */
+            --color-accent-main: #d6b98c;     /* 奶茶金 */
+            --color-accent-main-dark: #c3a36f;
+            --color-accent-main-text: #a4855d;
+
+            /* 4. 輔助色 (Utility Colors) - 調整為暖色系以搭配 */
+            --color-utility-blue: #cfdde6;    
+            --color-utility-green: #d9e5d8;   
+        }
+
+        /* ==========================================================================
+           A. 全域樣式 (Global Styles)
+           ========================================================================== */
+        body {
+            background-color: var(--color-bg-body);
+            color: var(--color-text-primary);
+            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* 捲軸優化 */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px; /* 增加橫向捲軸高度 */
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: var(--color-bg-body);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: var(--color-border-soft);
+            border-radius: 3px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--color-text-muted);
+        }
+        
+        /* 隱藏預設捲軸但在手機上保持滑動功能 (Utility) */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* ==========================================================================
+           B. 元件樣式 (Components)
+           ========================================================================== */
+
+        /* 活躍標籤 (用於航班切換) */
+        .tab-active {
+            border-bottom: 3px solid var(--color-accent-main-dark);
+            color: var(--color-text-primary) !important; 
+            font-weight: 700;
+            background-color: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+        }
+        
+        /* 非活躍標籤 */
+        .tab-inactive {
+            color: var(--color-text-muted);
+            border-bottom: 3px solid transparent;
+        }
+
+        /* 卡片懸停 */
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--color-shadow);
+            border: 1px solid var(--color-border-soft);
+            background-color: var(--color-bg-card);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-accent-main);
+        }
+
+        /* 景點連結 */
+        .attraction-link {
+            transition: color 0.2s ease;
+            color: var(--color-text-primary);
+        }
+        .attraction-link:hover {
+            color: var(--color-accent-main-text);
+            text-decoration: underline;
+        }
+
+        /* 天氣卡片 */
+        .weather-card {
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-soft);
+            border-radius: 0.75rem;
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            min-width: 80px; /* 確保在手機上有寬度 */
+        }
+        .weather-icon { font-size: 1.6rem; margin-bottom: 0.25rem; }
+        .weather-date { font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; }
+        .weather-temp { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); }
+
+        /* 置頂按鈕樣式 (融合版) */
+        .scroll-to-top-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background-color: rgba(255,255,255,0.8);
+            backdrop-filter: blur(4px);
+            color: var(--color-accent-main-dark);
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            border: 2px solid var(--color-accent-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .scroll-to-top-btn:hover {
+            background-color: var(--color-accent-main);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* ==========================================================================
+           C. 動畫 (Animations)
+           ========================================================================== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes drawLine {
+            from { height: 0; }
+            to { height: 100%; }
+        }
+        .timeline-line {
+            animation: drawLine 1s ease-out forwards;
+            background-color: var(--color-border-soft);
+        }
+
+        /* ==========================================================================
+           D. 響應式優化 (Mobile UX Optimizations)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            /* 標題縮小 */
+            h1 { font-size: 1.8rem !important; }
+
+            /* 導航列改為橫向滑動 */
+            nav ul {
+                flex-wrap: nowrap !important;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                justify-content: flex-start !important;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+            }
+            nav ul li { flex-shrink: 0; }
+
+            /* 行程區塊改為垂直排列 */
+            #itinerary-container { flex-direction: column !important; height: auto !important; }
+            
+            /* 階段導航橫向滾動 */
+            #phase-nav-container {
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid var(--color-border-soft);
+                overflow-x: auto;
+                display: flex;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            button[id^="nav-phase"] { min-width: 260px; flex-shrink: 0; }
+
+            /* 天氣卡片橫滑 */
+            #weather-current, #weather-sf, #weather-la {
+                overflow-x: auto;
+                display: flex;
+                gap: 0.5rem;
+                padding-bottom: 0.5rem;
+                flex-wrap: nowrap !important;
+            }
+        }
+    </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col">
+<body>
 
     <!-- Hero Section -->
-    <header class="bg-white shadow-sm border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl mb-2">
+    <header class="bg-white shadow-sm border-b border-[#efe6d8] relative overflow-hidden">
+        <!-- 調整漸層為暖色調以配合主題 -->
+        <div class="absolute inset-0 bg-gradient-to-r from-[#fbf7f2] via-[#faf0e6] to-[#f3e5d8] opacity-80"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center relative z-10">
+            <h1 class="text-4xl font-extrabold tracking-tight text-[#5c4d3c] sm:text-6xl mb-4">
                 美西舊金山與洛杉磯之旅
             </h1>
-            <p class="text-lg text-gray-600 mb-6">
-                2026年 2月26日 - 3月11日 · 13 天 12 夜 · 加州夢幻行
+            <p class="text-xl text-[#8c7b66] mb-6 font-light">
+                2026年 2月26日 - 3月11日 <span class="mx-2 text-[#d6b98c]">|</span> 13 天 12 夜 <span class="mx-2 text-[#d6b98c]">|</span> 加州夢幻行
             </p>                       
         </div>
     </header>
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm">
-        <div class="max-w-7xl mx-auto px-4">
-            <ul class="flex flex-wrap justify-center gap-4 h-auto md:h-12 items-center">
+    <nav class="sticky top-0 z-50 bg-[#fbf7f2]/95 backdrop-blur-md shadow-sm border-b border-[#efe6d8] transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-0 md:px-4">
+            <!-- 移除 justify-center 以配合手機版橫向捲動的樣式 -->
+            <ul class="flex md:justify-center h-auto md:h-16 items-center no-scrollbar">
               <li>
-                  <button onclick="scrollToSection('logistics')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">
-                      🛫 行前準備 & 航班
+                  <button onclick="scrollToSection('logistics')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">
+                      🛫 行前準備
                   </button>
               </li>
 
               <li>
-                  <button onclick="scrollToSection('itinerary')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">
+                  <button onclick="scrollToSection('itinerary')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">
                      🗺️ 每日行程
                   </button>
               </li>
 
-              <!-- NEW: Dining Nav Item -->
               <li>
-                  <button onclick="scrollToSection('dining')" class="text-gray-600 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors">
+                  <button onclick="scrollToSection('dining')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">
                      🍽️ 美食推薦
                   </button>
               </li>
 
               <li>
-                  <button onclick="scrollToSection('highlights')" class="text-gray-600 hover:text-yellow-600 px-3 py-2 text-sm font-medium transition-colors">
+                  <button onclick="scrollToSection('highlights')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">
                      🏛️ 景點探索
                   </button>
               </li>
 
+              <li class="hidden md:block w-px h-6 bg-[#efe6d8] mx-2"></li>
+
               <li>
                   <a href="disneyland_itinerary.html" target="_blank"
-                     class="text-gray-600 hover:text-red-600 px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1">
-                      <span>🏰</span> 迪士尼樂園
+                     class="text-[#a4855d] hover:text-[#c3a36f] px-4 py-2 text-sm font-bold transition-colors flex items-center gap-1 bg-white border border-[#efe6d8] rounded-full mx-2 whitespace-nowrap shadow-sm hover:shadow-md">
+                      <span>🏰</span> 迪士尼
                   </a>
               </li>
               <li>
                   <a href="universal_hollywood.html" target="_blank"
-                     class="text-gray-600 hover:text-orange-600 px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1">
+                     class="text-[#a4855d] hover:text-[#c3a36f] px-4 py-2 text-sm font-bold transition-colors flex items-center gap-1 bg-white border border-[#efe6d8] rounded-full whitespace-nowrap shadow-sm hover:shadow-md">
                       <span>🎥</span> 環球影城
                   </a>
               </li>
@@ -78,25 +284,32 @@
         </div>
     </nav>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-16">
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-24">
 
         <!-- Section 1: Logistics Hub -->
-        <section id="logistics" class="scroll-mt-20">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-900">🛫 行前準備與資訊</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
-                    包含航班時間、必備文件檢查、以及當地天氣預測，協助您打包行李與規劃抵達事宜。
+        <section id="logistics" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#3a3a3a] inline-block relative z-10">
+                    🛫 行前準備與資訊
+                    <!-- 裝飾底線改為奶茶金 -->
+                    <div class="absolute bottom-0 left-0 w-full h-3 bg-[#d6b98c] opacity-20 -z-10 transform translate-y-1"></div>
+                </h2>
+                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">
+                    包含航班時間、必備文件檢查、以及當地天氣預測。
                 </p>
             </div>
  
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Flight Info -->
-                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                <div class="bg-white rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] p-8 border border-[#efe6d8]">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-800">✈️ 航班資訊</h3>
-                        <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
-                            <button onclick="switchFlightTab('outbound')" id="btn-outbound" class="px-3 py-1 rounded-md text-sm font-medium transition-colors bg-white shadow text-gray-900">去程</button>
-                            <button onclick="switchFlightTab('inbound')" id="btn-inbound" class="px-3 py-1 rounded-md text-sm font-medium transition-colors text-gray-500 hover:text-gray-900">回程</button>
+                        <h3 class="text-xl font-bold text-[#3a3a3a] flex items-center gap-2">
+                            <span class="bg-[#faf7f2] text-[#d6b98c] p-2 rounded-lg text-lg">✈️</span> 航班資訊
+                        </h3>
+                        <!-- Tab Buttons using new Styles -->
+                        <div class="flex space-x-4 border-b border-[#efe6d8] px-2">
+                            <button onclick="switchFlightTab('outbound')" id="btn-outbound" class="tab-active text-sm transition-all pb-2">去程</button>
+                            <button onclick="switchFlightTab('inbound')" id="btn-inbound" class="tab-inactive text-sm transition-all pb-2 hover:text-[#3a3a3a]">回程</button>
                         </div>
                     </div>
                     
@@ -106,143 +319,175 @@
                 </div>
             
                 <!-- Weather & Tips -->
-                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                  <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">
-                      📍 所在地區・未來 3 天天氣
+                <div class="bg-white rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] p-8 border border-[#efe6d8]">
+                  <h3 class="text-xl font-bold text-[#3a3a3a] mb-6 flex items-center gap-2">
+                      <span class="bg-[#faf7f2] text-[#d6b98c] p-2 rounded-lg text-lg">☀️</span> 所在地區・未來 3 天天氣
                   </h3>
 
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <!-- Current Location -->
-                      <div class="bg-gray-50 rounded-xl p-4 border">
-                          <h4 class="text-lg font-medium mb-1">目前所在地</h4>
-                          <p class="text-sm text-gray-500 mb-4" id="current-city">定位中…</p>
-                          <div id="weather-current" class="flex gap-4"></div>
-                          <p id="wear-current" class="text-sm text-gray-600 mt-3"></p>
+                      <div class="bg-[#faf7f2] rounded-xl p-4 border border-[#efe6d8]">
+                          <h4 class="text-xs font-bold text-[#a09a93] mb-2 uppercase tracking-wide">目前所在地</h4>
+                          <p class="text-xs text-[#6b6b6b] mb-3 truncate font-bold" id="current-city">定位中…</p>
+                          <div id="weather-current" class="flex gap-2 justify-center"></div>
+                          <p id="wear-current" class="text-xs text-[#a4855d] mt-3 font-medium text-center"></p>
                       </div>
 
                       <!-- San Francisco -->
-                      <div class="bg-gray-50 rounded-xl p-4 border">
-                          <h4 class="text-lg font-medium mb-1">舊金山</h4>
-                          <p class="text-sm text-gray-500 mb-4">San Francisco</p>
-                          <div id="weather-sf" class="flex gap-4"></div>
-                          <p id="wear-sf" class="text-sm text-gray-600 mt-3"></p>
+                      <div class="bg-white rounded-xl p-4 border border-[#efe6d8]">
+                          <h4 class="text-xs font-bold text-[#a09a93] mb-2 uppercase tracking-wide">舊金山 SF</h4>
+                          <div id="weather-sf" class="flex gap-2 justify-center mt-1"></div>
+                          <p id="wear-sf" class="text-xs text-[#a4855d] mt-3 font-medium text-center"></p>
                       </div>
 
                       <!-- Los Angeles -->
-                      <div class="bg-gray-50 rounded-xl p-4 border">
-                          <h4 class="text-lg font-medium mb-1">洛杉磯</h4>
-                          <p class="text-sm text-gray-500 mb-4">Los Angeles</p>
-                          <div id="weather-la" class="flex gap-4"></div>
-                          <p id="wear-la" class="text-sm text-gray-600 mt-3"></p>
+                      <div class="bg-white rounded-xl p-4 border border-[#efe6d8]">
+                          <h4 class="text-xs font-bold text-[#a09a93] mb-2 uppercase tracking-wide">洛杉磯 LA</h4>
+                          <div id="weather-la" class="flex gap-2 justify-center mt-1"></div>
+                          <p id="wear-la" class="text-xs text-[#a4855d] mt-3 font-medium text-center"></p>
                       </div>
                   </div>
               </div>               
             </div>
             <!-- ACCOMMODATION SUMMARY -->
-            <div class="mt-8 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="mt-8 bg-white rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] p-8 border border-[#efe6d8]">
 
-                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                    <span class="mr-2 text-2xl">🏨</span> 住宿規劃
+                <h3 class="text-xl font-bold text-[#3a3a3a] mb-6 flex items-center gap-2">
+                    <span class="bg-[#faf7f2] text-[#d6b98c] p-2 rounded-lg text-lg">🏨</span> 住宿規劃
                 </h3>
 
-                <!-- ⭐ 正確的 grid 容器 -->
                 <div id="accommodation-content"
-                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- Dynamic Content Loaded via JS -->
                 </div>
 
             </div>           
             <!-- Essential Checklist Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-                <article class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                    <div class="text-2xl mb-2" aria-hidden="true">📄</div>
-                    <h4 class="font-bold text-blue-900">證件檢查</h4>
-                    <p class="text-sm text-blue-800 mt-1">護照、ESTA、國際駕照、台灣駕照正本。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                <article class="bg-[#faf7f2] p-6 rounded-2xl border border-[#efe6d8] hover:shadow-md transition-all">
+                    <div class="text-3xl mb-3">📄</div>
+                    <h4 class="font-bold text-[#3a3a3a] text-lg">證件檢查</h4>
+                    <p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">護照、ESTA、國際駕照、台灣駕照正本。</p>
                 </article>
-                <article class="bg-green-50 p-4 rounded-xl border border-green-100">
-                    <div class="text-2xl mb-2" aria-hidden="true">💵</div>
-                    <h4 class="font-bold text-green-900">貨幣小費</h4>
-                    <p class="text-sm text-green-800 mt-1">使用 USD。餐廳小費約 15-20%。標價不含稅。</p>
+                <article class="bg-[#faf7f2] p-6 rounded-2xl border border-[#efe6d8] hover:shadow-md transition-all">
+                    <div class="text-3xl mb-3">💵</div>
+                    <h4 class="font-bold text-[#3a3a3a] text-lg">貨幣小費</h4>
+                    <p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">使用 USD。餐廳小費約 15-20%。標價不含稅。</p>
                 </article>
-                <article class="bg-purple-50 p-4 rounded-xl border border-purple-100">
-                    <div class="text-2xl mb-2" aria-hidden="true">📱</div>
-                    <h4 class="font-bold text-purple-900">網路通訊</h4>
-                    <p class="text-sm text-purple-800 mt-1">提前購買 SIM 卡或租借 Wi-Fi 機。時區慢 16 小時。</p>
+                <article class="bg-[#faf7f2] p-6 rounded-2xl border border-[#efe6d8] hover:shadow-md transition-all">
+                    <div class="text-3xl mb-3">📱</div>
+                    <h4 class="font-bold text-[#3a3a3a] text-lg">網路通訊</h4>
+                    <p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">提前購買 SIM 卡或租借 Wi-Fi 機。時區慢 16 小時。</p>
                 </article>
-                <article class="bg-red-50 p-4 rounded-xl border border-red-100">
-                    <div class="text-2xl mb-2" aria-hidden="true">🚗</div>
-                    <h4 class="font-bold text-red-900">交通須知</h4>
-                    <p class="text-sm text-red-800 mt-1">SF搭大眾運輸；LA搭Uber；PCH自駕前查路況。</p>
+                <article class="bg-[#faf7f2] p-6 rounded-2xl border border-[#efe6d8] hover:shadow-md transition-all">
+                    <div class="text-3xl mb-3">🚗</div>
+                    <h4 class="font-bold text-[#3a3a3a] text-lg">交通須知</h4>
+                    <p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">SF搭大眾運輸；LA搭Uber；PCH自駕前查路況。</p>
                 </article>
             </div>
         </section>
 
         <!-- Section 2: Itinerary -->
-        <section id="itinerary" class="scroll-mt-20">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-900">🗺️ 13 天旅程規劃</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
-                    行程分為三大主題階段。點選左側階段可查看每日詳細安排與**相關景點亮點**。
+        <section id="itinerary" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#3a3a3a] inline-block relative z-10">
+                    🗺️ 13 天旅程規劃
+                    <div class="absolute bottom-0 left-0 w-full h-3 bg-[#a5b4fc] opacity-20 -z-10 transform translate-y-1"></div>
+                </h2>
+                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">
+                    行程分為三大主題階段。點選左側可切換查看詳細時間軸與亮點。
                 </p>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row md:h-[600px]">
+            <!-- 使用新的 ID "itinerary-container" 來配合響應式 CSS -->
+            <div id="itinerary-container" class="bg-white rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden border border-[#efe6d8] flex flex-col md:flex-row md:h-[750px]">
                 <!-- Sidebar: Phases -->
-                <div class="w-full md:w-1/3 bg-gray-50 border-r border-gray-200 md:overflow-y-auto">
-                    <div class="p-4 flex md:block gap-3 md:gap-0 overflow-x-auto md:overflow-visible">
+                <div id="phase-nav-container" class="w-full md:w-1/3 bg-[#fbf7f2] border-r border-[#efe6d8] md:overflow-y-auto custom-scroll z-10">
+                    <div class="p-4 md:p-6 space-y-4 md:block">
+                        <!-- Phase 1 -->
                         <button onclick="renderItinerary('phase1')" id="nav-phase1"
-                          class="w-full min-w-[260px] md:min-w-0 text-left p-4 rounded-xl transition-all border-l-4 border-blue-500 bg-white shadow-sm hover:bg-blue-50 group">
-                            <div class="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">Phase 1 · 2/26 - 3/2</div>
-                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-blue-700">三藩市漫遊與NBA</h3>
-                            <p class="text-sm text-gray-500 mt-1">金門大橋、惡魔島、NBA 賽事</p>
-                        </button>
-
-                        <button onclick="renderItinerary('phase2')" id="nav-phase2"
-                          class="w-full min-w-[260px] md:min-w-0 text-left p-4 rounded-xl transition-all border-l-4 border-transparent hover:border-yellow-500 hover:bg-yellow-50 group">
-                            <div class="text-xs font-bold text-yellow-600 uppercase tracking-wider mb-1">Phase 2 · 3/3 - 3/5</div>
-                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-yellow-700">加州一號公路</h3>
-                            <p class="text-sm text-gray-500 mt-1">絕美海岸自駕、赫氏古堡</p>
-                        </button>
-
-                        <button onclick="renderItinerary('phase3')" id="nav-phase3"
-                          class="w-full min-w-[260px] md:min-w-0 text-left p-4 rounded-xl transition-all border-l-4 border-transparent hover:border-purple-500 hover:bg-purple-50 group">
-                            <div class="text-xs font-bold text-purple-500 uppercase tracking-wider mb-1">
-                                Phase 3 · 3/6 - 3/9
+                          class="w-full text-left p-6 rounded-2xl transition-all duration-300 border border-transparent group relative overflow-hidden bg-white shadow-sm hover:border-[#d6b98c]">
+                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <span class="text-6xl text-[#3a3a3a]">🌉</span>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-700">
-                                天使之城與雙樂園
-                            </h3>
-                            <p class="text-sm text-gray-500 mt-1">
-                                迪士尼、環球影城、星光大道
-                            </p>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold px-2 py-1 rounded bg-[#cfdde6] text-[#475569] uppercase tracking-wider">Phase 1</span>
+                                    <span class="text-xs text-[#a09a93] font-medium">2/26 - 3/2</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">舊金山漫遊與NBA</h3>
+                                <p class="text-sm text-[#6b6b6b] line-clamp-2">金門大橋、惡魔島、NBA 賽事</p>
+                            </div>
+                        </button>
+
+                        <!-- Phase 2 -->
+                        <button onclick="renderItinerary('phase2')" id="nav-phase2"
+                          class="w-full text-left p-6 rounded-2xl transition-all duration-300 border border-transparent group relative overflow-hidden bg-white mt-4 md:mt-0 shadow-sm hover:border-[#d6b98c]">
+                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <span class="text-6xl text-[#3a3a3a]">🌊</span>
+                            </div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold px-2 py-1 rounded bg-[#fef3c7] text-[#92400e] uppercase tracking-wider">Phase 2</span>
+                                    <span class="text-xs text-[#a09a93] font-medium">3/3 - 3/5</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">加州一號公路</h3>
+                                <p class="text-sm text-[#6b6b6b] line-clamp-2">絕美海岸自駕、赫氏古堡</p>
+                            </div>
+                        </button>
+
+                        <!-- Phase 3 -->
+                        <button onclick="renderItinerary('phase3')" id="nav-phase3"
+                          class="w-full text-left p-6 rounded-2xl transition-all duration-300 border border-transparent group relative overflow-hidden bg-white mt-4 md:mt-0 shadow-sm hover:border-[#d6b98c]">
+                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <span class="text-6xl text-[#3a3a3a]">🎡</span>
+                            </div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold px-2 py-1 rounded bg-[#f3e8ff] text-[#6b21a8] uppercase tracking-wider">Phase 3</span>
+                                    <span class="text-xs text-[#a09a93] font-medium">3/6 - 3/9</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">天使之城與雙樂園</h3>
+                                <p class="text-sm text-[#6b6b6b] line-clamp-2">迪士尼、環球影城、星光大道</p>
+                            </div>
                         </button>
                     </div>
                 </div>
 
                 <!-- Content: Daily Details -->
-                <div class="w-full md:w-2/3 p-6 md:p-8 md:overflow-y-auto custom-scroll bg-white relative">
-                    <div id="itinerary-details" class="space-y-8">
-                        <!-- Content injected via JS -->
+                <div class="w-full md:w-2/3 bg-white relative">
+                    <!-- Sticky Header inside Content -->
+                    <div id="itinerary-header" class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-[#efe6d8] px-8 py-4 flex justify-between items-center shadow-sm">
+                        <!-- Dynamic Header Content -->
+                    </div>
+                    
+                    <div class="p-6 md:p-8 md:overflow-y-auto custom-scroll h-[calc(100%-80px)]">
+                        <div id="itinerary-details" class="pl-4 border-l-2 border-[#efe6d8] md:border-none">
+                            <!-- Content injected via JS -->
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- NEW Section: Dining Guide (Inserted before Highlights) -->
-        <section id="dining" class="scroll-mt-20">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-900">🍽️ 精選餐廳推薦清單</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
+        <!-- Section: Dining Guide -->
+        <section id="dining" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#3a3a3a] inline-block relative z-10">
+                    🍽️ 精選餐廳推薦
+                    <div class="absolute bottom-0 left-0 w-full h-3 bg-[#d9e5d8] opacity-50 -z-10 transform translate-y-1"></div>
+                </h2>
+                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">
                     從舊金山的經典酸麵包濃湯到洛杉磯的必吃漢堡，為您精選在地風味。
                 </p>
             </div>
 
             <!-- Dining Filters -->
-            <div class="flex flex-wrap justify-center gap-2 mb-8">
-                 <button onclick="filterDining('all')" class="dining-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-800 text-white shadow-md hover:bg-gray-700 transition-colors" data-filter="all">全部</button>
-                 <button onclick="filterDining('SF')" class="dining-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 transition-colors" data-filter="SF">🌉 舊金山</button>
-                 <button onclick="filterDining('PCH')" class="dining-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-yellow-50 hover:text-yellow-600 transition-colors" data-filter="PCH">🌊 一號公路</button>
-                 <button onclick="filterDining('LA')" class="dining-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-purple-50 hover:text-purple-600 transition-colors" data-filter="LA">🍔 洛杉磯</button>
+            <div class="flex flex-wrap justify-center gap-2 mb-10">
+                 <button onclick="filterDining('all')" class="dining-filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="all">全部</button>
+                 <button onclick="filterDining('SF')" class="dining-filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="SF">🌉 舊金山</button>
+                 <button onclick="filterDining('PCH')" class="dining-filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="PCH">🌊 一號公路</button>
+                 <button onclick="filterDining('LA')" class="dining-filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="LA">🍔 洛杉磯</button>
             </div>
 
             <!-- Dining Grid -->
@@ -252,21 +497,24 @@
         </section>
 
         <!-- Section 3: Highlights -->
-        <section id="highlights" class="scroll-mt-20">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-900">🏛️ 精選景點探索</h2>
-                <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
+        <section id="highlights" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#3a3a3a] inline-block relative z-10">
+                    🏛️ 精選景點探索
+                    <div class="absolute bottom-0 left-0 w-full h-3 bg-[#fef3c7] opacity-50 -z-10 transform translate-y-1"></div>
+                </h2>
+                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">
                     探索本次旅程的必訪亮點。**點擊下方景點卡片即可前往官方網站。**
                 </p>
             </div>
 
             <!-- Filters -->
-            <div class="flex flex-wrap justify-center gap-2 mb-8">
-                <button onclick="filterAttractions('all')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-800 text-white shadow-md hover:bg-gray-700 transition-colors active-filter" data-filter="all">全部顯示</button>
-                <button onclick="filterAttractions('SF')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 transition-colors" data-filter="SF">🌉 舊金山</button>
-                <button onclick="filterAttractions('Yosemite')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-green-50 hover:text-green-600 transition-colors" data-filter="Yosemite">🌲 優勝美地</button>
-                <button onclick="filterAttractions('PCH')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-yellow-50 hover:text-yellow-600 transition-colors" data-filter="PCH">🌊 一號公路</button>
-                <button onclick="filterAttractions('LA')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:bg-purple-50 hover:text-purple-600 transition-colors" data-filter="LA">🎬 洛杉磯</button>
+            <div class="flex flex-wrap justify-center gap-2 mb-10">
+                <button onclick="filterAttractions('all')" class="filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="all">全部顯示</button>
+                <button onclick="filterAttractions('SF')" class="filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="SF">🌉 舊金山</button>
+                <button onclick="filterAttractions('Yosemite')" class="filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="Yosemite">🌲 優勝美地</button>
+                <button onclick="filterAttractions('PCH')" class="filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="PCH">🌊 一號公路</button>
+                <button onclick="filterAttractions('LA')" class="filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="LA">🎬 洛杉磯</button>
             </div>
 
             <!-- Grid -->
@@ -277,15 +525,22 @@
 
     </main>
 
-    <footer class="bg-gray-900 text-white py-12 mt-12">
+    <footer class="bg-[#2c241b] text-white py-16 mt-12">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-2xl mb-4">🇺🇸</p>
-            <p class="text-gray-400">祝您的 2026 美西之旅充滿美好回憶！</p>
-            <div class="mt-8 text-xs text-gray-600">
-                Generated from Travel Booklet Source Data
+            <div class="text-4xl mb-6">🇺🇸</div>
+            <h3 class="text-2xl font-bold mb-2 tracking-wider">2026 美西之旅</h3>
+            <p class="text-[#a09a93]">祝您的旅程充滿美好回憶！</p>
+            <div class="w-12 h-1 bg-[#5c4d3c] mx-auto my-8 rounded-full"></div>
+            <div class="text-xs text-[#5c4d3c]">
+                Designed with Earthy Calm Theme
             </div>
         </div>
     </footer>
+
+    <!-- 捲動至頂部按鈕 (使用新樣式) -->
+    <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="scroll-to-top-btn">
+        <span class="text-xl">⬆️</span>
+    </button>
 
     <script>
         // --- Data Storage ---
@@ -356,7 +611,6 @@
             }
         };
 
-        // NEW: 餐廳資料 (Dining Data)
         const diningData = [
             // SF
             { name: "Fog Harbor Fish House", city: "SF", type: "Seafood", desc: "漁人碼頭排隊名店，海鮮品質極佳，必點獲獎的 Clam Chowder (蛤蜊濃湯)、Garlic Roasted Whole Dungeness Crab (蒜香烤大螃蟹)。", icon: "🦀", url: "https://fogharbor.com/" },
@@ -376,10 +630,7 @@
             { name: "Shake Shack", city: "LA", type: "FastFood", desc: "精緻漢堡代表，牛肉品質極高，奶昔是一絕。</br>推薦菜色： ShackBurger、Cheese Fries。</br>推薦飲品： Hand-Spun Shakes (經典奶昔)。</br>洛杉磯： 6201 Hollywood Blvd (離好萊塢的飯店 The Hollywood Franklin 極近)。</br>", icon: "🍔", url: "https://shakeshack.com/" }
         ];
 
-        // NEW: 景點快速查找地圖
         let attractionMap = {};
-
-        // 景點資訊 (Attractions data)
         const attractions = [
             // --- 舊金山 (SF) 景點 ---
             { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "舊金山最著名的象徵。這座橘紅色的懸索橋橫跨金門海峽，無論是在霧中若隱若現還是晴天下的鮮豔，都是旅人的必看之處。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/" }, 
@@ -444,11 +695,8 @@
             phase2: {
                 title: "Phase 2: 加州一號公路",
                 days: [
-                    // PCH Day 1 (SF-Carmel)
                     { date: "3/3 (二)", loc: "PCH Day 1 (SF➜Carmel)", act: "一號公路經典海岸線 (200km)", detail: "上午：飯店退房、市區取車。啟程沿著 1 號公路南下。<br>🛒Trader Joe's - Nob Hill (靠近漁人碼頭/市中心)<br>地址： 1095 Hyde St, San Francisco, CA 94109；營業時間：08:00 – 21:00 <br>🛒Target-Capitola (靠近 Santa Cruz)；特色： 位於一號公路旁的大型購物商場區，停車位超多。<br>地址：1750 41st Ave, Capitola, CA 95010；營業時間： 08:00 – 22:00<br>**自駕路況重點：出發前務必確認 Caltrans 路況以防坍方。<br>路線：舊金山 → 半月灣 → 聖塔克魯茲 → 蒙特瑞 → 17-Mile Drive → 卡梅爾小鎮 (約200KM)。<br>晚上：入住隆恩橡木酒店。", transport: "🚗 租車/自駕 (務必在市區取車)。", attractionKey: "卡梅爾小鎮", hotel: "隆恩橡木酒店 (Lone Oak Inn)" },
-                    // PCH Day 2 (Carmel-Morro Bay) 
                     { date: "3/4 (三)", loc: "PCH Day 2 (Carmel➜Morro Bay)", act: "Big Sur 巨岩海岸奇景與古堡", detail: "上午：📌第一站：羅伯斯角州立自然保護區** 健行賞海獺。**第二站：比克斯比大橋** 拍照。途經：**菲佛海灘** (紫色沙灘，可選擇停留)。**第三站：麥克威瀑布** 觀景台。<br>下午：**第四站：赫氏古堡** (需預約導覽) 參觀。**第五站：象鼻海豹灘** 觀賞海豹群。<br>晚上：抵達並入住 Morro Bay 飯店。", transport: "🚗 自駕 (務必確認 Hwy 1 路況 Caltrans)。", attractionKey: "赫氏古堡 Hearst Castle", hotel: "海港屋酒店 (Harbor House Inn)" }, 
-                    // PCH Day 3 (Morro Bay-LA) 
                     { date: "3/5 (四)", loc: "PCH Day 3 (Morro Bay➜LA)", act: "童話小鎮、西班牙海岸與 66 號公路終點", detail: "上午：飯店退房。在 Pismo Beach 附近享用早餐。**第一站 (內陸)：丹麥村 Solvang** (1.5 小時) 參觀風車、品嚐丹麥甜點。**第二站 (海岸)：聖塔芭芭拉** (2 小時) 登頂法院鐘樓，並在碼頭附近午餐。<br>下午：沿海岸線南下。<br>晚上：抵達洛杉磯，前往 **聖塔莫尼卡碼頭** (Route 66 終點) 賞夕陽與晚餐，入住飯店。", transport: "🚗 自駕 (進入洛杉磯前交通會明顯變慢，請預留緩衝時間)。", attractionKey: "聖塔莫尼卡碼頭 Santa Monica Pier", hotel: "The Hollywood Franklin Hotel near Universal Studios" }
                 ]
             },
@@ -487,150 +735,77 @@
           return "🧣 偏冷，外套或保暖層";
         }
         
-        /**
-         * 呼叫 Open-Meteo API 並處理錯誤
-         * @param {number} lat 緯度
-         * @param {number} lon 經度
-         * @param {string} containerId 渲染天氣卡片的 DOM ID
-         * @param {string} wearId 渲染穿衣建議的 DOM ID
-         */
         async function fetch3DayWeather(lat, lon, containerId, wearId) {
             try {
-                // 使用 metric 單位 (攝氏)
                 const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto&units=metric`;
                 const res = await fetch(url);
-
-                if (!res.ok) {
-                    throw new Error(`天氣 API 錯誤: HTTP 狀態碼 ${res.status}`);
-                }
-
+                if (!res.ok) throw new Error(`API Error`);
                 const data = await res.json();
                 const container = document.getElementById(containerId);
                 container.innerHTML = "";
 
-                // 渲染天氣卡片
                 data.daily.time.forEach((date, i) => {
+                    // Update to use .weather-card class
                     const card = document.createElement("div");
-                    // 修正樣式，讓卡片更美觀且響應式
-                    card.className = "weather-card text-center flex-1 min-w-[60px] p-2 rounded-lg bg-white shadow-sm border border-gray-100";
-                    
+                    card.className = "weather-card";
                     const maxTemp = Math.round(data.daily.temperature_2m_max[i]);
-                    const minTemp = Math.round(data.daily.temperature_2m_min[i]);
-
                     card.innerHTML = `
-                        <div class="text-3xl mb-1">${weatherIcon(data.daily.weathercode[i])}</div>
-                        <!-- 僅顯示 月/日 -->
-                        <div class="text-xs font-semibold text-gray-700">${new Date(date).toLocaleDateString().slice(5)}</div>
-                        <div class="text-sm font-bold text-gray-800 mt-1">
-                          ${maxTemp}° / ${minTemp}°
-                        </div>
+                        <div class="weather-icon">${weatherIcon(data.daily.weathercode[i])}</div>
+                        <div class="weather-date">${new Date(date).toLocaleDateString().slice(5)}</div>
+                        <div class="weather-temp">${maxTemp}°</div>
                     `;
                     container.appendChild(card);
                 });
-
-                // 更新穿衣建議
-                document.getElementById(wearId).innerText =
-                    wearAdvice(Math.round(data.daily.temperature_2m_max[0]));
-
+                document.getElementById(wearId).innerText = wearAdvice(Math.round(data.daily.temperature_2m_max[0]));
             } catch (error) {
-                // 處理 API 網路或數據解析錯誤
                 console.error("Error fetching weather data:", error);
-                document.getElementById(containerId).innerHTML = 
-                    `<p class="text-red-500 text-sm">數據載入失敗。詳情請見主控台 (Console)。</p>`;
-                document.getElementById(wearId).innerText = "無法取得天氣建議。";
+                document.getElementById(containerId).innerHTML = `<p class="text-xs text-[#a09a93]">數據載入失敗</p>`;
             }
         }
         
-        /**
-         * 嘗試載入目前所在地的天氣資訊，並處理地理定位錯誤。
-         */
         function loadCurrentLocationWeather() {
           const cityEl = document.getElementById("current-city");
-          const weatherEl = document.getElementById("weather-current");
-          const wearEl = document.getElementById("wear-current");
-            
           if (!navigator.geolocation) {
-            cityEl.innerHTML = `<span class="font-bold text-red-500">瀏覽器不支援定位功能。</span>`;
-            weatherEl.innerHTML = `<p class="text-red-500 text-sm">無法取得目前地區天氣。</p>`;
+            cityEl.innerHTML = `<span class="text-[#a09a93]">不支援定位</span>`;
             return;
           }
-        
-          const successCallback = async pos => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-        
-            // 成功定位，顯示座標
-            cityEl.innerText = `依 GPS 定位 (精度: ${pos.coords.accuracy.toFixed(0)}m)`;
-        
-            // 呼叫天氣 API
-            fetch3DayWeather(lat, lon, "weather-current", "wear-current");
-          };
-          
-          const errorCallback = (error) => {
-            let message = "定位失敗。";
-            if (error.code === error.PERMISSION_DENIED) {
-              message = "📍 定位被拒絕：請允許瀏覽器存取您的位置。";
-            } else if (error.code === error.POSITION_UNAVAILABLE) {
-              message = "📍 位置資訊不可用。";
-            } else if (error.code === error.TIMEOUT) {
-              message = "📍 定位請求超時。";
-            }
-            
-            // 在 UI 上顯示錯誤訊息
-            cityEl.innerHTML = `<span class="font-bold text-red-500">${message}</span>`;
-            weatherEl.innerHTML = `<p class="text-red-500 text-sm">無法取得目前地區天氣。</p>`;
-            wearEl.innerText = "無法取得天氣建議。";
-            console.error("Geolocation error:", error);
-          };
-
-          // 請求位置資訊，設定 5 秒超時
-          navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
-              enableHighAccuracy: true,
-              timeout: 5000,
-              maximumAge: 0
-          });
+          navigator.geolocation.getCurrentPosition(
+              pos => {
+                cityEl.innerText = `GPS 定位成功`;
+                fetch3DayWeather(pos.coords.latitude, pos.coords.longitude, "weather-current", "wear-current");
+              }, 
+              err => { cityEl.innerHTML = `<span class="text-[#a09a93]">定位失敗</span>`; },
+              { enableHighAccuracy: false, timeout: 5000 }
+          );
         }
 
         function init() {
-            createAttractionMap(); // 呼叫新的地圖創建函數
+            createAttractionMap();
             renderFlightTable('outbound');
-            renderAccommodation(); // 渲染住宿資訊
-            // renderWeatherChart(); // 備用圖表已註釋掉，不影響主功能
-            renderItinerary('phase1'); // 預設顯示 舊金山 階段
-            renderAttractions('all'); // 預設渲染所有景點
-            renderDining('all'); // NEW: 預設渲染所有餐廳
-            
-            // ** 修正後的定位和天氣載入 **
+            renderAccommodation();
+            renderItinerary('phase1');
+            renderAttractions('all');
+            renderDining('all');
             loadCurrentLocationWeather();       
-            
-            // San Francisco
             fetch3DayWeather(37.7749, -122.4194, "weather-sf", "wear-sf");
-            
-            // Los Angeles
             fetch3DayWeather(34.0522, -118.2437, "weather-la", "wear-la");
-
         }
 
         function scrollToSection(id) {
             const el = document.getElementById(id);
             if (!el) return;
             const nav = document.querySelector('nav');
-            const offset = nav ? nav.offsetHeight + 8 : 0; // nav 高度 + 微調
+            const offset = nav ? nav.offsetHeight + 8 : 0;
             const y = el.getBoundingClientRect().top + window.scrollY - offset;
             window.scrollTo({ top: y, behavior: 'smooth' });
         }
 
-        // --- 航班 Tab + 渲染 ---
-
         function switchFlightTab(type) {
-            document.getElementById('btn-outbound').classList.remove('bg-white', 'shadow', 'text-gray-900');
-            document.getElementById('btn-inbound').classList.remove('bg-white', 'shadow', 'text-gray-900');
-            document.getElementById('btn-outbound').classList.add('text-gray-500');
-            document.getElementById('btn-inbound').classList.add('text-gray-500');
+            document.getElementById('btn-outbound').className = 'tab-inactive text-sm transition-all pb-2 hover:text-[#3a3a3a]';
+            document.getElementById('btn-inbound').className = 'tab-inactive text-sm transition-all pb-2 hover:text-[#3a3a3a]';
 
             const activeBtn = document.getElementById(`btn-${type}`);
-            activeBtn.classList.remove('text-gray-500');
-            activeBtn.classList.add('bg-white', 'shadow', 'text-gray-900');
+            activeBtn.className = 'tab-active text-sm transition-all pb-2';
 
             renderFlightTable(type);
         }
@@ -642,74 +817,74 @@
             
             data.forEach((flight, index) => {
                 html += `
-                    <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                        <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3 text-sm">
+                    <div class="flex items-start p-4 bg-[#fbf7f2] rounded-xl border border-[#efe6d8] mb-3 last:mb-0 hover:border-[#d6b98c] transition-colors">
+                        <div class="flex-shrink-0 bg-[#d6b98c] text-white rounded-lg w-10 h-10 flex items-center justify-center font-bold mr-4 text-sm shadow-sm">
                             ${index + 1}
                         </div>
                         <div class="flex-grow">
-                            <div class="flex items-center space-x-2 mb-1">
-                                <span class="font-bold text-gray-800">${flight.leg}</span>
-                                <!-- 顯示航班號碼 -->
-                                <span class="text-sm font-semibold text-blue-700 bg-blue-200 px-2 py-0.5 rounded-lg">國泰 ${flight.number}</span>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold text-[#3a3a3a] text-lg">${flight.leg}</span>
+                                <span class="text-xs font-bold text-[#a4855d] bg-[#faf7f2] px-2 py-1 rounded-md border border-[#efe6d8]">CX${flight.number.replace('CX','')}</span>
                             </div>
-                            <div class="flex justify-between items-center mb-1">
-                                <!-- 顯示備註資訊 -->
-                                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">${flight.note}</span>
+                            <div class="mb-2">
+                                <span class="text-xs font-medium bg-[#fef3c7] text-[#92400e] px-2 py-0.5 rounded-full">${flight.note}</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                                <div><span class="text-gray-400">起飛:</span> ${flight.date}</div>
-                                <div><span class="text-gray-400">抵達:</span> ${flight.arr}</div>
+                            <div class="grid grid-cols-2 gap-4 text-sm text-[#6b6b6b] mt-2">
+                                <div class="bg-white p-2 rounded border border-[#efe6d8]">
+                                    <span class="block text-xs text-[#a09a93] uppercase">Departure</span>
+                                    <span class="font-mono font-bold text-[#3a3a3a]">${flight.date}</span>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-[#efe6d8]">
+                                    <span class="block text-xs text-[#a09a93] uppercase">Arrival</span>
+                                    <span class="font-mono font-bold text-[#3a3a3a]">${flight.arr}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
             });
-
-            // --- 國泰航空報到資訊 (Cathay Pacific Check-in) ---
+            
+            // 國泰報到資訊
             html += `
-                <div class="mt-6 p-4 border border-teal-200 bg-teal-50 rounded-xl space-y-3">
-                    <h4 class="text-base font-bold text-teal-800 flex items-center">
-                        <span class="text-xl mr-2">🛄</span> 國泰航空報到指引 (Cathay Pacific)
+                <div class="mt-6 p-4 border border-[#cfdde6] bg-[#f0f9ff] rounded-xl space-y-3">
+                    <h4 class="text-base font-bold text-[#0f766e] flex items-center">
+                        <span class="text-xl mr-2">🛄</span> 國泰航空報到指引
                     </h4>
-                    
-                    <div>
-                        <p class="text-sm font-semibold text-teal-900 mb-1">✅ 線上報到 (Online Check-in)</p>
-                        <p class="text-xs text-teal-700">開放時間：通常為起飛前 48 小時。建議優先使用以節省時間。</p>
-                        <a href="https://www.cathaypacific.com/mb/?cxsource=TOP-NAV_FLIGHTS_3_1#!/zh_TW/olci/login" target="_blank" class="text-xs text-blue-600 hover:underline font-medium inline-flex items-center">
-                            前往國泰航空官網報到連結 
-                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    <div class="flex items-center justify-between">
+                         <div class="text-sm text-[#115e59]">
+                             <span class="font-bold">線上報到：</span>起飛前 48 小時
+                         </div>
+                         <a href="https://www.cathaypacific.com/mb/?cxsource=TOP-NAV_FLIGHTS_3_1#!/zh_TW/olci/login" target="_blank" class="px-3 py-1 bg-[#0f766e] text-white text-xs font-bold rounded hover:bg-[#115e59] transition-colors">
+                            前往官網
                         </a>
                     </div>
-                    <div>
-                        <p class="text-sm font-semibold text-teal-900 mb-1">📍 機場櫃檯資訊 (TPE)</p>
-                        <p class="text-xs text-teal-700">地點：桃園機場第二航廈。國泰櫃檯通常位於 **D 或 E 區**。</p>
-                        <p class="text-xs text-red-700 font-bold mt-1">
-                            *請務必至少提前 2 小時抵達，並以當日機場 FIDS 螢幕資訊為準。
-                        </p>
-                    </div>
+                    <p class="text-xs text-[#991b1b] font-bold bg-[#fef2f2] p-2 rounded border border-[#fecaca]">
+                        * TPE 櫃檯：桃園機場第二航廈 (通常 D/E 區)
+                    </p>
                 </div>
             `;
-            // --- 結束國泰航空報到資訊 ---
             container.innerHTML = html;
         }
 
         // 渲染住宿資訊
- 	 const toUTCDate = iso => {
-   	 const d = new Date(iso);
-   	 return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  };
+        const toUTCDate = iso => {
+            const d = new Date(iso);
+            return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        };
+        
         function renderAccommodation() {
             const container = document.getElementById('accommodation-content');
             const accommodations = Object.values(accommodationData);
             let html = '';
 
             const tripStartUTC = toUTCDate("2026-02-26");
-
+            
+            // Update badges to match earthy theme
             const cityStyle = {
-                "舊金山": "bg-blue-100 text-blue-800",
-                "蒙特雷": "bg-yellow-100 text-yellow-800",
-                "莫羅貝": "bg-green-100 text-green-800",
-                "洛杉磯": "bg-purple-100 text-purple-800"
+                "舊金山": "bg-[#cfdde6] text-[#475569]", // Blue-ish grey
+                "蒙特雷": "bg-[#fef3c7] text-[#92400e]", // Amber
+                "莫羅貝": "bg-[#d9e5d8] text-[#166534]", // Green
+                "洛杉磯": "bg-[#f3e8ff] text-[#6b21a8]"  // Purple
             };
 
             accommodations.forEach(hotel => {
@@ -719,41 +894,44 @@
                 const dayIndex = Math.floor((checkin - tripStartUTC) / 86400000) + 1;
 
                 html += `
-                <div class="bg-white rounded-2xl border shadow-sm p-5 flex flex-col justify-between">
+                <div class="card-hover rounded-2xl p-6 flex flex-col justify-between group h-full">
                     <!-- 上方標籤 -->
-                    <div class="flex justify-between items-center mb-3 text-xs">
-                        <span class="font-bold text-red-600">Day ${dayIndex}</span>
-                        <span class="text-gray-500">${nights} 晚</span>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="font-bold text-white bg-[#d6b98c] px-3 py-0.5 rounded text-xs">Day ${dayIndex}</span>
+                        <span class="text-xs font-semibold text-[#6b6b6b] bg-[#faf7f2] px-2 py-0.5 rounded-full border border-[#efe6d8]">${nights} 晚</span>
                     </div>
 
                     <!-- 飯店名稱 -->
-                    <h4 class="text-base font-bold mb-1"> ${hotel.name}</h4>
+                    <h4 class="text-lg font-bold mb-2 text-[#3a3a3a] group-hover:text-[#d6b98c] transition-colors"> ${hotel.name}</h4>
 
                     <!-- 城市 badge -->
-                    <span class="inline-block text-xs font-bold px-2 py-1 rounded-full mb-2 ${cityStyle[hotel.city] || 'bg-gray-100 text-gray-600'}">
-                        ${hotel.city}
-                    </span>
+                    <div class="mb-3">
+                         <span class="inline-block text-xs font-bold px-2 py-1 rounded-md ${cityStyle[hotel.city] || 'bg-gray-100 text-gray-600'}">
+                            ${hotel.city}
+                        </span>
+                    </div>
 
                     <!-- 日期 -->
-                    <p class="text-xs text-gray-600 mb-2">
-                        📅 ${hotel.checkinDate} (${hotel.checkin}) → ${hotel.checkoutDate} (${hotel.checkout}) 
-                    </p>
+                    <div class="bg-[#faf7f2] p-2 rounded mb-3 border border-[#efe6d8]">
+                        <p class="text-xs text-[#6b6b6b]">
+                            📅 <span class="font-semibold">${hotel.checkinDate.slice(5)}</span> - <span class="font-semibold">${hotel.checkoutDate.slice(5)}</span>
+                        </p>
+                    </div>
 
                     <!-- 房型 -->
-                    <p class="text-sm text-gray-700 mb-1">
+                    <p class="text-sm text-[#6b6b6b] mb-2 font-medium">
                         🛏️ ${hotel.room}
                     </p>
 
                     <!-- 重點 -->
-                    <p class="text-xs text-gray-500 mb-3">
+                    <p class="text-xs text-[#a09a93] mb-4 line-clamp-2">
                         ${hotel.highlight}｜${hotel.facilities}
                     </p>
 
                     <!-- 地圖 -->
-                    <p class="text-xs text-gray-500 mb-3">
-                        📍 <a href="${hotel.mapLink}" target="_blank"
-                       class="text-sm text-blue-600 font-medium hover:underline">
-                       查看 Google 地圖
+                    <a href="${hotel.mapLink}" target="_blank"
+                       class="mt-auto w-full text-center py-2 rounded-lg bg-[#faf7f2] text-[#a4855d] text-sm font-bold hover:bg-[#d6b98c] hover:text-white transition-colors flex justify-center items-center gap-1 border border-[#efe6d8]">
+                       📍 Google Maps
                     </a>
 
                 </div>
@@ -761,261 +939,160 @@
             });
 
             container.innerHTML = html;
-}
-
-        function renderWeatherChart() {
-            const ctx = document.getElementById('weatherChart').getContext('2d');
-            if (!ctx) return;
-    new Chart(ctx, {
-      type: 'line',
-                data: {
-                    labels: ['早晨', '中午', '傍晚', '夜晚'],
-                    datasets: [
-                        {
-                            label: '舊金山 (SF) 氣溫 °C',
-                            data: [8, 14, 12, 9],
-                            borderColor: '#4299e1', // Ocean Blue
-                            backgroundColor: 'rgba(66, 153, 225, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: '洛杉磯 (LA) 氣溫 °C',
-                            data: [11, 21, 18, 12],
-                            borderColor: '#ed8936', // Warm Orange
-                            backgroundColor: 'rgba(237, 137, 54, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: { mode: 'index', intersect: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 0,
-                            max: 25,
-                            title: { display: true, text: '溫度 (°C)' }
-                        }
-                    }
-                }
-            });
         }
 
         // --- Itinerary Logic ---
-
-        // NEW: 地圖 URL 生成函數
         function generatePhaseMapUrl(phaseKey) {
             let poiList = [];
-
-            if (phaseKey === 'phase1') {
-                // 舊金山：住宿 + 關鍵景點
-                poiList = [
-                    "Riu Plaza Fisherman's Wharf, San Francisco", 
-                    "Alcatraz Island, San Francisco", 
-                    "Golden Gate Bridge, San Francisco", 
-                    "Lombard Street, San Francisco",
-                    "Ferry Building Marketplace, San Francisco", 
-                    "Chase Center, San Francisco"
-                ];
-            } else if (phaseKey === 'phase2') {
-                // 一號公路：住宿 + 關鍵景點
-                poiList = [
-                    "Carmel-by-the-Sea", 
-                    "Point Lobos State Natural Reserve", 
-                    "Bixby Bridge", 
-                    "Hearst Castle", 
-                    "Elephant Seal Rookery", 
-                    "Morro Bay, CA", 
-                    "Solvang, CA", 
-                    "Santa Barbara, CA"
-                ];
-            } else if (phaseKey === 'phase3') {
-                // 洛杉磯：住宿 + 關鍵景點
-                poiList = [
-                    "The Hollywood Franklin Hotel, Los Angeles", 
-                    "Santa Monica Pier", 
-                    "Disneyland Park, Anaheim", 
-                    "Universal Studios Hollywood", 
-                    "Griffith Observatory", 
-                    "Hollywood Walk of Fame"
-                ];
-            }
-
-            // 使用 Google Maps Search API 的 query 參數來標記多個地點
-            const query = poiList.join(' and '); // 使用 ' and ' 作為分隔符在 Google Maps 查詢中效果較好
-            const baseUrl = "https://www.google.com/maps/search/?api=1&query=";
-            return baseUrl + encodeURIComponent(query);
+            if (phaseKey === 'phase1') poiList = ["Riu Plaza Fisherman's Wharf", "Alcatraz Island", "Golden Gate Bridge", "Lombard Street", "Chase Center"];
+            else if (phaseKey === 'phase2') poiList = ["Carmel-by-the-Sea", "Bixby Bridge", "Hearst Castle", "Morro Bay", "Solvang"];
+            else if (phaseKey === 'phase3') poiList = ["Hollywood Franklin Hotel", "Santa Monica Pier", "Disneyland Park", "Universal Studios Hollywood", "Griffith Observatory"];
+            const query = poiList.join(' and '); 
+            return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
         }
 
-        // 景點徽章顏色工具函數 (簡化，只用於行程中展示，不影響主要分類篩選)
         function getAttractionBadgeColor(type) {
-            if (type === 'History') return 'bg-amber-100 text-amber-800';
-            if (type === 'Nature') return 'bg-green-100 text-green-800';
-            if (type === 'Fun') return 'bg-pink-100 text-pink-800';
-            if (type === 'Food') return 'bg-orange-100 text-orange-800';
-            if (type === 'Photo') return 'bg-red-100 text-red-800'; 
-            if (type === 'Culture') return 'bg-teal-100 text-teal-800'; 
+            if (type === 'History') return 'bg-[#fef3c7] text-[#92400e] border-[#fcd34d]'; // Amber
+            if (type === 'Nature') return 'bg-[#dcfce7] text-[#166534] border-[#86efac]'; // Green
+            if (type === 'Fun') return 'bg-[#fce7f3] text-[#9d174d] border-[#fbcfe8]'; // Pink
+            if (type === 'Food') return 'bg-[#ffedd5] text-[#9a3412] border-[#fdba74]'; // Orange
+            if (type === 'Photo') return 'bg-[#fee2e2] text-[#991b1b] border-[#fca5a5]'; // Red
+            if (type === 'Culture') return 'bg-[#ccfbf1] text-[#115e59] border-[#5eead4]'; // Teal
             return 'bg-gray-100 text-gray-600';
         }
-// 左側階段按鈕狀態（簡化且一致）
-  function activatePhaseNav(activeKey) {
-    const btns = [
-      { id: 'nav-phase1', key: 'phase1', color: 'blue' },
-      { id: 'nav-phase2', key: 'phase2', color: 'yellow' },
-      { id: 'nav-phase3', key: 'phase3', color: 'purple' }
-    ];
-    btns.forEach(({ id, key, color }) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const isActive = key === activeKey;
-      el.classList.remove('border-transparent', 'border-blue-500', 'border-yellow-500', 'border-purple-500', 'bg-gray-50', 'bg-blue-50', 'bg-yellow-50', 'bg-purple-50');
-      el.classList.add('shadow-sm', 'border-l-4');
-      if (isActive) {
-        el.classList.add(`border-${color}-500`, `bg-${color}-50`, 'bg-white');
-      } else {
-        el.classList.add('border-transparent', 'bg-gray-50');
-      }
-    });
-  }        
-  function renderItinerary(phaseKey) {
-    const phase = itineraryData[phaseKey];
-    const container = document.getElementById('itinerary-details');
-    if (!phase || !container) return;
 
-    activatePhaseNav(phaseKey);
-            const mapUrl = generatePhaseMapUrl(phaseKey); // Get the map URL
+        function activatePhaseNav(activeKey) {
+            const btns = [
+              { id: 'nav-phase1', key: 'phase1' },
+              { id: 'nav-phase2', key: 'phase2' },
+              { id: 'nav-phase3', key: 'phase3' }
+            ];
+            btns.forEach(({ id, key }) => {
+              const el = document.getElementById(id);
+              if (!el) return;
+              
+              if (key === activeKey) {
+                  el.classList.add('border-[#d6b98c]', 'shadow-md');
+                  el.classList.remove('border-transparent');
+              } else {
+                  el.classList.remove('border-[#d6b98c]', 'shadow-md');
+                  el.classList.add('border-transparent');
+              }
+            });
+        }        
+  
+        function renderItinerary(phaseKey) {
+            const phase = itineraryData[phaseKey];
+            const container = document.getElementById('itinerary-details');
+            const headerContainer = document.getElementById('itinerary-header');
+            
+            if (!phase || !container) return;
 
-            // Determine primary color for map button and phase title underline
-            let primaryColorClass = 'bg-blue-500';
-            let hoverColorClass = 'hover:bg-blue-600';
-            let pinColor = 'border-blue-400';
-            let lineColor = 'border-blue-300';
-            let locColor = 'text-blue-600';
-            let locBg = 'bg-blue-100';
+            activatePhaseNav(phaseKey);
+            const mapUrl = generatePhaseMapUrl(phaseKey);
 
-            if (phaseKey === 'phase2') {
-                primaryColorClass = 'bg-yellow-500';
-                hoverColorClass = 'hover:bg-yellow-600';
-                pinColor = 'border-yellow-500';
-                lineColor = 'border-yellow-400';
-                locColor = 'text-yellow-600';
-                locBg = 'bg-yellow-100';
-            } else if (phaseKey === 'phase3') {
-                primaryColorClass = 'bg-purple-500';
-                hoverColorClass = 'hover:bg-purple-600';
-                pinColor = 'border-purple-500';
-                lineColor = 'border-purple-400';
-                locColor = 'text-purple-600';
-                locBg = 'bg-purple-100';
-            }
-// 從這裡開始
-            // Generate HTML with animation
-            let html = `
-                <div class="mb-6 animate-fade-in">
-                    <!-- NEW: 地圖連結按鈕 (整合自 dashboard 概念) -->
-                    <a href="${mapUrl}" target="_blank" class="flex items-center justify-center p-3 mb-4 rounded-xl text-white font-bold ${primaryColorClass} ${hoverColorClass} transition-colors shadow-lg card-hover">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657A8 8 0 1117.657 16.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        🔍 地圖連結：開新分頁查看「${phase.title}」主要地點
-          <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-        </a>                    
-                    <h3 class="text-2xl font-bold text-gray-900">${phase.title}</h3>
-                    <div class="h-1 w-20 ${phaseKey === 'phase2' ? 'bg-yellow-500' : phaseKey === 'phase3' ? 'bg-purple-500' : 'bg-blue-500'} mt-2 rounded-full"></div>
+            // Theme colors (Updated to Earthy Tones)
+            let theme = { text: 'text-[#a4855d]', bg: 'bg-[#faf7f2]', accent: 'bg-[#d6b98c]', border: 'border-[#efe6d8]' };
+            
+            // Header
+            headerContainer.innerHTML = `
+                <div>
+                    <h3 class="text-xl font-bold text-[#3a3a3a]">${phase.title}</h3>
+                    <div class="h-1 w-12 ${theme.accent} rounded-full mt-1"></div>
                 </div>
+                <a href="${mapUrl}" target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-full ${theme.bg} text-[#a4855d] text-sm font-bold hover:bg-white hover:shadow-md transition-all border border-[#efe6d8]">
+                    <span>🗺️ 地圖模式</span>
+                </a>
             `;
 
-                phase.days.forEach((day, idx) => {
-      const attraction = day.attractionKey ? attractionMap[day.attractionKey] : null;
-      let attractionHtml = '';
-      if (attraction) {
-        const badgeColor = getAttractionBadgeColor(attraction.type);
-                    const typeLabel = attraction.type === 'History' ? '歷史地標' : 
-                                      attraction.type === 'Nature' ? '自然景觀' : 
-                                      attraction.type === 'Fun' ? '娛樂樂園' : 
-                                      attraction.type === 'Food' ? '美食體驗' : 
-                                      attraction.type === 'Photo' ? '攝影打卡' : 
-                                      attraction.type === 'Culture' ? '文化藝術' : '其他';
+            let html = `<div class="relative space-y-12 py-4">`;
+            html += `<div class="absolute left-[19px] top-6 bottom-6 w-0.5 bg-[#efe6d8] timeline-line md:block hidden"></div>`;
 
-                    attractionHtml = `
-                        <div class="mt-3 pt-3 border-t border-gray-100">
-                            <div class="flex items-center space-x-2 mb-2">
-                                <div class="text-xl">${attraction.icon}</div>
-                                <!-- 點擊景點名稱跳轉到 Highlights 區塊 -->
-                                <button onclick="scrollToSection('highlights')" class="text-sm font-bold text-gray-800 underline hover:text-yellow-600 attraction-link cursor-pointer p-0 m-0 border-none bg-transparent flex items-center">
-                                    <span class="mr-1">景點亮點:</span>
-                                    <span>${attraction.name}</span>
-                                </button>
-                                <span class="text-xs px-2 py-0.5 rounded-full font-bold ${badgeColor}">${typeLabel}</span>
+            phase.days.forEach((day, idx) => {
+              const attraction = day.attractionKey ? attractionMap[day.attractionKey] : null;
+              
+              let attractionHtml = '';
+              if (attraction) {
+                const badgeColor = getAttractionBadgeColor(attraction.type);
+                attractionHtml = `
+                    <div onclick="scrollToSection('highlights')" class="mt-4 bg-white border border-[#efe6d8] rounded-xl p-3 flex items-start gap-3 cursor-pointer hover:shadow-md hover:border-[#d6b98c] transition-all group/card">
+                        <div class="text-2xl bg-[#faf7f2] rounded-lg p-2 group-hover/card:scale-110 transition-transform">${attraction.icon}</div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs font-bold border px-1.5 rounded ${badgeColor}">重點行程</span>
+                                <h5 class="text-sm font-bold text-[#3a3a3a] group-hover/card:text-[#d6b98c] transition-colors">${attraction.name}</h5>
                             </div>
-                            <!-- 使用 short_desc 簡短介紹 -->
-                            <p class="text-xs text-gray-600 italic leading-relaxed">${attraction.short_desc}</p>
+                            <p class="text-xs text-[#a09a93] line-clamp-1">${attraction.short_desc}</p>
                         </div>
-                    `;
-                }
-
-                // Check for linked hotel
-                let hotelHtml = '';
-                const currentHotel = Object.values(accommodationData).find(h => h.name === day.hotel);
-                if (currentHotel) {
-                     hotelHtml = `<span class="text-xs text-gray-500 bg-yellow-50 border border-yellow-200 inline-block px-2 py-1 rounded ml-2">🏠 ${currentHotel.city}</span>`;
-                }
-
-                // Determine pin and line color based on phase
-                // Color variables already set above (pinColor, lineColor, locColor, locBg)
-
-                html += `
-                    <div class="flex group relative pl-8 pb-8 last:pb-0 border-l-2 border-gray-200">
-          <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-4 ${pinColor} group-hover:scale-125 transition-transform"></div>
-          <div class="bg-gray-50 rounded-xl p-5 w-full hover:bg-white hover:shadow-md transition-all border border-gray-100">
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">                                <span class="font-bold ${locColor} ${locBg} px-3 py-1 rounded-full text-sm w-fit mb-2 sm:mb-0">
-                                    ${day.date}
-                                    ${hotelHtml}
-                                </span>
-                                <span class="text-sm font-semibold text-gray-500 flex items-center">
-                                    <span class="mr-1">📍</span> ${day.loc}
-                                </span>
-                            </div>
-                            <div class="flex items-center gap-3 mb-1">
-              <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 font-semibold">${idx + 1}</span>
-              <h4 class="text-lg font-bold text-gray-800">${day.act}</h4>
-            </div>
-            <p class="text-gray-600 text-sm leading-relaxed">${day.detail}</p>
-            ${attractionHtml}
-            <div class="text-xs text-gray-500 bg-white border border-gray-200 inline-block px-2 py-1 rounded mt-3">🚇 交通: ${day.transport || '—'}</div>                        </div>
                     </div>
                 `;
+              }
+
+              let hotelHtml = '';
+              const currentHotel = Object.values(accommodationData).find(h => h.name === day.hotel);
+              if (currentHotel) {
+                   hotelHtml = `
+                    <div class="mt-2 inline-flex items-center gap-1.5 text-xs text-[#6b6b6b] bg-[#faf7f2] px-2 py-1 rounded-md border border-[#efe6d8]">
+                        <span>🛌</span> 住宿：${currentHotel.name}
+                    </div>`;
+              }
+
+              html += `
+                <div class="relative flex gap-6 group animate-fade-in" style="animation-delay: ${idx * 100}ms">
+                    <!-- Timeline Marker -->
+                    <div class="hidden md:flex flex-col items-center">
+                        <div class="w-10 h-10 rounded-full bg-[#fbf7f2] text-[#a4855d] border-4 border-white shadow-md flex items-center justify-center font-bold z-10 text-sm group-hover:scale-110 transition-transform">
+                            ${idx + 1}
+                        </div>
+                    </div>
+
+                    <!-- Content Card -->
+                    <div class="flex-1 bg-white rounded-2xl p-6 border border-[#efe6d8] shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-[#d6b98c]"></div>
+                        
+                        <div class="flex flex-wrap justify-between items-start mb-3 gap-2">
+                            <span class="text-2xl font-black text-[#faf7f2] select-none absolute right-4 top-2">DAY ${idx + 1}</span>
+                            <div class="flex items-center gap-2 z-10">
+                                <span class="px-3 py-1 rounded-full bg-[#3a3a3a] text-white text-xs font-bold tracking-wide">${day.date.split(' ')[0]}</span>
+                                <span class="text-sm font-bold text-[#a09a93] flex items-center gap-1">
+                                    📍 ${day.loc}
+                                </span>
+                            </div>
+                        </div>
+
+                        <h4 class="text-xl font-bold text-[#3a3a3a] mb-3 relative z-10 group-hover:text-[#d6b98c] transition-colors">
+                            ${day.act}
+                        </h4>
+
+                        <div class="text-sm text-[#6b6b6b] leading-relaxed mb-4 relative z-10 bg-[#fbf7f2] p-4 rounded-xl border border-[#efe6d8]">
+                            ${day.detail.replace(/<br>/g, '<div class="h-2"></div>')}
+                        </div>
+
+                        ${attractionHtml}
+                        ${hotelHtml}
+
+                        <div class="mt-4 pt-3 border-t border-[#efe6d8] flex items-center gap-2 text-xs text-[#a09a93]">
+                            <span class="bg-[#faf7f2] p-1 rounded">🚗 交通</span>
+                            <span>${day.transport || '—'}</span>
+                        </div>
+                    </div>
+                </div>
+              `;
             });
 
+            html += `</div>`;
             container.innerHTML = html;
         }
 
         // --- NEW: Dining Logic ---
         function filterDining(filter) {
             document.querySelectorAll('.dining-filter-btn').forEach(btn => {
-                // Reset styles
-                btn.classList.remove('bg-gray-800', 'text-white', 'shadow-md');
-                btn.classList.remove('bg-white', 'text-gray-600', 'border', 'hover:bg-blue-50', 'hover:text-blue-600', 'hover:bg-yellow-50', 'hover:text-yellow-600', 'hover:bg-purple-50', 'hover:text-purple-600', 'hover:bg-green-50', 'hover:text-green-600');
-                
-                // Default non-active
-                btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                btn.classList.remove('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
+                btn.classList.add('bg-white', 'text-[#6b6b6b]', 'border', 'border-[#efe6d8]');
 
                 if (btn.dataset.filter === filter) {
-                    // Active state
-                    btn.classList.add('bg-gray-800', 'text-white', 'shadow-md');
-                    btn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
-                } else {
-                    // Hover states
-                    if (btn.dataset.filter === 'SF') btn.classList.add('hover:bg-blue-50', 'hover:text-blue-600');
-                    if (btn.dataset.filter === 'PCH') btn.classList.add('hover:bg-yellow-50', 'hover:text-yellow-600');
-                    if (btn.dataset.filter === 'LA') btn.classList.add('hover:bg-purple-50', 'hover:text-purple-600');
+                    btn.classList.add('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
+                    btn.classList.remove('bg-white', 'text-[#6b6b6b]', 'border', 'border-[#efe6d8]');
                 }
             });
             renderDining(filter);
@@ -1023,40 +1100,33 @@
 
         function renderDining(filter) {
             const container = document.getElementById('dining-grid');
-            
-            const filtered = filter === 'all' 
-                ? diningData 
-                : diningData.filter(d => d.city === filter);
-            
+            const filtered = filter === 'all' ? diningData : diningData.filter(d => d.city === filter);
             let html = '';
+            
             filtered.forEach(item => {
-                // Determine city styles for badge
-                let areaBadgeClass = 'bg-gray-100 text-gray-600';
+                let badgeClass = 'bg-[#faf7f2] text-[#6b6b6b]';
                 let cityLabel = '地區';
-                
-                if (item.city === 'SF') { areaBadgeClass = 'bg-blue-100 text-blue-800'; cityLabel = '舊金山'; }
-                else if (item.city === 'PCH') { areaBadgeClass = 'bg-yellow-100 text-yellow-800'; cityLabel = '一號公路'; }
-                else if (item.city === 'LA') { areaBadgeClass = 'bg-purple-100 text-purple-800'; cityLabel = '洛杉磯'; }
+                if (item.city === 'SF') { badgeClass = 'bg-[#cfdde6] text-[#475569]'; cityLabel = '舊金山'; }
+                else if (item.city === 'PCH') { badgeClass = 'bg-[#fef3c7] text-[#92400e]'; cityLabel = '一號公路'; }
+                else if (item.city === 'LA') { badgeClass = 'bg-[#f3e8ff] text-[#6b21a8]'; cityLabel = '洛杉磯'; }
 
                 html += `
                     <a href="${item.url}" target="_blank" rel="noopener noreferrer" 
-                       class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 card-hover flex flex-col h-full group block cursor-pointer"
-                       aria-label="前往 ${item.name} 餐廳網站">
+                       class="card-hover rounded-2xl p-6 group block relative overflow-hidden h-full flex flex-col justify-between">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-[#faf7f2] rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 group-hover:bg-[#d6b98c]/20"></div>
                         
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="text-4xl">${item.icon}</div>
-                            <span class="text-xs px-2 py-1 rounded-full font-bold ${areaBadgeClass}">${cityLabel}</span>
+                        <div>
+                            <div class="relative z-10 flex justify-between items-start mb-4">
+                                <div class="text-4xl shadow-sm bg-white rounded-full w-12 h-12 flex items-center justify-center border border-[#efe6d8]">${item.icon}</div>
+                                <span class="text-xs px-2 py-1 rounded-full font-bold ${badgeClass}">${cityLabel}</span>
+                            </div>
+                            <h4 class="text-lg font-bold text-[#3a3a3a] mb-2 relative z-10 group-hover:text-[#d6b98c] transition-colors">${item.name}</h4>
+                            <p class="text-sm text-[#6b6b6b] mb-4 relative z-10 line-clamp-3">${item.desc.replace(/<\/br>/g, ' ')}</p>
                         </div>
-                        <h4 class="text-lg font-bold text-gray-900 mb-1">${item.name}</h4>
-                        <p class="text-sm text-gray-600 flex-grow mt-2">${item.desc}</p>
                         
-                        <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
-                            <span class="text-sm font-semibold text-green-600 group-hover:text-green-800 transition-colors">
-                                查看餐廳資訊
-                            </span>
-                            <svg class="w-4 h-4 text-green-500 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                            </svg>
+                        <div class="relative z-10 flex items-center text-sm font-bold text-[#a09a93] group-hover:text-[#d6b98c] transition-colors mt-auto">
+                            <span>查看詳情</span>
+                            <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                         </div>
                     </a>
                 `;
@@ -1065,87 +1135,46 @@
         }
 
         // --- Attraction Logic ---
-
         function filterAttractions(filter) {
-            // Update active button state
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                // Remove all color classes
-                btn.classList.remove('bg-gray-800', 'text-white', 'shadow-md');
-                btn.classList.remove('bg-white', 'text-gray-600', 'border', 'hover:bg-blue-50', 'hover:text-blue-600', 'hover:bg-yellow-50', 'hover:text-yellow-600', 'hover:bg-purple-50', 'hover:text-purple-600', 'hover:bg-green-50', 'hover:text-green-600');
-                
-                // Add default non-active styles
-                btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+                btn.classList.remove('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
+                btn.classList.add('bg-white', 'text-[#6b6b6b]', 'border', 'border-[#efe6d8]');
 
                 if(btn.dataset.filter === filter) {
-                    // Active state
-                    btn.classList.add('bg-gray-800', 'text-white', 'shadow-md');
-                    btn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
-                } else {
-                    // Hover states based on filter name (for non-active buttons)
-                    if (btn.dataset.filter === 'SF') btn.classList.add('hover:bg-blue-50', 'hover:text-blue-600');
-                    if (btn.dataset.filter === 'Yosemite') btn.classList.add('hover:bg-green-50', 'hover:text-green-600');
-                    if (btn.dataset.filter === 'PCH') btn.classList.add('hover:bg-yellow-50', 'hover:text-yellow-600');
-                    if (btn.dataset.filter === 'LA') btn.classList.add('hover:bg-purple-50', 'hover:text-purple-600');
+                    btn.classList.add('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
+                    btn.classList.remove('bg-white', 'text-[#6b6b6b]', 'border', 'border-[#efe6d8]');
                 }
             });
-
             renderAttractions(filter);
         }
 
         function renderAttractions(filter) {
             const container = document.getElementById('attraction-grid');
-            
-            // Filter only by the city/area code (SF, PCH, LA)
-            const filtered = filter === 'all' 
-                ? attractions 
-                : attractions.filter(a => a.city === filter);
-            
+            const filtered = filter === 'all' ? attractions : attractions.filter(a => a.city === filter);
             let html = '';
+            
             filtered.forEach(item => {
-                // 使用共用函數獲取顏色 (用於卡片頂部的類型徽章)
                 const badgeColor = getAttractionBadgeColor(item.type);
-                const typeLabel = item.type === 'History' ? '歷史地標' : 
-                                  item.type === 'Nature' ? '自然景觀' : 
-                                  item.type === 'Fun' ? '娛樂樂園' : 
-                                  item.type === 'Food' ? '美食體驗' : 
-                                  item.type === 'Photo' ? '攝影打卡' : 
-                                  item.type === 'Culture' ? '文化藝術' : '其他';
-
-                // 城市名稱轉換
+                const typeLabel = item.type === 'History' ? '歷史' : item.type === 'Nature' ? '自然' : item.type === 'Fun' ? '娛樂' : item.type === 'Food' ? '美食' : item.type === 'Photo' ? '攝影' : item.type === 'Culture' ? '文化' : '其他';
                 const cityLabel = item.city === 'SF' ? '舊金山' : item.city === 'LA' ? '洛杉磯' : item.city === 'Yosemite' ? '優勝美地' : '一號公路';
 
-                // 城市顏色標籤
-                let areaBadgeClass = 'bg-gray-100 text-gray-600';
-                if (item.city === 'SF') areaBadgeClass = 'bg-blue-100 text-blue-800';
-                else if (item.city === 'PCH') areaBadgeClass = 'bg-yellow-100 text-yellow-800';
-                else if (item.city === 'LA') areaBadgeClass = 'bg-purple-100 text-purple-800';
-                else if (item.city === 'Yosemite') areaBadgeClass = 'bg-green-100 text-green-800';
-
-                // 將卡片容器從 div 改為 <a> 標籤，並設定 href 和 target="_blank"
                 html += `
                     <a href="${item.url}" target="_blank" rel="noopener noreferrer" 
-                       class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 card-hover flex flex-col h-full group block cursor-pointer"
-                       aria-label="前往 ${item.name} 官方網站">
-                        
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="text-4xl">${item.icon}</div>
-                            <div class="flex space-x-2">
-                                <span class="text-xs px-2 py-1 rounded-full font-bold ${badgeColor}">${typeLabel}</span>
-                                <span class="text-xs px-2 py-1 rounded-full font-bold ${areaBadgeClass}">${cityLabel}</span>
+                       class="card-hover rounded-2xl overflow-hidden group block">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="text-4xl transform group-hover:scale-110 transition-transform duration-300">${item.icon}</div>
+                                <div class="flex flex-col items-end gap-1">
+                                    <span class="text-[10px] uppercase font-bold text-[#a09a93] tracking-wider">${cityLabel}</span>
+                                    <span class="text-xs px-2 py-1 rounded-full font-bold border ${badgeColor}">${typeLabel}</span>
+                                </div>
                             </div>
+                            <h4 class="text-lg font-bold text-[#3a3a3a] mb-2 group-hover:text-[#d6b98c] transition-colors">${item.name}</h4>
+                            <p class="text-sm text-[#6b6b6b] line-clamp-2">${item.desc}</p>
                         </div>
-                        <h4 class="text-lg font-bold text-gray-900 mb-1">${item.name}</h4>
-                        <p class="text-sm text-gray-600 flex-grow mt-2">${item.desc}</p>
-                        
-                        <!-- 新增連結提示 -->
-                        <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
-                            <span class="text-sm font-semibold text-indigo-600 group-hover:text-indigo-800 transition-colors">
-                                了解更多 (官方網站)
-                            </span>
-                            <!-- 外部連結圖示 -->
-                            <svg class="w-4 h-4 text-indigo-500 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                            </svg>
+                        <div class="bg-[#faf7f2] px-6 py-3 border-t border-[#efe6d8] flex justify-between items-center">
+                            <span class="text-xs font-bold text-[#a09a93] group-hover:text-[#d6b98c]">了解更多</span>
+                            <span class="text-[#a09a93] group-hover:text-[#d6b98c] group-hover:translate-x-1 transition-all">➔</span>
                         </div>
                     </a>
                 `;
@@ -1157,10 +1186,5 @@
         window.addEventListener('DOMContentLoaded', init);
 
     </script>
-    <!-- 捲動至頂部按鈕 (Scroll to Top Button) - 實現透明底 -->
-    <button onclick="window.scrollTo({top:0,behavior:'smooth'})"
-        class="fixed bottom-4 right-4 z-50 bg-transparent text-indigo-600 w-12 h-12 rounded-full shadow-lg border-2 border-indigo-400 flex items-center justify-center md:hidden transition-all duration-300 hover:bg-indigo-100/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-        <span class="text-2xl">⬆️</span>
-    </button>
 </body>
 </html>
