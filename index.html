@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>2026 美西｜舊金山與洛杉磯之旅</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 SheetJS 用於讀取 Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     
     <!-- 
       Application Structure:
@@ -157,6 +159,61 @@
             transform: translateY(-3px);
         }
 
+        /* Excel 按鈕樣式 */
+        .excel-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .excel-btn-primary {
+            background-color: #107c41; /* Excel Green */
+            color: white;
+        }
+        .excel-btn-primary:hover {
+            background-color: #0c5e31;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .excel-btn-secondary {
+            background-color: white;
+            color: #107c41;
+            border-color: #107c41;
+        }
+        .excel-btn-secondary:hover {
+            background-color: #f0fdf4;
+        }
+
+        /* ==========================================================================
+           E. 展開/收合動畫 (Expand/Collapse Animations) - NEW
+           ========================================================================== */
+        .expandable-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                        opacity 0.3s ease-in,
+                        margin-top 0.3s ease;
+        }
+        .expandable-content.open {
+            max-height: 500px; /* 足夠大的高度以容納內容 */
+            opacity: 1;
+            margin-top: 1rem;
+        }
+        .rotate-icon {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+        .rotate-icon.open {
+            transform: rotate(180deg);
+        }
+
         /* ==========================================================================
            C. 動畫 (Animations)
            ========================================================================== */
@@ -207,7 +264,8 @@
                 padding: 1rem;
                 gap: 1rem;
             }
-            button[id^="nav-phase"] { min-width: 260px; flex-shrink: 0; }
+            /* 讓 JS 動態生成的按鈕在手機版也有固定寬度 */
+            .phase-nav-btn { min-width: 260px; flex-shrink: 0; }
 
             /* 天氣卡片橫滑 */
             #weather-current, #weather-sf, #weather-la {
@@ -389,7 +447,7 @@
 
         <!-- Section 2: Itinerary -->
         <section id="itinerary" class="scroll-mt-24">
-            <div class="text-center mb-12">
+            <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-[#3a3a3a] inline-block relative z-10">
                     🗺️ 13 天旅程規劃
                     <div class="absolute bottom-0 left-0 w-full h-3 bg-[#a5b4fc] opacity-20 -z-10 transform translate-y-1"></div>
@@ -397,60 +455,16 @@
                 <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">
                     行程分為三大主題階段。點選左側可切換查看詳細時間軸與亮點。
                 </p>
+                
+                <!-- 原本的 Excel Controls 已移除，移動至頁尾 -->
             </div>
 
             <!-- 使用新的 ID "itinerary-container" 來配合響應式 CSS -->
             <div id="itinerary-container" class="bg-white rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden border border-[#efe6d8] flex flex-col md:flex-row md:h-[750px]">
-                <!-- Sidebar: Phases -->
+                <!-- Sidebar: Phases (Dynamic) -->
                 <div id="phase-nav-container" class="w-full md:w-1/3 bg-[#fbf7f2] border-r border-[#efe6d8] md:overflow-y-auto custom-scroll z-10">
-                    <div class="p-4 md:p-6 space-y-4 md:block">
-                        <!-- Phase 1 -->
-                        <button onclick="renderItinerary('phase1')" id="nav-phase1"
-                          class="w-full text-left p-6 rounded-2xl transition-all duration-300 border border-transparent group relative overflow-hidden bg-white shadow-sm hover:border-[#d6b98c]">
-                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <span class="text-6xl text-[#3a3a3a]">🌉</span>
-                            </div>
-                            <div class="relative z-10">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-bold px-2 py-1 rounded bg-[#cfdde6] text-[#475569] uppercase tracking-wider">Phase 1</span>
-                                    <span class="text-xs text-[#a09a93] font-medium">2/26 - 3/2</span>
-                                </div>
-                                <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">舊金山漫遊與NBA</h3>
-                                <p class="text-sm text-[#6b6b6b] line-clamp-2">金門大橋、惡魔島、NBA 賽事</p>
-                            </div>
-                        </button>
-
-                        <!-- Phase 2 -->
-                        <button onclick="renderItinerary('phase2')" id="nav-phase2"
-                          class="w-full text-left p-6 rounded-2xl transition-all duration-300 border border-transparent group relative overflow-hidden bg-white mt-4 md:mt-0 shadow-sm hover:border-[#d6b98c]">
-                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <span class="text-6xl text-[#3a3a3a]">🌊</span>
-                            </div>
-                            <div class="relative z-10">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-bold px-2 py-1 rounded bg-[#fef3c7] text-[#92400e] uppercase tracking-wider">Phase 2</span>
-                                    <span class="text-xs text-[#a09a93] font-medium">3/3 - 3/5</span>
-                                </div>
-                                <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">加州一號公路</h3>
-                                <p class="text-sm text-[#6b6b6b] line-clamp-2">絕美海岸自駕、赫氏古堡</p>
-                            </div>
-                        </button>
-
-                        <!-- Phase 3 -->
-                        <button onclick="renderItinerary('phase3')" id="nav-phase3"
-                          class="w-full text-left p-6 rounded-2xl transition-all duration-300 border border-transparent group relative overflow-hidden bg-white mt-4 md:mt-0 shadow-sm hover:border-[#d6b98c]">
-                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <span class="text-6xl text-[#3a3a3a]">🎡</span>
-                            </div>
-                            <div class="relative z-10">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-bold px-2 py-1 rounded bg-[#f3e8ff] text-[#6b21a8] uppercase tracking-wider">Phase 3</span>
-                                    <span class="text-xs text-[#a09a93] font-medium">3/6 - 3/9</span>
-                                </div>
-                                <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">天使之城與雙樂園</h3>
-                                <p class="text-sm text-[#6b6b6b] line-clamp-2">迪士尼、環球影城、星光大道</p>
-                            </div>
-                        </button>
+                    <div id="phase-nav-content" class="p-4 md:p-6 space-y-4 md:block">
+                        <!-- Dynamic Content injected via JS (renderSidebar) -->
                     </div>
                 </div>
 
@@ -531,8 +545,24 @@
             <h3 class="text-2xl font-bold mb-2 tracking-wider">2026 美西之旅</h3>
             <p class="text-[#a09a93]">祝您的旅程充滿美好回憶！</p>
             <div class="w-12 h-1 bg-[#5c4d3c] mx-auto my-8 rounded-full"></div>
-            <div class="text-xs text-[#5c4d3c]">
+            <div class="text-xs text-[#5c4d3c] mb-8">
                 Designed with Earthy Calm Theme
+            </div>
+
+            <!-- New: Stealthy Excel Controls in Footer -->
+            <div class="inline-block px-6 py-4 rounded-2xl border border-[#3e3429] bg-[#251e16]">
+                <p class="text-[10px] text-[#5c4d3c] mb-3 font-bold uppercase tracking-widest">行程管理後台</p>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(this)" />
+                    <label for="excel-upload" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
+                        <span>📂</span> 匯入資料
+                    </label>
+                    
+                    <button onclick="downloadTemplate()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
+                        <span>⬇️</span> 下載範本
+                    </button>
+                </div>
+                <p id="upload-status" class="text-[10px] text-[#a09a93] mt-2 hidden"></p>
             </div>
         </div>
     </footer>
@@ -543,9 +573,9 @@
     </button>
 
     <script>
-        // --- Data Storage ---
+        // --- Data Storage (All converted to LET for mutation) ---
 
-        const flightData = {
+        let flightData = {
             outbound: [
                 { leg: "TPE ➜ HKG", date: "2/26 20:15", arr: "22:00", note: "轉機", number: "CX531" }, 
                 { leg: "HKG ➜ SFO", date: "2/26 01:00 (+1)", arr: "21:15 (2/26)", note: "需調整時差", number: "CX872" }
@@ -556,8 +586,8 @@
             ]
         };
 
-        const accommodationData = {
-            sf: {
+        let accommodationData = [
+            {
                 city: "舊金山",
                 name: "Riu Plaza Fisherman's Wharf",
                 checkinDate: "2026-02-26",
@@ -570,7 +600,7 @@
                 address: "2500 Mason Street, San Francisco, CA 94133, USA",
                 mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166"
             },
-            monterey: {
+            {
                 city: "蒙特雷",
                 name: "隆恩橡木酒店",
                 checkinDate: "2026-03-03",
@@ -583,7 +613,7 @@
                 address: "2221 North Fremont Street, Monterey, CA 93940, USA",
                 mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579"
             },
-            morro: {
+            {
                 city: "莫羅貝",
                 name: "海港屋酒店",
                 checkinDate: "2026-03-04",
@@ -596,7 +626,7 @@
                 address: "1095 Main Street, Morro Bay, CA 93442, USA",
                 mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805"
             },
-            la: {
+            {
                 city: "洛杉磯",
                 name: "Hollywood Franklin Hotel",
                 checkinDate: "2026-03-05",
@@ -609,9 +639,9 @@
                 address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA",
                 mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599"
             }
-        };
+        ];
 
-        const diningData = [
+        let diningData = [
             // SF
             { name: "Fog Harbor Fish House", city: "SF", type: "Seafood", desc: "漁人碼頭排隊名店，海鮮品質極佳，必點獲獎的 Clam Chowder (蛤蜊濃湯)、Garlic Roasted Whole Dungeness Crab (蒜香烤大螃蟹)。", icon: "🦀", url: "https://fogharbor.com/" },
             { name: "Boudin Bakery", city: "SF", type: "Classic", desc: "舊金山酸麵包創始店，蛤蜊濃湯 (Clam Chowder) 是觀光客必嚐經典。", icon: "🥣", url: "https://boudinbakery.com/" },
@@ -631,7 +661,7 @@
         ];
 
         let attractionMap = {};
-        const attractions = [
+        let attractions = [
             // --- 舊金山 (SF) 景點 ---
             { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "舊金山最著名的象徵。這座橘紅色的懸索橋橫跨金門海峽，無論是在霧中若隱若現還是晴天下的鮮豔，都是旅人的必看之處。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/" }, 
             { name: "漁人碼頭與 39 號碼頭", city: "SF", type: "Food", desc: "舊金山人氣最旺的觀光區，充滿商店、餐廳和街頭藝人。最著名的莫過於棲息在浮筒上的野生海獅。必嚐酸麵包蛤蜊濃湯。", short_desc: "人氣觀光區，必看野生海獅與享用酸麵包濃湯。", icon: "🦀", url: "https://www.fishermanswharf.org/" },
@@ -681,9 +711,13 @@
             { name: "好萊塢星光大道 Walk of Fame", city: "LA", type: "History", desc: "尋找鑲嵌在人行道上的粉紅星形獎章，參觀 TCL 中國劇院（明星手腳印）與杜比劇院。建議上午前往避開人潮。", short_desc: "尋找心儀明星的星星與手印。", icon: "⭐", url: "https://www.walkoffame.com/" },
         ];
         
-        const itineraryData = {
+        let itineraryData = {
             phase1: {
                 title: "Phase 1: 三藩市漫遊與NBA",
+                icon: "🌉",
+                badgeClass: "bg-[#cfdde6] text-[#475569]",
+                dateRange: "2/26 - 3/2",
+                desc: "金門大橋、惡魔島、NBA 賽事",
                 days: [
                     { date: "2/26 (四)", loc: "舊金山", act: "抵達與時差調適", detail: "21:15 SFO 抵達、前往 Riu Plaza Fisherman's Wharf、休息調適時差。", transport: "Shared Shuttle 或 Uber/Lyft (費用較高但最方便)。", hotel: "Riu Plaza Fisherman's Wharf" },
                     { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "上午：惡魔島參觀。<br>午餐：漁人碼頭<br>下午：Lombard Street (纜車體驗)、前往藝術宮。<br>晚餐<br>晚上：藝術宮湖畔欣賞夕陽、返回飯店。", transport: "惡魔島：碼頭步行。九曲花街/藝術宮： Powell-Hyde 纜車 🚋。", attractionKey: "惡魔島 Alcatraz", hotel: "Riu Plaza Fisherman's Wharf" }, 
@@ -694,6 +728,10 @@
             },
             phase2: {
                 title: "Phase 2: 加州一號公路",
+                icon: "🌊",
+                badgeClass: "bg-[#fef3c7] text-[#92400e]",
+                dateRange: "3/3 - 3/5",
+                desc: "絕美海岸自駕、赫氏古堡",
                 days: [
                     { date: "3/3 (二)", loc: "PCH Day 1 (SF➜Carmel)", act: "一號公路經典海岸線 (200km)", detail: "上午：飯店退房、市區取車。啟程沿著 1 號公路南下。<br>🛒Trader Joe's - Nob Hill (靠近漁人碼頭/市中心)<br>地址： 1095 Hyde St, San Francisco, CA 94109；營業時間：08:00 – 21:00 <br>🛒Target-Capitola (靠近 Santa Cruz)；特色： 位於一號公路旁的大型購物商場區，停車位超多。<br>地址：1750 41st Ave, Capitola, CA 95010；營業時間： 08:00 – 22:00<br>**自駕路況重點：出發前務必確認 Caltrans 路況以防坍方。<br>路線：舊金山 → 半月灣 → 聖塔克魯茲 → 蒙特瑞 → 17-Mile Drive → 卡梅爾小鎮 (約200KM)。<br>晚上：入住隆恩橡木酒店。", transport: "🚗 租車/自駕 (務必在市區取車)。", attractionKey: "卡梅爾小鎮", hotel: "隆恩橡木酒店 (Lone Oak Inn)" },
                     { date: "3/4 (三)", loc: "PCH Day 2 (Carmel➜Morro Bay)", act: "Big Sur 巨岩海岸奇景與古堡", detail: "上午：📌第一站：羅伯斯角州立自然保護區** 健行賞海獺。**第二站：比克斯比大橋** 拍照。途經：**菲佛海灘** (紫色沙灘，可選擇停留)。**第三站：麥克威瀑布** 觀景台。<br>下午：**第四站：赫氏古堡** (需預約導覽) 參觀。**第五站：象鼻海豹灘** 觀賞海豹群。<br>晚上：抵達並入住 Morro Bay 飯店。", transport: "🚗 自駕 (務必確認 Hwy 1 路況 Caltrans)。", attractionKey: "赫氏古堡 Hearst Castle", hotel: "海港屋酒店 (Harbor House Inn)" }, 
@@ -702,6 +740,10 @@
             },
             phase3: {
                 title: "Phase 3: 天使之城與雙樂園",
+                icon: "🎡",
+                badgeClass: "bg-[#f3e8ff] text-[#6b21a8]",
+                dateRange: "3/6 - 3/9",
+                desc: "迪士尼、環球影城、星光大道",
                 days: [
                     { date: "3/6 (五)", loc: "洛杉磯", act: "魔法童話國度 (迪士尼)", detail: "上午：駕車前往 Anaheim、迪士尼樂園 (Disneyland Park)。<br>下午：迪士尼樂園 (California Adventure) 遊玩。<br>晚上：駕車至 The Hollywood Franklin Hotel 住宿。", transport: "🚗 自駕： Santa Monica ➜ Anaheim ➜ Hollywood。", attractionKey: "迪士尼樂園", hotel: "The Hollywood Franklin Hotel" },
                     { date: "3/7 (六)", loc: "洛杉磯", act: "好萊塢時尚探索 (還車)", detail: "上午：駕車前往 **格里斐斯天文台 Griffith Observatory** (觀景/拍照)。<br>下午：**好萊塢星光大道** 尋找星星、The Grove 購物。<br>晚上：Uber/Lyft 回飯店。", transport: "🚗 自駕 (需支付 Griffith 停車費或搭接駁車) -> 傍晚還車。還車後： 交通改為 Uber/Lyft。", attractionKey: "格里斐斯天文台 Griffith Observatory", hotel: "The Hollywood Franklin Hotel" },
@@ -783,7 +825,8 @@
             createAttractionMap();
             renderFlightTable('outbound');
             renderAccommodation();
-            renderItinerary('phase1');
+            renderSidebar(); // New: dynamic sidebar
+            renderItinerary('phase1'); // Load first phase
             renderAttractions('all');
             renderDining('all');
             loadCurrentLocationWeather();       
@@ -812,6 +855,8 @@
 
         function renderFlightTable(type) {
             const data = flightData[type];
+            if (!data) return;
+
             const container = document.getElementById('flight-content');
             let html = '';
             
@@ -824,7 +869,7 @@
                         <div class="flex-grow">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="font-bold text-[#3a3a3a] text-lg">${flight.leg}</span>
-                                <span class="text-xs font-bold text-[#a4855d] bg-[#faf7f2] px-2 py-1 rounded-md border border-[#efe6d8]">CX${flight.number.replace('CX','')}</span>
+                                <span class="text-xs font-bold text-[#a4855d] bg-[#faf7f2] px-2 py-1 rounded-md border border-[#efe6d8]">CX${(flight.number || '').replace('CX','')}</span>
                             </div>
                             <div class="mb-2">
                                 <span class="text-xs font-medium bg-[#fef3c7] text-[#92400e] px-2 py-0.5 rounded-full">${flight.note}</span>
@@ -844,7 +889,6 @@
                 `;
             });
             
-            // 國泰報到資訊
             html += `
                 <div class="mt-6 p-4 border border-[#cfdde6] bg-[#f0f9ff] rounded-xl space-y-3">
                     <h4 class="text-base font-bold text-[#0f766e] flex items-center">
@@ -874,17 +918,18 @@
         
         function renderAccommodation() {
             const container = document.getElementById('accommodation-content');
-            const accommodations = Object.values(accommodationData);
+            // Support both array (from Excel) and object (legacy)
+            const accommodations = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
             let html = '';
 
             const tripStartUTC = toUTCDate("2026-02-26");
             
             // Update badges to match earthy theme
             const cityStyle = {
-                "舊金山": "bg-[#cfdde6] text-[#475569]", // Blue-ish grey
-                "蒙特雷": "bg-[#fef3c7] text-[#92400e]", // Amber
-                "莫羅貝": "bg-[#d9e5d8] text-[#166534]", // Green
-                "洛杉磯": "bg-[#f3e8ff] text-[#6b21a8]"  // Purple
+                "舊金山": "bg-[#cfdde6] text-[#475569]",
+                "蒙特雷": "bg-[#fef3c7] text-[#92400e]",
+                "莫羅貝": "bg-[#d9e5d8] text-[#166534]",
+                "洛杉磯": "bg-[#f3e8ff] text-[#6b21a8]"
             };
 
             accommodations.forEach(hotel => {
@@ -941,12 +986,214 @@
             container.innerHTML = html;
         }
 
+        // --- EXCEL & DYNAMIC ITINERARY FUNCTIONS ---
+
+        // 1. 下載多工作表範本
+        function downloadTemplate() {
+            const wb = XLSX.utils.book_new();
+
+            // 1. Itinerary Sheet
+            const itineraryHeaders = ["phase_id", "phase_title", "date", "location", "activity", "details", "transport", "hotel", "attraction_key"];
+            let itineraryRows = [itineraryHeaders];
+            Object.keys(itineraryData).forEach(key => {
+                const phase = itineraryData[key];
+                phase.days.forEach(day => {
+                    itineraryRows.push([
+                        key, phase.title, day.date, day.loc, day.act,
+                        day.detail.replace(/<div class="h-2"><\/div>/g, "<br>"),
+                        day.transport, day.hotel, day.attractionKey || ""
+                    ]);
+                });
+            });
+            const wsItinerary = XLSX.utils.aoa_to_sheet(itineraryRows);
+            XLSX.utils.book_append_sheet(wb, wsItinerary, "Itinerary");
+
+            // 2. Flights Sheet
+            const flightHeaders = ["direction", "leg", "date", "arrival", "note", "number"];
+            let flightRows = [flightHeaders];
+            flightData.outbound.forEach(f => flightRows.push(["outbound", f.leg, f.date, f.arr, f.note, f.number]));
+            flightData.inbound.forEach(f => flightRows.push(["inbound", f.leg, f.date, f.arr, f.note, f.number]));
+            const wsFlights = XLSX.utils.aoa_to_sheet(flightRows);
+            XLSX.utils.book_append_sheet(wb, wsFlights, "Flights");
+
+            // 3. Accommodation Sheet
+            const accHeaders = ["city", "name", "checkinDate", "checkoutDate", "room", "highlight", "facilities", "address", "mapLink"];
+            let accRows = [accHeaders];
+            // Support object or array source
+            const accList = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
+            accList.forEach(a => accRows.push([a.city, a.name, a.checkinDate, a.checkoutDate, a.room, a.highlight, a.facilities, a.address, a.mapLink]));
+            const wsAcc = XLSX.utils.aoa_to_sheet(accRows);
+            XLSX.utils.book_append_sheet(wb, wsAcc, "Accommodation");
+
+            // 4. Dining Sheet
+            const diningHeaders = ["city", "name", "type", "desc", "icon", "url"];
+            let diningRows = [diningHeaders];
+            diningData.forEach(d => diningRows.push([d.city, d.name, d.type, d.desc.replace(/<\/br>/g, "\n"), d.icon, d.url]));
+            const wsDining = XLSX.utils.aoa_to_sheet(diningRows);
+            XLSX.utils.book_append_sheet(wb, wsDining, "Dining");
+
+            // 5. Attractions Sheet
+            const attrHeaders = ["city", "name", "type", "desc", "short_desc", "icon", "url"];
+            let attrRows = [attrHeaders];
+            attractions.forEach(a => attrRows.push([a.city, a.name, a.type, a.desc, a.short_desc, a.icon, a.url]));
+            const wsAttr = XLSX.utils.aoa_to_sheet(attrRows);
+            XLSX.utils.book_append_sheet(wb, wsAttr, "Attractions");
+
+            // 下載檔案
+            XLSX.writeFile(wb, "My_Trip_Full_Plan.xlsx");
+        }
+
+        // 2. 處理 Excel 上傳 (支援多 Sheet)
+        function handleExcelUpload(input) {
+            const file = input.files[0];
+            const status = document.getElementById('upload-status');
+            
+            if (!file) return;
+
+            status.classList.remove('hidden');
+            status.innerText = "正在讀取檔案...";
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    
+                    // --- 1. Process Itinerary ---
+                    if (workbook.Sheets['Itinerary']) {
+                        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets['Itinerary']);
+                        const newItineraryData = {};
+                        jsonData.forEach(row => {
+                            const pid = row.phase_id || 'phase1';
+                            if (!newItineraryData[pid]) {
+                                newItineraryData[pid] = {
+                                    title: row.phase_title || "My Phase",
+                                    icon: "📍",
+                                    badgeClass: "bg-[#cfdde6] text-[#475569]",
+                                    dateRange: "",
+                                    desc: "自定義行程",
+                                    days: []
+                                };
+                                if(pid.includes('1')) { newItineraryData[pid].icon = "🌉"; }
+                                else if(pid.includes('2')) { newItineraryData[pid].icon = "🌊"; newItineraryData[pid].badgeClass = "bg-[#fef3c7] text-[#92400e]"; }
+                                else if(pid.includes('3')) { newItineraryData[pid].icon = "🎡"; newItineraryData[pid].badgeClass = "bg-[#f3e8ff] text-[#6b21a8]"; }
+                            }
+                            newItineraryData[pid].days.push({
+                                date: row.date || "TBD",
+                                loc: row.location || "",
+                                act: row.activity || "",
+                                detail: row.details ? row.details.toString().replace(/\r\n/g, "<br>").replace(/\n/g, "<br>") : "",
+                                transport: row.transport || "",
+                                hotel: row.hotel || "",
+                                attractionKey: row.attraction_key || ""
+                            });
+                        });
+                        itineraryData = newItineraryData;
+                        renderSidebar();
+                        renderItinerary(Object.keys(itineraryData)[0]);
+                    }
+
+                    // --- 2. Process Flights ---
+                    if (workbook.Sheets['Flights']) {
+                        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets['Flights']);
+                        const newFlightData = { outbound: [], inbound: [] };
+                        jsonData.forEach(row => {
+                            const flight = {
+                                leg: row.leg,
+                                date: row.date,
+                                arr: row.arrival,
+                                note: row.note,
+                                number: row.number
+                            };
+                            if (row.direction === 'outbound') newFlightData.outbound.push(flight);
+                            else if (row.direction === 'inbound') newFlightData.inbound.push(flight);
+                        });
+                        flightData = newFlightData;
+                        renderFlightTable('outbound');
+                    }
+
+                    // --- 3. Process Accommodation ---
+                    if (workbook.Sheets['Accommodation']) {
+                        // Directly map to array of objects
+                        accommodationData = XLSX.utils.sheet_to_json(workbook.Sheets['Accommodation']);
+                        renderAccommodation();
+                    }
+
+                    // --- 4. Process Dining ---
+                    if (workbook.Sheets['Dining']) {
+                        diningData = XLSX.utils.sheet_to_json(workbook.Sheets['Dining']).map(d => ({
+                            ...d,
+                            desc: d.desc ? d.desc.replace(/\n/g, "</br>") : ""
+                        }));
+                        renderDining('all');
+                    }
+
+                    // --- 5. Process Attractions ---
+                    if (workbook.Sheets['Attractions']) {
+                        attractions = XLSX.utils.sheet_to_json(workbook.Sheets['Attractions']);
+                        createAttractionMap(); // Important: rebuild the map for itinerary linking
+                        renderAttractions('all');
+                    }
+
+                    status.innerText = "✅ 匯入成功！所有資料已更新。";
+                    status.className = "text-xs text-green-600 w-full mt-2 font-bold";
+
+                } catch (error) {
+                    console.error(error);
+                    status.innerText = "❌ 讀取失敗，請確認檔案格式正確。";
+                    status.className = "text-xs text-red-600 w-full mt-2 font-bold";
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 3. 動態產生側邊欄 (取代原本寫死的 HTML)
+        function renderSidebar() {
+            const container = document.getElementById('phase-nav-content');
+            container.innerHTML = ''; // Clear existing
+
+            Object.keys(itineraryData).forEach((key, index) => {
+                const phase = itineraryData[key];
+                const btnId = `nav-${key}`;
+                
+                // Determine margin top based on index to mimic original design
+                const mt = index > 0 ? "mt-4 md:mt-0" : "";
+                
+                const html = `
+                <button onclick="renderItinerary('${key}')" id="${btnId}"
+                  class="phase-nav-btn w-full text-left p-6 rounded-2xl transition-all duration-300 border border-transparent group relative overflow-hidden bg-white shadow-sm hover:border-[#d6b98c] ${mt}">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <span class="text-6xl text-[#3a3a3a]">${phase.icon}</span>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold px-2 py-1 rounded ${phase.badgeClass} uppercase tracking-wider">Part ${index + 1}</span>
+                            <span class="text-xs text-[#a09a93] font-medium">${phase.dateRange || ""}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">${phase.title}</h3>
+                        <p class="text-sm text-[#6b6b6b] line-clamp-2">${phase.desc}</p>
+                    </div>
+                </button>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
         // --- Itinerary Logic ---
         function generatePhaseMapUrl(phaseKey) {
             let poiList = [];
+            // Basic fallback for standard phases, custom phases will have generic search
             if (phaseKey === 'phase1') poiList = ["Riu Plaza Fisherman's Wharf", "Alcatraz Island", "Golden Gate Bridge", "Lombard Street", "Chase Center"];
             else if (phaseKey === 'phase2') poiList = ["Carmel-by-the-Sea", "Bixby Bridge", "Hearst Castle", "Morro Bay", "Solvang"];
             else if (phaseKey === 'phase3') poiList = ["Hollywood Franklin Hotel", "Santa Monica Pier", "Disneyland Park", "Universal Studios Hollywood", "Griffith Observatory"];
+            
+            // If custom phase or no predefined POIs, try to grab from locations in data
+            if (poiList.length === 0 && itineraryData[phaseKey]) {
+                poiList = itineraryData[phaseKey].days.map(d => d.attractionKey || d.hotel).filter(x => x);
+            }
+
             const query = poiList.join(' and '); 
             return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
         }
@@ -962,23 +1209,18 @@
         }
 
         function activatePhaseNav(activeKey) {
-            const btns = [
-              { id: 'nav-phase1', key: 'phase1' },
-              { id: 'nav-phase2', key: 'phase2' },
-              { id: 'nav-phase3', key: 'phase3' }
-            ];
-            btns.forEach(({ id, key }) => {
-              const el = document.getElementById(id);
-              if (!el) return;
-              
-              if (key === activeKey) {
-                  el.classList.add('border-[#d6b98c]', 'shadow-md');
-                  el.classList.remove('border-transparent');
-              } else {
-                  el.classList.remove('border-[#d6b98c]', 'shadow-md');
-                  el.classList.add('border-transparent');
-              }
+            // Deactivate all buttons first
+            document.querySelectorAll('.phase-nav-btn').forEach(el => {
+                el.classList.remove('border-[#d6b98c]', 'shadow-md');
+                el.classList.add('border-transparent');
             });
+
+            // Activate specific button
+            const activeBtn = document.getElementById(`nav-${activeKey}`);
+            if (activeBtn) {
+                activeBtn.classList.add('border-[#d6b98c]', 'shadow-md');
+                activeBtn.classList.remove('border-transparent');
+            }
         }        
   
         function renderItinerary(phaseKey) {
@@ -1026,14 +1268,30 @@
                         </div>
                     </div>
                 `;
+              } else if (day.attractionKey) {
+                   attractionHtml = `
+                    <div class="mt-4 bg-white border border-[#efe6d8] rounded-xl p-3 flex items-start gap-3">
+                         <div class="text-2xl bg-[#faf7f2] rounded-lg p-2">📍</div>
+                         <div>
+                            <h5 class="text-sm font-bold text-[#3a3a3a]">${day.attractionKey}</h5>
+                        </div>
+                    </div>
+                   `;
               }
 
               let hotelHtml = '';
-              const currentHotel = Object.values(accommodationData).find(h => h.name === day.hotel);
+              const accList = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
+              const currentHotel = accList.find(h => h.name === day.hotel);
+              
               if (currentHotel) {
                    hotelHtml = `
                     <div class="mt-2 inline-flex items-center gap-1.5 text-xs text-[#6b6b6b] bg-[#faf7f2] px-2 py-1 rounded-md border border-[#efe6d8]">
                         <span>🛌</span> 住宿：${currentHotel.name}
+                    </div>`;
+              } else if (day.hotel) {
+                  hotelHtml = `
+                    <div class="mt-2 inline-flex items-center gap-1.5 text-xs text-[#6b6b6b] bg-[#faf7f2] px-2 py-1 rounded-md border border-[#efe6d8]">
+                        <span>🛌</span> 住宿：${day.hotel}
                     </div>`;
               }
 
@@ -1084,7 +1342,17 @@
             container.innerHTML = html;
         }
 
-        // --- NEW: Dining Logic ---
+        // --- NEW: Toggle Function ---
+        function toggleExpand(contentId, arrowId) {
+            const content = document.getElementById(contentId);
+            const arrow = document.getElementById(arrowId);
+            if (content && arrow) {
+                content.classList.toggle('open');
+                arrow.classList.toggle('open');
+            }
+        }
+
+        // --- NEW: Dining Logic (Updated for Expandable) ---
         function filterDining(filter) {
             document.querySelectorAll('.dining-filter-btn').forEach(btn => {
                 btn.classList.remove('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
@@ -1103,16 +1371,20 @@
             const filtered = filter === 'all' ? diningData : diningData.filter(d => d.city === filter);
             let html = '';
             
-            filtered.forEach(item => {
+            filtered.forEach((item, index) => {
                 let badgeClass = 'bg-[#faf7f2] text-[#6b6b6b]';
                 let cityLabel = '地區';
                 if (item.city === 'SF') { badgeClass = 'bg-[#cfdde6] text-[#475569]'; cityLabel = '舊金山'; }
                 else if (item.city === 'PCH') { badgeClass = 'bg-[#fef3c7] text-[#92400e]'; cityLabel = '一號公路'; }
                 else if (item.city === 'LA') { badgeClass = 'bg-[#f3e8ff] text-[#6b21a8]'; cityLabel = '洛杉磯'; }
 
+                // 使用 unique ID for toggling
+                const descId = `dining-desc-${index}`;
+                const arrowId = `dining-arrow-${index}`;
+
+                // 注意：外層改為 div，不作為連結，避免點擊衝突
                 html += `
-                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" 
-                       class="card-hover rounded-2xl p-6 group block relative overflow-hidden h-full flex flex-col justify-between">
+                    <div class="card-hover rounded-2xl p-6 group block relative overflow-hidden h-full flex flex-col justify-between">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-[#faf7f2] rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 group-hover:bg-[#d6b98c]/20"></div>
                         
                         <div>
@@ -1121,20 +1393,33 @@
                                 <span class="text-xs px-2 py-1 rounded-full font-bold ${badgeClass}">${cityLabel}</span>
                             </div>
                             <h4 class="text-lg font-bold text-[#3a3a3a] mb-2 relative z-10 group-hover:text-[#d6b98c] transition-colors">${item.name}</h4>
-                            <p class="text-sm text-[#6b6b6b] mb-4 relative z-10 line-clamp-3">${item.desc.replace(/<\/br>/g, ' ')}</p>
+                            
+                            <!-- 隱藏的內容 -->
+                            <div id="${descId}" class="expandable-content relative z-10 text-sm text-[#6b6b6b] border-l-2 border-[#d6b98c] pl-3">
+                                ${item.desc.replace(/<\/br>/g, '<br>')}
+                            </div>
                         </div>
                         
-                        <div class="relative z-10 flex items-center text-sm font-bold text-[#a09a93] group-hover:text-[#d6b98c] transition-colors mt-auto">
-                            <span>查看詳情</span>
-                            <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        <div class="relative z-10 flex items-center justify-between pt-4 border-t border-[#efe6d8] mt-4">
+                            <!-- 展開按鈕 -->
+                            <button onclick="toggleExpand('${descId}', '${arrowId}')" class="text-xs font-bold text-[#a09a93] hover:text-[#d6b98c] transition-colors flex items-center gap-1 focus:outline-none">
+                                <span>餐點介紹</span>
+                                <svg id="${arrowId}" class="rotate-icon w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+
+                            <!-- 官網連結 -->
+                            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="text-sm font-bold text-[#3a3a3a] hover:text-[#d6b98c] flex items-center gap-1">
+                                <span>官網</span>
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                            </a>
                         </div>
-                    </a>
+                    </div>
                 `;
             });
             container.innerHTML = html;
         }
 
-        // --- Attraction Logic ---
+        // --- Attraction Logic (Updated for Expandable) ---
         function filterAttractions(filter) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
@@ -1153,15 +1438,17 @@
             const filtered = filter === 'all' ? attractions : attractions.filter(a => a.city === filter);
             let html = '';
             
-            filtered.forEach(item => {
+            filtered.forEach((item, index) => {
                 const badgeColor = getAttractionBadgeColor(item.type);
                 const typeLabel = item.type === 'History' ? '歷史' : item.type === 'Nature' ? '自然' : item.type === 'Fun' ? '娛樂' : item.type === 'Food' ? '美食' : item.type === 'Photo' ? '攝影' : item.type === 'Culture' ? '文化' : '其他';
                 const cityLabel = item.city === 'SF' ? '舊金山' : item.city === 'LA' ? '洛杉磯' : item.city === 'Yosemite' ? '優勝美地' : '一號公路';
 
+                const descId = `attr-desc-${index}`;
+                const arrowId = `attr-arrow-${index}`;
+
                 html += `
-                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" 
-                       class="card-hover rounded-2xl overflow-hidden group block">
-                        <div class="p-6">
+                    <div class="card-hover rounded-2xl overflow-hidden group block flex flex-col h-full">
+                        <div class="p-6 flex-grow">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="text-4xl transform group-hover:scale-110 transition-transform duration-300">${item.icon}</div>
                                 <div class="flex flex-col items-end gap-1">
@@ -1170,13 +1457,26 @@
                                 </div>
                             </div>
                             <h4 class="text-lg font-bold text-[#3a3a3a] mb-2 group-hover:text-[#d6b98c] transition-colors">${item.name}</h4>
-                            <p class="text-sm text-[#6b6b6b] line-clamp-2">${item.desc}</p>
+                            
+                            <!-- 隱藏的內容 -->
+                            <div id="${descId}" class="expandable-content text-sm text-[#6b6b6b] border-l-2 border-[#d6b98c] pl-3">
+                                ${item.desc}
+                            </div>
                         </div>
-                        <div class="bg-[#faf7f2] px-6 py-3 border-t border-[#efe6d8] flex justify-between items-center">
-                            <span class="text-xs font-bold text-[#a09a93] group-hover:text-[#d6b98c]">了解更多</span>
-                            <span class="text-[#a09a93] group-hover:text-[#d6b98c] group-hover:translate-x-1 transition-all">➔</span>
+                        
+                        <div class="bg-[#faf7f2] px-6 py-3 border-t border-[#efe6d8] flex justify-between items-center mt-auto">
+                            <!-- 展開按鈕 -->
+                            <button onclick="toggleExpand('${descId}', '${arrowId}')" class="text-xs font-bold text-[#a09a93] hover:text-[#d6b98c] transition-colors flex items-center gap-1 focus:outline-none">
+                                <span>景點介紹</span>
+                                <svg id="${arrowId}" class="rotate-icon w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+
+                            <!-- 官網連結 -->
+                             <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="text-[#a09a93] group-hover:text-[#d6b98c] group-hover:translate-x-1 transition-all text-xs font-bold flex items-center">
+                                前往官網 ➔
+                            </a>
                         </div>
-                    </a>
+                    </div>
                 `;
             });
             container.innerHTML = html;
