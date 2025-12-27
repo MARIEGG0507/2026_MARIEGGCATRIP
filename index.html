@@ -134,7 +134,10 @@
         .timeline-line { animation: drawLine 1s ease-out forwards; background-color: var(--color-border-soft); }
 
         @media (max-width: 768px) {
-            h1 { font-size: 1.8rem !important; }
+            /* Hero Banner Mobile Adjustment */
+            header { height: auto !important; min-height: 400px; }
+            h1 { font-size: 2rem !important; line-height: 1.2 !important; }
+            
             nav ul { flex-wrap: nowrap !important; overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start !important; gap: 0.5rem; padding: 0.5rem 1rem; }
             nav ul li { flex-shrink: 0; }
             #itinerary-container { flex-direction: column !important; height: auto !important; }
@@ -149,20 +152,20 @@
     <header class="relative overflow-hidden h-[400px] md:h-[500px] flex items-end border-b border-[#efe6d8]">
         <!-- 背景圖片 -->
         <div class="absolute inset-0 z-0">
-            <img src="https://raw.githubusercontent.com/MARIEGG0507/2026_MARIEGGCATRIP/refs/heads/main/image/Image_herobanner.png" alt="Hero Banner" class="w-full h-full object-cover">
+            <img src="https://raw.githubusercontent.com/MARIEGG0507/2026_MARIEGGCATRIP/refs/heads/main/image/Image_herobanner.png" alt="Hero Banner" class="w-full h-full object-cover object-center">
             <!-- 漸層遮罩：確保文字可讀性 -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
         </div>
 
         <!-- 標題內容 -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center relative z-10 w-full mb-4">
-            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-6xl mb-3 drop-shadow-lg">美西舊金山與洛杉磯之旅</h1>
-            <p class="text-xl text-white/90 font-light drop-shadow-md flex flex-wrap justify-center items-center gap-2">
-                2026年 2月26日 - 3月11日 
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center relative z-10 w-full mb-0 md:mb-4">
+            <h1 class="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-3 drop-shadow-lg">美西舊金山與洛杉磯之旅</h1>
+            <p class="text-lg md:text-xl text-white/90 font-light drop-shadow-md flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
+                <span class="whitespace-nowrap">2026年 2月26日 - 3月11日</span> 
                 <span class="hidden md:inline mx-2 text-[#d6b98c]">|</span> 
-                <span class="block md:inline">13 天 12 夜</span>
+                <span class="block w-full md:w-auto md:inline">13 天 12 夜</span>
                 <span class="hidden md:inline mx-2 text-[#d6b98c]">|</span> 
-                <span class="block md:inline">加州夢幻行</span>
+                <span class="block w-full md:w-auto md:inline">加州夢幻行</span>
             </p>                       
         </div>
     </header>
@@ -256,7 +259,8 @@
                     <div id="phase-nav-content" class="p-4 md:p-6 space-y-4 md:block"></div>
                 </div>
                 <div class="w-full md:w-2/3 bg-white relative flex flex-col h-full">
-                    <div id="itinerary-header" class="shrink-0 bg-white/95 backdrop-blur border-b border-[#efe6d8] px-8 py-4 flex justify-between items-center shadow-sm z-20"></div>
+                    <!-- 更新了 class 以支援手機版排列 -->
+                    <div id="itinerary-header" class="shrink-0 bg-white/95 backdrop-blur border-b border-[#efe6d8] px-4 md:px-8 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 shadow-sm z-20"></div>
                     <div id="itinerary-details" class="flex-grow p-6 md:p-8 md:overflow-y-auto custom-scroll transition-opacity duration-300">
                         <div id="itinerary-list-content" class="pl-4 border-l-2 border-[#efe6d8] md:border-none"></div>
                     </div>
@@ -439,7 +443,7 @@
                     { date: "2/26 (四)", loc: "舊金山", act: "抵達與時差調適", detail: "21:15 SFO 抵達、前往 Riu Plaza Fisherman's Wharf、休息調適時差。", transport: "Shared Shuttle 或 Uber/Lyft (費用較高但最方便)。", hotel: "Riu Plaza Fisherman's Wharf" },
                     { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "上午：08:00 至Pier 33 售票亭（Pre-Paid，或叫will call）兌換門票（網路預約訂票必須在集合時間 30 分鐘前到「Pier 33 售票亭（Pre-Paid，或叫will call）」兌換門票，所以一定要把訂票證明（ORDER CONFIRMATION）印出來或存在手機裡出示，且要帶有照片的身分證件、購票用信用卡，檢查後才能換到登船、登島門票。）<br><strong>08:40梯次</strong> 參觀惡魔島。<br>午餐：漁人碼頭<br>下午：九曲花街 Lombard St、叮叮車 Cable Car、彩繪女士 Painted Ladies，前往藝術宮。<br>晚餐<br>晚上：藝術宮湖畔欣賞夕陽、返回飯店。", transport: "惡魔島：碼頭步行。九曲花街/藝術宮： Powell-Hyde 纜車 🚋。", attractionKey: "惡魔島 Alcatraz", hotel: "Riu Plaza Fisherman's Wharf" }, 
                     { date: "2/28 (六)", loc: "舊金山", act: "NBA 賽事日", detail: "上午：悠閒早午餐、Ferry Building 散步。<br>下午：前往 Chase Center 周邊用晚餐。<br>午晚餐<br>晚上：17:30 觀賞 NBA 勇士隊 vs 湖人隊。", transport: "Ferry Building： MUNI 巴士。Chase Center： MUNI T-Line 輕軌直達。賽後： MUNI 或 Uber/Lyft 回飯店。", attractionKey: "大通中心 Chase Center", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "3/1 (日)", loc: "舊金山/周邊", act: "優勝美地國家公園", detail: "<strong>06:00 – </strong> Fisherman's Wharf Area（Look for the Pomegranate Café which is located opposite the meet-up point The Gray Line representative will meet you there.）<br><strong>07:30 – 11:30</strong> 乘車前往優勝美地（中途休息 20-30 分）<br><strong>11:30 – 12:00</strong> 抵達國家公園（經南側或西側入口）<br><strong>12:00 – 16:30</strong> 優勝美地谷深度探索（午餐自理）<br>- 在優勝美地國家公園遊覽 4 小時<br>- 1 小時導覽和 3 小時自由活動時間<br>- 下瀑布遊覽不包含在導覽行程中<br><strong>17:00 – 20:40</strong> 返回舊金山", transport: "旅行社提供交通車。", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "3/1 (日)", loc: "舊金山/周邊", act: "優勝美地國家公園", detail: "<strong>06:00 – </strong> Fisherman's Wharf Area（Look for the Pomegranate Café which is located opposite the meet-up point The Gray Line representative will meet you there.）<br><strong>07:30 – 11:30</strong>乘車前往優勝美地（中途休息 20-30 分）<br><strong>11:30 – 12:00</strong> 抵達國家公園（經南側或西側入口）<br><strong>12:00 – 16:30</strong> 優勝美地谷深度探索（午餐自理）<br>- 在優勝美地國家公園遊覽 4 小時<br>- 1 小時導覽和 3 小時自由活動時間<br>- 下瀑布遊覽不包含在導覽行程中<br><strong>17:00 – 20:40</strong> 返回舊金山", transport: "旅行社提供交通車。", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
                     { date: "3/2 (一)", loc: "舊金山", act: "城市文化巡禮", detail: "上午：聯合廣場逛街、前往唐人街午餐。<br>下午：搭車前往金門大橋北邊 Vista Point 拍照。<br>晚上：順路回程經 Crissy Field、晚餐、自由活動。", transport: "纜車/唐人街： Powell-Mason 纜車 🚋。金門大橋： 從唐人街搭 Uber/Lyft 直達。", attractionKey: "金門大橋 Golden Gate", hotel: "Riu Plaza Fisherman's Wharf" }
                 ]
             },
@@ -647,7 +651,7 @@
                                 icon: "📍",
                                 badgeClass: "bg-[#cfdde6] text-[#475569]",
                                 dateRange: "",
-                                desc: "自定義行程",
+                                desc: "", // Remove default text
                                 days: []
                             };
                             if(pid.includes('1')) { newItineraryData[pid].icon = "🌉"; }
@@ -763,7 +767,7 @@
                     </div>
                     <div class="relative z-10">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold px-2 py-1 rounded ${phase.badgeClass} uppercase tracking-wider">Part ${index + 1}</span>
+                            <span class="text-xs font-bold px-2 py-1 rounded ${phase.badgeClass} uppercase tracking-wider">Phase ${index + 1}</span>
                             <span class="text-xs text-[#a09a93] font-medium">${phase.dateRange || ""}</span>
                         </div>
                         <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">${phase.title}</h3>
@@ -1009,7 +1013,7 @@
                                     icon: "📍",
                                     badgeClass: "bg-[#cfdde6] text-[#475569]",
                                     dateRange: "",
-                                    desc: "自定義行程",
+                                    desc: "", // Remove default text
                                     days: []
                                 };
                                 if(pid.includes('1')) { newItineraryData[pid].icon = "🌉"; }
@@ -1331,12 +1335,13 @@
             // Theme colors
             let theme = { text: 'text-[#a4855d]', bg: 'bg-[#faf7f2]', accent: 'bg-[#d6b98c]', border: 'border-[#efe6d8]' };
             
+            // Header content generation (Flexbox classes already handled in HTML structure above)
             headerContainer.innerHTML = `
                 <div>
                     <h3 class="text-xl font-bold text-[#3a3a3a]">${phase.title}</h3>
                     <div class="h-1 w-12 ${theme.accent} rounded-full mt-1"></div>
                 </div>
-                <div class="flex bg-[#faf7f2] p-1 rounded-full border border-[#efe6d8]">
+                <div class="flex bg-[#faf7f2] p-1 rounded-full border border-[#efe6d8] self-end md:self-auto">
                     <button onclick="switchViewMode('list')" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all ${listBtnClass}">
                         📝 列表
                     </button>
