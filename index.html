@@ -7,6 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 SheetJS 用於讀取 Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- 引入 Leaflet 地圖套件 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
     <!-- 
       Application Structure:
@@ -212,6 +215,29 @@
         }
         .rotate-icon.open {
             transform: rotate(180deg);
+        }
+
+        /* ==========================================================================
+           F. 地圖樣式 (Map Styles) - NEW
+           ========================================================================== */
+        .map-toggle-active {
+            background-color: var(--color-accent-main);
+            color: white;
+            border-color: var(--color-accent-main);
+        }
+        .map-toggle-inactive {
+            background-color: white;
+            color: var(--color-text-secondary);
+            border-color: var(--color-border-soft);
+        }
+        /* Leaflet Popup Customization */
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .leaflet-popup-content {
+            margin: 12px;
+            font-family: 'Inter', sans-serif;
         }
 
         /* ==========================================================================
@@ -460,25 +486,31 @@
             </div>
 
             <!-- 使用新的 ID "itinerary-container" 來配合響應式 CSS -->
-            <div id="itinerary-container" class="bg-white rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden border border-[#efe6d8] flex flex-col md:flex-row md:h-[750px]">
+            <div id="itinerary-container" class="bg-white rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden border border-[#efe6d8] flex flex-col md:flex-row md:h-[750px] relative">
                 <!-- Sidebar: Phases (Dynamic) -->
-                <div id="phase-nav-container" class="w-full md:w-1/3 bg-[#fbf7f2] border-r border-[#efe6d8] md:overflow-y-auto custom-scroll z-10">
+                <div id="phase-nav-container" class="w-full md:w-1/3 bg-[#fbf7f2] border-r border-[#efe6d8] md:overflow-y-auto custom-scroll z-10 relative">
                     <div id="phase-nav-content" class="p-4 md:p-6 space-y-4 md:block">
                         <!-- Dynamic Content injected via JS (renderSidebar) -->
                     </div>
                 </div>
 
-                <!-- Content: Daily Details -->
-                <div class="w-full md:w-2/3 bg-white relative">
+                <!-- Content: Daily Details & Map Container -->
+                <div class="w-full md:w-2/3 bg-white relative flex flex-col h-full">
                     <!-- Sticky Header inside Content -->
-                    <div id="itinerary-header" class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-[#efe6d8] px-8 py-4 flex justify-between items-center shadow-sm">
+                    <div id="itinerary-header" class="shrink-0 bg-white/95 backdrop-blur border-b border-[#efe6d8] px-8 py-4 flex justify-between items-center shadow-sm z-20">
                         <!-- Dynamic Header Content -->
                     </div>
                     
-                    <div class="p-6 md:p-8 md:overflow-y-auto custom-scroll h-[calc(100%-80px)]">
-                        <div id="itinerary-details" class="pl-4 border-l-2 border-[#efe6d8] md:border-none">
+                    <!-- Scrollable List View -->
+                    <div id="itinerary-details" class="flex-grow p-6 md:p-8 md:overflow-y-auto custom-scroll transition-opacity duration-300">
+                        <div id="itinerary-list-content" class="pl-4 border-l-2 border-[#efe6d8] md:border-none">
                             <!-- Content injected via JS -->
                         </div>
+                    </div>
+
+                    <!-- Map View (Hidden by default) -->
+                    <div id="itinerary-map" class="hidden flex-grow z-10 w-full h-full relative bg-[#fbf7f2]">
+                        <!-- Leaflet map will be initialized here -->
                     </div>
                 </div>
             </div>
@@ -586,6 +618,7 @@
             ]
         };
 
+        // Added Lat/Lng for Map Mode
         let accommodationData = [
             {
                 city: "舊金山",
@@ -598,7 +631,8 @@
                 highlight: "🍳 含早餐｜🚭 禁菸房",
                 facilities: "高速網路、私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機",
                 address: "2500 Mason Street, San Francisco, CA 94133, USA",
-                mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166"
+                mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166",
+                lat: 37.8070, lng: -122.4135
             },
             {
                 city: "蒙特雷",
@@ -611,7 +645,8 @@
                 highlight: "🍽️ 不含餐｜🚭 禁菸房",
                 facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣",
                 address: "2221 North Fremont Street, Monterey, CA 93940, USA",
-                mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579"
+                mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579",
+                lat: 36.5970, lng: -121.8581
             },
             {
                 city: "莫羅貝",
@@ -624,7 +659,8 @@
                 highlight: "🌊 海景陽台｜🚭 禁菸房",
                 facilities: "私人陽台、海景、空調、微波爐、咖啡機、暖氣",
                 address: "1095 Main Street, Morro Bay, CA 93442, USA",
-                mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805"
+                mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805",
+                lat: 35.3682, lng: -120.8502
             },
             {
                 city: "洛杉磯",
@@ -637,7 +673,8 @@
                 highlight: "🎬 近環球影城｜🚭 禁菸房",
                 facilities: "游泳池、市景、空調、微波爐、咖啡機、保險箱",
                 address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA",
-                mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599"
+                mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599",
+                lat: 34.1054, lng: -118.3235
             }
         ];
 
@@ -661,54 +698,55 @@
         ];
 
         let attractionMap = {};
+        // Added Lat/Lng for Map Mode
         let attractions = [
             // --- 舊金山 (SF) 景點 ---
-            { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "舊金山最著名的象徵。這座橘紅色的懸索橋橫跨金門海峽，無論是在霧中若隱若現還是晴天下的鮮豔，都是旅人的必看之處。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/" }, 
-            { name: "漁人碼頭與 39 號碼頭", city: "SF", type: "Food", desc: "舊金山人氣最旺的觀光區，充滿商店、餐廳和街頭藝人。最著名的莫過於棲息在浮筒上的野生海獅。必嚐酸麵包蛤蜊濃湯。", short_desc: "人氣觀光區，必看野生海獅與享用酸麵包濃湯。", icon: "🦀", url: "https://www.fishermanswharf.org/" },
-            { name: "惡魔島 Alcatraz", city: "SF", type: "History", desc: "曾是關押全美最危險罪犯（如卡彭）的聯邦監獄。島上充滿神祕色彩，提供世界級的導覽系統。需提早數月訂票。", short_desc: "傳奇聯邦監獄，充滿神祕色彩與歷史故事。", icon: "🏝️", url: "https://www.alcatrazcruises.com/" },
-            { name: "九曲花街 Lombard St", city: "SF", type: "Photo", desc: "世界上最彎曲的街道。為了緩衝極度陡峭的坡度而設計了八個急轉彎，路旁種滿繡球花，景緻迷人。", short_desc: "世界上最彎曲的街道，繡球花與急轉彎的視覺饗宴。", icon: "🌸", url: "https://www.sftravel.com/article/guide-to-lombard-street" },
-            { name: "彩繪女士 Painted Ladies", city: "SF", type: "Photo", desc: "舊金山最具代表性的維多利亞式排屋，背景正是現代化的市中心高樓大廈，呈現出古典與現代的完美對比。", short_desc: "經典維多利亞式排屋，阿拉莫廣場的絕美明信片景緻。", icon: "🏠", url: "https://www.sftravel.com/article/guide-alamo-square-painted-ladies" },
-            { name: "渡輪大廈 Ferry Building", city: "SF", type: "Food", desc: "舊金山的美食殿堂。這座歷史悠久的渡輪站內進駐了許多在地手工藝品、精品咖啡、乳酪與特色美食。", short_desc: "歷史悠久的美食殿堂，匯集在地農產與精品咖啡。", icon: "⛴️", url: "https://www.ferrybuildingmarketplace.com/" },
-            { name: "叮叮車 Cable Car", city: "SF", type: "Fun", desc: "世界上唯一仍在運行的手動纜車系統，也是舊金山的移動名片。搭乘它穿梭在陡坡間，極具復古情懷。", short_desc: "體驗世界唯一手動纜車，穿梭陡坡的復古情懷。", icon: "🚋", url: "https://www.sfmta.com/getting-around/muni/cable-cars" },
-            { name: "藝術宮", city: "SF", type: "Photo", desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", short_desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", icon: "🏛️", url: "https://palaceoffinearts.com/" },
-            { name: "Chase Center", city: "SF", type: "Fun", desc: "金州勇士隊主場，現代化且熱血沸騰。", short_desc: "金州勇士隊主場，現代化且熱血沸騰。", icon: "🏀", url: "https://www.chasecenter.com/" },
+            { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "舊金山最著名的象徵。這座橘紅色的懸索橋橫跨金門海峽，無論是在霧中若隱若現還是晴天下的鮮豔，都是旅人的必看之處。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/", lat: 37.8199, lng: -122.4783 }, 
+            { name: "漁人碼頭與 39 號碼頭", city: "SF", type: "Food", desc: "舊金山人氣最旺的觀光區，充滿商店、餐廳和街頭藝人。最著名的莫過於棲息在浮筒上的野生海獅。必嚐酸麵包蛤蜊濃湯。", short_desc: "人氣觀光區，必看野生海獅與享用酸麵包濃湯。", icon: "🦀", url: "https://www.fishermanswharf.org/", lat: 37.8080, lng: -122.4177 },
+            { name: "惡魔島 Alcatraz", city: "SF", type: "History", desc: "曾是關押全美最危險罪犯（如卡彭）的聯邦監獄。島上充滿神祕色彩，提供世界級的導覽系統。需提早數月訂票。", short_desc: "傳奇聯邦監獄，充滿神祕色彩與歷史故事。", icon: "🏝️", url: "https://www.alcatrazcruises.com/", lat: 37.8270, lng: -122.4230 },
+            { name: "九曲花街 Lombard St", city: "SF", type: "Photo", desc: "世界上最彎曲的街道。為了緩衝極度陡峭的坡度而設計了八個急轉彎，路旁種滿繡球花，景緻迷人。", short_desc: "世界上最彎曲的街道，繡球花與急轉彎的視覺饗宴。", icon: "🌸", url: "https://www.sftravel.com/article/guide-to-lombard-street", lat: 37.8021, lng: -122.4187 },
+            { name: "彩繪女士 Painted Ladies", city: "SF", type: "Photo", desc: "舊金山最具代表性的維多利亞式排屋，背景正是現代化的市中心高樓大廈，呈現出古典與現代的完美對比。", short_desc: "經典維多利亞式排屋，阿拉莫廣場的絕美明信片景緻。", icon: "🏠", url: "https://www.sftravel.com/article/guide-alamo-square-painted-ladies", lat: 37.7762, lng: -122.4328 },
+            { name: "渡輪大廈 Ferry Building", city: "SF", type: "Food", desc: "舊金山的美食殿堂。這座歷史悠久的渡輪站內進駐了許多在地手工藝品、精品咖啡、乳酪與特色美食。", short_desc: "歷史悠久的美食殿堂，匯集在地農產與精品咖啡。", icon: "⛴️", url: "https://www.ferrybuildingmarketplace.com/", lat: 37.7955, lng: -122.3937 },
+            { name: "叮叮車 Cable Car", city: "SF", type: "Fun", desc: "世界上唯一仍在運行的手動纜車系統，也是舊金山的移動名片。搭乘它穿梭在陡坡間，極具復古情懷。", short_desc: "體驗世界唯一手動纜車，穿梭陡坡的復古情懷。", icon: "🚋", url: "https://www.sfmta.com/getting-around/muni/cable-cars", lat: 37.7941, lng: -122.4089 },
+            { name: "藝術宮", city: "SF", type: "Photo", desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", short_desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", icon: "🏛️", url: "https://palaceoffinearts.com/", lat: 37.8029, lng: -122.4484 },
+            { name: "Chase Center", city: "SF", type: "Fun", desc: "金州勇士隊主場，現代化且熱血沸騰。", short_desc: "金州勇士隊主場，現代化且熱血沸騰。", icon: "🏀", url: "https://www.chasecenter.com/", lat: 37.7680, lng: -122.3877 },
             
             // --- 優勝美地 (Yosemite) 景點 ---
-            { name: "隧道景觀 Tunnel View", city: "Yosemite", type: "Photo", desc: "進入優勝美地谷地時最經典的觀景台。從這裡可以一次飽覽酋長岩、新娘面紗瀑布和半圓頂三大地標，是攝影愛好者的天堂。", short_desc: "優勝美地象徵性視角，一次飽覽三大地標。", icon: "🏞️", url: "https://www.nps.gov/yose/planyourvisit/tunnelview.htm" },
-            { name: "酋長岩 El Capitan", city: "Yosemite", type: "Nature", desc: "世界上最大的單塊花崗岩巨石，垂直高度超過 900 公尺。雖然遊客不能攀登，但從谷底仰望其氣勢，已足夠令人震撼。", short_desc: "全球最大單塊花崗岩，攀岩者的夢想聖地。", icon: "🧗", url: "https://www.nps.gov/yose/planyourvisit/elcapitan.htm" },
-            { name: "優勝美地瀑布 Yosemite Falls", city: "Yosemite", type: "Nature", desc: "由上、中、下三段瀑布組成，總落差達 739 公尺，是北美最高的瀑布之一。春末夏初雪水融化時，水量最大，氣勢最為磅礡。", short_desc: "北美最高瀑布之一，春季水量最為壯觀。", icon: "🌊", url: "https://www.nps.gov/yose/planyourvisit/waterfalls.htm" },
-            { name: "半圓頂 Half Dome", city: "Yosemite", type: "Nature", desc: "優勝美地最著名的地標，形狀像一顆被切開的巨大圓頂。它代表著優勝美地的精神——堅毅與壯麗。從谷底或冰川點遠眺皆極為壯觀。", short_desc: "優勝美地精神象徵，獨特半圓形花崗岩地標。", icon: "⛰️", url: "https://www.nps.gov/yose/planyourvisit/halfdome.htm" },
+            { name: "隧道景觀 Tunnel View", city: "Yosemite", type: "Photo", desc: "進入優勝美地谷地時最經典的觀景台。從這裡可以一次飽覽酋長岩、新娘面紗瀑布和半圓頂三大地標，是攝影愛好者的天堂。", short_desc: "優勝美地象徵性視角，一次飽覽三大地標。", icon: "🏞️", url: "https://www.nps.gov/yose/planyourvisit/tunnelview.htm", lat: 37.7156, lng: -119.6772 },
+            { name: "酋長岩 El Capitan", city: "Yosemite", type: "Nature", desc: "世界上最大的單塊花崗岩巨石，垂直高度超過 900 公尺。雖然遊客不能攀登，但從谷底仰望其氣勢，已足夠令人震撼。", short_desc: "全球最大單塊花崗岩，攀岩者的夢想聖地。", icon: "🧗", url: "https://www.nps.gov/yose/planyourvisit/elcapitan.htm", lat: 37.7339, lng: -119.6377 },
+            { name: "優勝美地瀑布 Yosemite Falls", city: "Yosemite", type: "Nature", desc: "由上、中、下三段瀑布組成，總落差達 739 公尺，是北美最高的瀑布之一。春末夏初雪水融化時，水量最大，氣勢最為磅礡。", short_desc: "北美最高瀑布之一，春季水量最為壯觀。", icon: "🌊", url: "https://www.nps.gov/yose/planyourvisit/waterfalls.htm", lat: 37.7562, lng: -119.5969 },
+            { name: "半圓頂 Half Dome", city: "Yosemite", type: "Nature", desc: "優勝美地最著名的地標，形狀像一顆被切開的巨大圓頂。它代表著優勝美地的精神——堅毅與壯麗。從谷底或冰川點遠眺皆極為壯觀。", short_desc: "優勝美地精神象徵，獨特半圓形花崗岩地標。", icon: "⛰️", url: "https://www.nps.gov/yose/planyourvisit/halfdome.htm", lat: 37.7459, lng: -119.5332 },
 
             // --- 舊金山到卡梅爾 PCH 景點 ---
-            { name: "鴿子點燈塔", city: "PCH", type: "History", desc: "建於 1871 年，是美國西海岸最高的燈塔之一。戶外園區全天開放，是經典的海岸攝影據點。", short_desc: "經典海岸燈塔，美國西海岸最高之一。", icon: "💡", url: "https://www.parks.ca.gov/?page_id=533" },
-            { name: "鯊魚鰭灣", city: "PCH", type: "Nature", desc: "因海中巨石形狀酷似鯊魚背鰭而得名。擁有原始的自然美感與獨特的海蝕洞景觀。", short_desc: "形狀酷似鯊魚背鰭的巨石海灘。", icon: "🦈", url: "https://www.californiacoastline.org/cgi-bin/image.cgi?image=4583&mode=big&options=0" },
-            { name: "聖塔克魯茲碼頭與樂園", city: "PCH", type: "Fun", desc: "加州最古老的海濱遊樂園，擁有百年歷史的木質過山車。碼頭下方常有成群海獅休憩。", short_desc: "加州最古老海濱樂園，經典木質過山車。", icon: "🎡", url: "https://beachboardwalk.com/" },
-            { name: "蒙特雷灣水族館", city: "PCH", type: "Nature", desc: "全美最受推崇的水族館，必看巨型海藻森林與海獺餵食秀。座落於歷史罐頭廠街。", short_desc: "全美頂尖水族館，巨型海藻森林景觀。", icon: "🐠", url: "https://www.montereybayaquarium.org/" },
-            { name: "17-Mile Drive", city: "PCH", type: "Nature", desc: "私人景觀公路，欣賞碧海藍天、孤柏樹、海豹與豪華住宅。需付入園費$12.25/車。", short_desc: "海岸線私人景觀公路，必看孤柏與鳥岩。", icon: "🌲", url: "https://www.pebblebeach.com/17-mile-drive/" },
-            { name: "卡梅爾小鎮", city: "PCH", type: "Culture", desc: "充滿歐式童話氛圍的藝術小鎮，擁有薑餅屋般的房舍和潔白沙灘，適合散步與藝廊之旅。", short_desc: "歐式童話藝術小鎮，無霓虹燈與速食店。", icon: "🏡", url: "https://www.carmelcalifornia.com/" },
+            { name: "鴿子點燈塔", city: "PCH", type: "History", desc: "建於 1871 年，是美國西海岸最高的燈塔之一。戶外園區全天開放，是經典的海岸攝影據點。", short_desc: "經典海岸燈塔，美國西海岸最高之一。", icon: "💡", url: "https://www.parks.ca.gov/?page_id=533", lat: 37.1844, lng: -122.3947 },
+            { name: "鯊魚鰭灣", city: "PCH", type: "Nature", desc: "因海中巨石形狀酷似鯊魚背鰭而得名。擁有原始的自然美感與獨特的海蝕洞景觀。", short_desc: "形狀酷似鯊魚背鰭的巨石海灘。", icon: "🦈", url: "https://www.californiacoastline.org/cgi-bin/image.cgi?image=4583&mode=big&options=0", lat: 37.0097, lng: -122.1816 },
+            { name: "聖塔克魯茲碼頭與樂園", city: "PCH", type: "Fun", desc: "加州最古老的海濱遊樂園，擁有百年歷史的木質過山車。碼頭下方常有成群海獅休憩。", short_desc: "加州最古老海濱樂園，經典木質過山車。", icon: "🎡", url: "https://beachboardwalk.com/", lat: 36.9641, lng: -122.0181 },
+            { name: "蒙特雷灣水族館", city: "PCH", type: "Nature", desc: "全美最受推崇的水族館，必看巨型海藻森林與海獺餵食秀。座落於歷史罐頭廠街。", short_desc: "全美頂尖水族館，巨型海藻森林景觀。", icon: "🐠", url: "https://www.montereybayaquarium.org/", lat: 36.6183, lng: -121.9015 },
+            { name: "17-Mile Drive", city: "PCH", type: "Nature", desc: "私人景觀公路，欣賞碧海藍天、孤柏樹、海豹與豪華住宅。需付入園費$12.25/車。", short_desc: "海岸線私人景觀公路，必看孤柏與鳥岩。", icon: "🌲", url: "https://www.pebblebeach.com/17-mile-drive/", lat: 36.6022, lng: -121.9546 },
+            { name: "卡梅爾小鎮", city: "PCH", type: "Culture", desc: "充滿歐式童話氛圍的藝術小鎮，擁有薑餅屋般的房舍和潔白沙灘，適合散步與藝廊之旅。", short_desc: "歐式童話藝術小鎮，無霓虹燈與速食店。", icon: "🏡", url: "https://www.carmelcalifornia.com/", lat: 36.5552, lng: -121.9233 },
 
             // --- PCH 景點 ---
-            { name: "羅伯斯角州立自然保護區 Point Lobos", city: "PCH", type: "Nature", desc: "被譽為「加州州立公園系統中的皇冠」。這裡有豐富的海鳥、海豹與海獺生態，以及壯觀的海蝕景觀。", short_desc: "加州皇冠級自然保護區，觀賞海獺海豹。", icon: "🦭", url: "https://www.parks.ca.gov/?page_id=571" },
-            { name: "Bixby Bridge", city: "PCH", type: "Photo", desc: "一號公路最具代表性的攝影點。巨大的單跨混凝土拱橋完工於 1932 年，橫跨在陡峭的斷崖深谷之間。", short_desc: "一號公路最著名的單拱橋，懸崖絕景。", icon: "🌉", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10924" },
-            { name: "菲佛海灘 Pfeiffer Beach", city: "PCH", type: "Photo", desc: "隱藏在山谷中的秘境海灘。著名的「紫色」沙灘與海上巨大的 Keyhole Rock 石洞拱門。", short_desc: "欣賞 Keyhole Rock 與獨特的紫色沙灘。", icon: "💜", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10921" },
-            { name: "麥克威瀑布 McWay Falls", city: "PCH", type: "Nature", desc: "加州極少數直接落入海灘的瀑布。碧綠的海水配上細白的瀑布，美得像一幅畫。", short_desc: "世外桃源般的海岸瀑布，寶石色海灣。", icon: "💧", url: "https://www.parks.ca.gov/?page_id=570" },
-            { name: "赫氏古堡 Hearst Castle", city: "PCH", type: "History", desc: "報業大亨赫斯特的私人領地，融合地中海風情與無數歐洲骨董，極盡奢華。", short_desc: "極致奢華的私人莊園，融合歐洲藝術。", icon: "🏰", url: "https://hearstcastle.org/" },
-            { name: "象鼻海豹灘 Elephant Seal Rookery", city: "PCH", type: "Nature", desc: "全年都可以在此觀賞到成百上千隻巨大的象鼻海豹在沙灘上休息、換毛或育雛。", short_desc: "免費生態觀察點，觀賞成群象鼻海豹。", icon: "🦭", url: "https://www.elephantseal.org/" },
-            { name: "月光石海灘 Moonstone Beach", city: "PCH", type: "Nature", desc: "以海灘上散布的小玉石得名。擁有風景極佳的濱海木棧道，適合悠閒散步。", short_desc: "以小玉石聞名，擁有絕美濱海木棧道。", icon: "💎", url: "https://visitcambriaca.com/moonstone-beach/" },
-            { name: "莫羅貝與莫羅岩 Morro Rock", city: "PCH", type: "Photo", desc: "巨大的海上岩漿岩矗立在海港入口。碼頭區充滿了海鮮餐廳與水上活動。", short_desc: "巨型海上岩漿岩地標，海鮮美食碼頭。", icon: "🌋", url: "https://www.morrobay.org/" },
-            { name: "皮斯莫比奇 Pismo Beach", city: "PCH", type: "Fun", desc: "這段旅程的終點，是一個充滿陽光氣息的海邊渡假小鎮。以廣大的沙灘和沙丘活動聞名。", short_desc: "海邊渡假小鎮，沙灘碼頭與沙丘活動。", icon: "🏖️", url: "https://experiencepismobeach.com/" },
+            { name: "羅伯斯角州立自然保護區 Point Lobos", city: "PCH", type: "Nature", desc: "被譽為「加州州立公園系統中的皇冠」。這裡有豐富的海鳥、海豹與海獺生態，以及壯觀的海蝕景觀。", short_desc: "加州皇冠級自然保護區，觀賞海獺海豹。", icon: "🦭", url: "https://www.parks.ca.gov/?page_id=571", lat: 36.5222, lng: -121.9525 },
+            { name: "Bixby Bridge", city: "PCH", type: "Photo", desc: "一號公路最具代表性的攝影點。巨大的單跨混凝土拱橋完工於 1932 年，橫跨在陡峭的斷崖深谷之間。", short_desc: "一號公路最著名的單拱橋，懸崖絕景。", icon: "🌉", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10924", lat: 36.3715, lng: -121.9017 },
+            { name: "菲佛海灘 Pfeiffer Beach", city: "PCH", type: "Photo", desc: "隱藏在山谷中的秘境海灘。著名的「紫色」沙灘與海上巨大的 Keyhole Rock 石洞拱門。", short_desc: "欣賞 Keyhole Rock 與獨特的紫色沙灘。", icon: "💜", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10921", lat: 36.2381, lng: -121.8152 },
+            { name: "麥克威瀑布 McWay Falls", city: "PCH", type: "Nature", desc: "加州極少數直接落入海灘的瀑布。碧綠的海水配上細白的瀑布，美得像一幅畫。", short_desc: "世外桃源般的海岸瀑布，寶石色海灣。", icon: "💧", url: "https://www.parks.ca.gov/?page_id=570", lat: 36.1579, lng: -121.6722 },
+            { name: "赫氏古堡 Hearst Castle", city: "PCH", type: "History", desc: "報業大亨赫斯特的私人領地，融合地中海風情與無數歐洲骨董，極盡奢華。", short_desc: "極致奢華的私人莊園，融合歐洲藝術。", icon: "🏰", url: "https://hearstcastle.org/", lat: 35.6852, lng: -121.1666 },
+            { name: "象鼻海豹灘 Elephant Seal Rookery", city: "PCH", type: "Nature", desc: "全年都可以在此觀賞到成百上千隻巨大的象鼻海豹在沙灘上休息、換毛或育雛。", short_desc: "免費生態觀察點，觀賞成群象鼻海豹。", icon: "🦭", url: "https://www.elephantseal.org/", lat: 35.6630, lng: -121.2574 },
+            { name: "月光石海灘 Moonstone Beach", city: "PCH", type: "Nature", desc: "以海灘上散布的小玉石得名。擁有風景極佳的濱海木棧道，適合悠閒散步。", short_desc: "以小玉石聞名，擁有絕美濱海木棧道。", icon: "💎", url: "https://visitcambriaca.com/moonstone-beach/", lat: 35.5714, lng: -121.1197 },
+            { name: "莫羅貝與莫羅岩 Morro Rock", city: "PCH", type: "Photo", desc: "巨大的海上岩漿岩矗立在海港入口。碼頭區充滿了海鮮餐廳與水上活動。", short_desc: "巨型海上岩漿岩地標，海鮮美食碼頭。", icon: "🌋", url: "https://www.morrobay.org/", lat: 35.3719, lng: -120.8672 },
+            { name: "皮斯莫比奇 Pismo Beach", city: "PCH", type: "Fun", desc: "這段旅程的終點，是一個充滿陽光氣息的海邊渡假小鎮。以廣大的沙灘和沙丘活動聞名。", short_desc: "海邊渡假小鎮，沙灘碼頭與沙丘活動。", icon: "🏖️", url: "https://experiencepismobeach.com/", lat: 35.1428, lng: -120.6413 },
 
             // --- PCH 終段景點 ---
-            { name: "丹麥村 Solvang", city: "PCH", type: "Culture", desc: "由丹麥移民建立，完美保留了丹麥建築風格與文化。隨處可見巨大的風車、傳統木造房屋以及傳統服飾的木偶裝飾。", short_desc: "充滿北歐童話氣息的丹麥移民小鎮，經典風車地標。", icon: "🇩🇰", url: "https://solvangusa.com/" },
-            { name: "聖塔芭芭拉 Santa Barbara", city: "PCH", type: "Culture", desc: "被譽為「美西的蔚藍海岸」，城市規定所有建築必須維持紅瓦、白牆的西班牙殖民風格，散發著優雅的度假氛圍。", short_desc: "具備紅瓦白牆西班牙風格的優雅海岸城市，必登法院鐘樓。", icon: "🇪🇸", url: "https://santabarbaraca.com/" },
+            { name: "丹麥村 Solvang", city: "PCH", type: "Culture", desc: "由丹麥移民建立，完美保留了丹麥建築風格與文化。隨處可見巨大的風車、傳統木造房屋以及傳統服飾的木偶裝飾。", short_desc: "充滿北歐童話氣息的丹麥移民小鎮，經典風車地標。", icon: "🇩🇰", url: "https://solvangusa.com/", lat: 34.5958, lng: -120.1376 },
+            { name: "聖塔芭芭拉 Santa Barbara", city: "PCH", type: "Culture", desc: "被譽為「美西的蔚藍海岸」，城市規定所有建築必須維持紅瓦、白牆的西班牙殖民風格，散發著優雅的度假氛圍。", short_desc: "具備紅瓦白牆西班牙風格的優雅海岸城市，必登法院鐘樓。", icon: "🇪🇸", url: "https://santabarbaraca.com/", lat: 34.4208, lng: -119.6982 },
 
             // --- 洛杉磯 (LA) 景點 ---
-            { name: "聖塔莫尼卡碼頭 Santa Monica Pier", city: "LA", type: "Fun", desc: "這不僅是一號公路接近尾聲的經典站點，也是傳奇「母親之路」66 號公路的終點站。碼頭充滿了復古的海濱遊樂設施與熱鬧氛圍。", short_desc: "66號公路終點，經典海濱樂園與摩天輪。", icon: "🎠", url: "https://www.santamonicapier.org/" },
-            { name: "迪士尼樂園", city: "LA", type: "Fun", desc: "元祖樂園，充滿童話與魔法。建議使用 Genie+。", short_desc: "元祖樂園，充滿童話與魔法。", icon: "🎢", url: "https://disneyland.disney.go.com/" },
-            { name: "好萊塢環球影城 Universal Studios", city: "LA", type: "Fun", desc: "全球首座環球影城，結合真實片場與遊樂設施。必玩：超級任天堂世界（馬力歐賽車）、Studio Tour（玩命關頭/大白鯊）、哈利波特禁忌之旅。建議購買 Express Pass 省時。", short_desc: "電影主題樂園，必玩任天堂世界與片場導覽。", icon: "🎬", url: "https://www.universalstudioshollywood.com/" },
-            { name: "華納兄弟影城 Warner Bros. Tour", city: "LA", type: "Culture", desc: "相較於環球影城，提供更具知性深度的片場參觀。走入《六人行》咖啡館、《蝙蝠俠》道具間與真實製片廠。需提前預約。", short_desc: "深度片場參觀，走入六人行與蝙蝠俠場景。", icon: "🎥", url: "https://www.wbstudiotour.com/" },
-            { name: "格里斐斯天文台 Griffith Observatory", city: "LA", type: "Photo", desc: "洛杉磯地標，《樂來越愛你》(La La Land) 取景地。戶外露台可眺望好萊塢標誌與絕美市景夕陽。Samuel Oschin 天象館秀需現場購票。", short_desc: "俯瞰 LA 夜景與好萊塢標誌的最佳地點。", icon: "🔭", url: "https://griffithobservatory.org/" },
-            { name: "好萊塢星光大道 Walk of Fame", city: "LA", type: "History", desc: "尋找鑲嵌在人行道上的粉紅星形獎章，參觀 TCL 中國劇院（明星手腳印）與杜比劇院。建議上午前往避開人潮。", short_desc: "尋找心儀明星的星星與手印。", icon: "⭐", url: "https://www.walkoffame.com/" },
+            { name: "聖塔莫尼卡碼頭 Santa Monica Pier", city: "LA", type: "Fun", desc: "這不僅是一號公路接近尾聲的經典站點，也是傳奇「母親之路」66 號公路的終點站。碼頭充滿了復古的海濱遊樂設施與熱鬧氛圍。", short_desc: "66號公路終點，經典海濱樂園與摩天輪。", icon: "🎠", url: "https://www.santamonicapier.org/", lat: 34.0100, lng: -118.4960 },
+            { name: "迪士尼樂園", city: "LA", type: "Fun", desc: "元祖樂園，充滿童話與魔法。建議使用 Genie+。", short_desc: "元祖樂園，充滿童話與魔法。", icon: "🎢", url: "https://disneyland.disney.go.com/", lat: 33.8121, lng: -117.9190 },
+            { name: "好萊塢環球影城 Universal Studios", city: "LA", type: "Fun", desc: "全球首座環球影城，結合真實片場與遊樂設施。必玩：超級任天堂世界（馬力歐賽車）、Studio Tour（玩命關頭/大白鯊）、哈利波特禁忌之旅。建議購買 Express Pass 省時。", short_desc: "電影主題樂園，必玩任天堂世界與片場導覽。", icon: "🎬", url: "https://www.universalstudioshollywood.com/", lat: 34.1381, lng: -118.3534 },
+            { name: "華納兄弟影城 Warner Bros. Tour", city: "LA", type: "Culture", desc: "相較於環球影城，提供更具知性深度的片場參觀。走入《六人行》咖啡館、《蝙蝠俠》道具間與真實製片廠。需提前預約。", short_desc: "深度片場參觀，走入六人行與蝙蝠俠場景。", icon: "🎥", url: "https://www.wbstudiotour.com/", lat: 34.1485, lng: -118.3377 },
+            { name: "格里斐斯天文台 Griffith Observatory", city: "LA", type: "Photo", desc: "洛杉磯地標，《樂來越愛你》(La La Land) 取景地。戶外露台可眺望好萊塢標誌與絕美市景夕陽。Samuel Oschin 天象館秀需現場購票。", short_desc: "俯瞰 LA 夜景與好萊塢標誌的最佳地點。", icon: "🔭", url: "https://griffithobservatory.org/", lat: 34.1184, lng: -118.3004 },
+            { name: "好萊塢星光大道 Walk of Fame", city: "LA", type: "History", desc: "尋找鑲嵌在人行道上的粉紅星形獎章，參觀 TCL 中國劇院（明星手腳印）與杜比劇院。建議上午前往避開人潮。", short_desc: "尋找心儀明星的星星與手印。", icon: "⭐", url: "https://www.walkoffame.com/", lat: 34.1016, lng: -118.3267 },
         ];
         
         let itineraryData = {
@@ -1017,11 +1055,11 @@
             XLSX.utils.book_append_sheet(wb, wsFlights, "Flights");
 
             // 3. Accommodation Sheet
-            const accHeaders = ["city", "name", "checkinDate", "checkoutDate", "room", "highlight", "facilities", "address", "mapLink"];
+            const accHeaders = ["city", "name", "checkinDate", "checkoutDate", "room", "highlight", "facilities", "address", "mapLink", "lat", "lng"];
             let accRows = [accHeaders];
             // Support object or array source
             const accList = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
-            accList.forEach(a => accRows.push([a.city, a.name, a.checkinDate, a.checkoutDate, a.room, a.highlight, a.facilities, a.address, a.mapLink]));
+            accList.forEach(a => accRows.push([a.city, a.name, a.checkinDate, a.checkoutDate, a.room, a.highlight, a.facilities, a.address, a.mapLink, a.lat, a.lng]));
             const wsAcc = XLSX.utils.aoa_to_sheet(accRows);
             XLSX.utils.book_append_sheet(wb, wsAcc, "Accommodation");
 
@@ -1033,9 +1071,9 @@
             XLSX.utils.book_append_sheet(wb, wsDining, "Dining");
 
             // 5. Attractions Sheet
-            const attrHeaders = ["city", "name", "type", "desc", "short_desc", "icon", "url"];
+            const attrHeaders = ["city", "name", "type", "desc", "short_desc", "icon", "url", "lat", "lng"];
             let attrRows = [attrHeaders];
-            attractions.forEach(a => attrRows.push([a.city, a.name, a.type, a.desc, a.short_desc, a.icon, a.url]));
+            attractions.forEach(a => attrRows.push([a.city, a.name, a.type, a.desc, a.short_desc, a.icon, a.url, a.lat, a.lng]));
             const wsAttr = XLSX.utils.aoa_to_sheet(attrRows);
             XLSX.utils.book_append_sheet(wb, wsAttr, "Attractions");
 
@@ -1181,22 +1219,12 @@
             });
         }
 
-        // --- Itinerary Logic ---
-        function generatePhaseMapUrl(phaseKey) {
-            let poiList = [];
-            // Basic fallback for standard phases, custom phases will have generic search
-            if (phaseKey === 'phase1') poiList = ["Riu Plaza Fisherman's Wharf", "Alcatraz Island", "Golden Gate Bridge", "Lombard Street", "Chase Center"];
-            else if (phaseKey === 'phase2') poiList = ["Carmel-by-the-Sea", "Bixby Bridge", "Hearst Castle", "Morro Bay", "Solvang"];
-            else if (phaseKey === 'phase3') poiList = ["Hollywood Franklin Hotel", "Santa Monica Pier", "Disneyland Park", "Universal Studios Hollywood", "Griffith Observatory"];
-            
-            // If custom phase or no predefined POIs, try to grab from locations in data
-            if (poiList.length === 0 && itineraryData[phaseKey]) {
-                poiList = itineraryData[phaseKey].days.map(d => d.attractionKey || d.hotel).filter(x => x);
-            }
+        // --- MAP & ITINERARY LOGIC ---
 
-            const query = poiList.join(' and '); 
-            return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
-        }
+        // State to track current map instance
+        let currentMap = null;
+        let isMapMode = false;
+        let currentPhaseKey = 'phase1';
 
         function getAttractionBadgeColor(type) {
             if (type === 'History') return 'bg-[#fef3c7] text-[#92400e] border-[#fcd34d]'; // Amber
@@ -1209,44 +1237,75 @@
         }
 
         function activatePhaseNav(activeKey) {
-            // Deactivate all buttons first
             document.querySelectorAll('.phase-nav-btn').forEach(el => {
                 el.classList.remove('border-[#d6b98c]', 'shadow-md');
                 el.classList.add('border-transparent');
             });
-
-            // Activate specific button
             const activeBtn = document.getElementById(`nav-${activeKey}`);
             if (activeBtn) {
                 activeBtn.classList.add('border-[#d6b98c]', 'shadow-md');
                 activeBtn.classList.remove('border-transparent');
             }
-        }        
-  
+        }
+
+        // Main function to switch content based on phase
         function renderItinerary(phaseKey) {
+            currentPhaseKey = phaseKey;
             const phase = itineraryData[phaseKey];
-            const container = document.getElementById('itinerary-details');
             const headerContainer = document.getElementById('itinerary-header');
             
-            if (!phase || !container) return;
+            if (!phase) return;
 
             activatePhaseNav(phaseKey);
-            const mapUrl = generatePhaseMapUrl(phaseKey);
 
-            // Theme colors (Updated to Earthy Tones)
+            // 1. Render Header (with Map Toggle)
+            const mapBtnClass = isMapMode ? 'map-toggle-active' : 'map-toggle-inactive';
+            const listBtnClass = !isMapMode ? 'map-toggle-active' : 'map-toggle-inactive';
+
+            // Theme colors
             let theme = { text: 'text-[#a4855d]', bg: 'bg-[#faf7f2]', accent: 'bg-[#d6b98c]', border: 'border-[#efe6d8]' };
             
-            // Header
             headerContainer.innerHTML = `
                 <div>
                     <h3 class="text-xl font-bold text-[#3a3a3a]">${phase.title}</h3>
                     <div class="h-1 w-12 ${theme.accent} rounded-full mt-1"></div>
                 </div>
-                <a href="${mapUrl}" target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-full ${theme.bg} text-[#a4855d] text-sm font-bold hover:bg-white hover:shadow-md transition-all border border-[#efe6d8]">
-                    <span>🗺️ 地圖模式</span>
-                </a>
+                <div class="flex bg-[#faf7f2] p-1 rounded-full border border-[#efe6d8]">
+                    <button onclick="switchViewMode('list')" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all ${listBtnClass}">
+                        📝 列表
+                    </button>
+                    <button onclick="switchViewMode('map')" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all ${mapBtnClass}">
+                        🗺️ 地圖
+                    </button>
+                </div>
             `;
 
+            // 2. Render List Content
+            renderListContent(phase);
+
+            // 3. Handle View Visibility
+            const listContainer = document.getElementById('itinerary-details');
+            const mapContainer = document.getElementById('itinerary-map');
+
+            if (isMapMode) {
+                listContainer.classList.add('hidden');
+                mapContainer.classList.remove('hidden');
+                // Need a slight delay to allow div to become visible before rendering map sizing
+                setTimeout(() => renderPhaseMap(phase), 100);
+            } else {
+                listContainer.classList.remove('hidden');
+                mapContainer.classList.add('hidden');
+            }
+        }
+
+        function switchViewMode(mode) {
+            isMapMode = (mode === 'map');
+            renderItinerary(currentPhaseKey); // Re-render with new state
+        }
+
+        // Render List Logic (Extracted from previous renderItinerary)
+        function renderListContent(phase) {
+            const container = document.getElementById('itinerary-list-content');
             let html = `<div class="relative space-y-12 py-4">`;
             html += `<div class="absolute left-[19px] top-6 bottom-6 w-0.5 bg-[#efe6d8] timeline-line md:block hidden"></div>`;
 
@@ -1340,6 +1399,133 @@
 
             html += `</div>`;
             container.innerHTML = html;
+        }
+
+        // --- NEW: Helper to find attractions in text ---
+        function findMentionedAttractions(text) {
+            if (!text) return [];
+            return attractions.filter(attraction => {
+                // 拆解名稱，例如 "金門大橋 Golden Gate" -> ["金門大橋", "Golden", "Gate"]
+                const keywords = attraction.name.split(/[\s,]+/);
+                // 只要中文名或英文名有出現在文中就算 (忽略太短的詞以防誤判)
+                return keywords.some(keyword => keyword.length >= 2 && text.includes(keyword));
+            });
+        }
+
+        // Render Map Logic (Updated to include mentioned attractions)
+        function renderPhaseMap(phase) {
+            // 1. Cleanup old map
+            if (currentMap) {
+                currentMap.remove();
+                currentMap = null;
+            }
+
+            // 2. Initialize Map
+            currentMap = L.map('itinerary-map').setView([37.7749, -122.4194], 10); // Default SF
+
+            // 3. Add Tile Layer (OpenStreetMap - Free)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(currentMap);
+
+            // 4. Collect Markers
+            let bounds = [];
+            let routePoints = [];
+            let addedLocations = new Set(); // Prevent duplicate markers at exact same spot
+
+            phase.days.forEach((day, idx) => {
+                const combinedText = (day.act + " " + day.detail);
+                
+                // A. Primary Attraction (Key)
+                if (day.attractionKey && attractionMap[day.attractionKey] && attractionMap[day.attractionKey].lat) {
+                    const poi = attractionMap[day.attractionKey];
+                    const locKey = `${poi.lat},${poi.lng}`;
+                    
+                    if (!addedLocations.has(locKey)) {
+                        L.marker([poi.lat, poi.lng])
+                            .addTo(currentMap)
+                            .bindPopup(`
+                                <div class="text-center">
+                                    <div class="text-xs font-bold text-[#d6b98c] mb-1">⭐ DAY ${idx + 1} 重點</div>
+                                    <div class="text-xl mb-1">${poi.icon}</div>
+                                    <h3 class="font-bold text-[#3a3a3a]">${poi.name}</h3>
+                                </div>
+                            `);
+                        bounds.push([poi.lat, poi.lng]);
+                        routePoints.push([poi.lat, poi.lng]);
+                        addedLocations.add(locKey);
+                    }
+                }
+
+                // B. Secondary Attractions (Found in Text) - NEW
+                const mentionedPois = findMentionedAttractions(combinedText);
+                mentionedPois.forEach(poi => {
+                    // Skip if it's the main key (already added) or invalid coords
+                    if (poi.name === day.attractionKey || !poi.lat) return;
+                    
+                    const locKey = `${poi.lat},${poi.lng}`;
+                    if (!addedLocations.has(locKey)) {
+                        // Use a smaller circle marker for secondary spots
+                        L.circleMarker([poi.lat, poi.lng], {
+                            color: '#6b6b6b',
+                            fillColor: '#ffffff',
+                            fillOpacity: 1,
+                            radius: 6,
+                            weight: 2
+                        }).addTo(currentMap)
+                        .bindPopup(`
+                            <div class="text-center">
+                                <div class="text-xs font-bold text-[#a09a93] mb-1">📍 DAY ${idx + 1} 順遊</div>
+                                <h3 class="font-bold text-sm text-[#3a3a3a]">${poi.name}</h3>
+                            </div>
+                        `);
+                        bounds.push([poi.lat, poi.lng]);
+                        // Optional: Add to route line? Maybe cluttering, let's keep route clean with main stops
+                        // routePoints.push([poi.lat, poi.lng]); 
+                        addedLocations.add(locKey);
+                    }
+                });
+
+                // C. Hotel
+                const accList = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
+                const hotel = accList.find(h => h.name === day.hotel);
+                if (hotel && hotel.lat) {
+                    const locKey = `${hotel.lat},${hotel.lng}`;
+                    if (!addedLocations.has(locKey)) {
+                        L.circleMarker([hotel.lat, hotel.lng], {
+                            color: '#3a3a3a',
+                            fillColor: '#3a3a3a',
+                            fillOpacity: 0.8,
+                            radius: 6
+                        }).addTo(currentMap)
+                        .bindPopup(`
+                            <div class="text-center">
+                                <div class="text-xs font-bold text-[#a09a93] mb-1">🌙 住宿</div>
+                                <h3 class="font-bold text-sm text-[#3a3a3a]">${hotel.name}</h3>
+                            </div>
+                        `);
+                        bounds.push([hotel.lat, hotel.lng]);
+                        addedLocations.add(locKey);
+                    }
+                }
+            });
+
+            // 5. Draw Route Line (Simple polyline connecting points)
+            if (routePoints.length > 1) {
+                L.polyline(routePoints, {
+                    color: '#d6b98c',
+                    weight: 4,
+                    opacity: 0.6,
+                    dashArray: '10, 10',
+                    lineCap: 'round'
+                }).addTo(currentMap);
+            }
+
+            // 6. Fit Bounds
+            if (bounds.length > 0) {
+                currentMap.fitBounds(bounds, { padding: [50, 50] });
+            }
         }
 
         // --- NEW: Toggle Function ---
