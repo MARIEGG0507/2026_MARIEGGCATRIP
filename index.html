@@ -6,7 +6,7 @@
     <title>2026 美西｜舊金山與洛杉磯之旅</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 引入 SheetJS (用於匯出備份與匯入 Excel) -->
+    <!-- 引入 SheetJS (用於匯出備份 Excel) -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     
     <!-- 引入 PptxGenJS (用於匯出 PowerPoint) -->
@@ -134,9 +134,8 @@
         .timeline-line { animation: drawLine 1s ease-out forwards; background-color: var(--color-border-soft); }
 
         @media (max-width: 768px) {
-            /* Hero Banner Mobile Adjustment */
-            header { height: auto !important; min-height: 400px; }
-            h1 { font-size: 2rem !important; line-height: 1.2 !important; }
+            /* Mobile Typography Adjustments */
+            h1 { font-size: 1.8rem !important; line-height: 1.3 !important; }
             
             nav ul { flex-wrap: nowrap !important; overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start !important; gap: 0.5rem; padding: 0.5rem 1rem; }
             nav ul li { flex-shrink: 0; }
@@ -149,24 +148,31 @@
 </head>
 <body>
     <div id="toast">訊息提示</div>
-    <header class="relative overflow-hidden h-[400px] md:h-[500px] flex items-end border-b border-[#efe6d8]">
-        <!-- 背景圖片 -->
-        <div class="absolute inset-0 z-0">
-            <img src="https://raw.githubusercontent.com/MARIEGG0507/2026_MARIEGGCATRIP/refs/heads/main/image/Image_herobanner.png" alt="Hero Banner" class="w-full h-full object-cover object-center">
-            <!-- 漸層遮罩：確保文字可讀性 -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+    <!-- 
+      Header 優化說明：
+      1. 手機版 (Default): flex-col 排版。圖片 w-full h-auto (等比例)。文字區塊在下方 bg-[#2c241b]。
+      2. 桌面版 (md): block 排版。高度固定 h-[500px]。圖片 absolute inset-0 (覆蓋)。文字 absolute bottom-0 (疊加)。
+    -->
+    <header class="relative border-b border-[#efe6d8] flex flex-col md:block md:h-[500px] overflow-hidden">
+        <!-- 背景圖片區塊 -->
+        <div class="relative w-full h-auto md:absolute md:inset-0 md:z-0 md:h-full">
+            <img src="https://raw.githubusercontent.com/MARIEGG0507/2026_MARIEGGCATRIP/refs/heads/main/image/Image_herobanner.png" alt="Hero Banner" class="w-full h-auto md:h-full md:object-cover md:object-center block">
+            <!-- 漸層遮罩：僅在桌面版顯示，因為手機版文字不疊加在圖上 -->
+            <div class="hidden md:block absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
         </div>
 
-        <!-- 標題內容 -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center relative z-10 w-full mb-0 md:mb-4">
-            <h1 class="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-3 drop-shadow-lg">美西舊金山與洛杉磯之旅</h1>
-            <p class="text-lg md:text-xl text-white/90 font-light drop-shadow-md flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
-                <span class="whitespace-nowrap">2026年 2月26日 - 3月11日</span> 
-                <span class="hidden md:inline mx-2 text-[#d6b98c]">|</span> 
-                <span class="block w-full md:w-auto md:inline">13 天 12 夜</span>
-                <span class="hidden md:inline mx-2 text-[#d6b98c]">|</span> 
-                <span class="block w-full md:w-auto md:inline">加州夢幻行</span>
-            </p>                       
+        <!-- 標題內容區塊 -->
+        <div class="relative z-10 w-full bg-[#2c241b] md:bg-transparent px-4 py-8 md:py-12 text-center md:absolute md:bottom-0 md:mb-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-2xl sm:text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-3 drop-shadow-lg">美西舊金山與洛杉磯之旅</h1>
+                <p class="text-base md:text-xl text-white/90 font-light drop-shadow-md flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
+                    <span class="whitespace-nowrap">2026年 2月26日 - 3月11日</span> 
+                    <span class="hidden md:inline mx-2 text-[#d6b98c]">|</span> 
+                    <span class="block w-full md:w-auto md:inline">13 天 12 夜</span>
+                    <span class="hidden md:inline mx-2 text-[#d6b98c]">|</span> 
+                    <span class="block w-full md:w-auto md:inline">加州夢幻行</span>
+                </p>                       
+            </div>
         </div>
     </header>
 
@@ -318,11 +324,7 @@
                      <button onclick="downloadTemplate()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
                         <span>⬇️</span> 匯出備份 (Excel)
                     </button>
-                     <!-- Hidden file input for Excel Import -->
-                     <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(this)" />
-                     <label for="excel-upload" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
-                        <span>📂</span> Excel 匯入
-                    </label>
+                    <!-- 已移除 Excel 匯入按鈕 -->
 
                     <button onclick="loadFromGoogleSheet()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
                         <span>☁️</span> Google 同步
@@ -443,7 +445,7 @@
                     { date: "2/26 (四)", loc: "舊金山", act: "抵達與時差調適", detail: "21:15 SFO 抵達、前往 Riu Plaza Fisherman's Wharf、休息調適時差。", transport: "Shared Shuttle 或 Uber/Lyft (費用較高但最方便)。", hotel: "Riu Plaza Fisherman's Wharf" },
                     { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "上午：08:00 至Pier 33 售票亭（Pre-Paid，或叫will call）兌換門票（網路預約訂票必須在集合時間 30 分鐘前到「Pier 33 售票亭（Pre-Paid，或叫will call）」兌換門票，所以一定要把訂票證明（ORDER CONFIRMATION）印出來或存在手機裡出示，且要帶有照片的身分證件、購票用信用卡，檢查後才能換到登船、登島門票。）<br><strong>08:40梯次</strong> 參觀惡魔島。<br>午餐：漁人碼頭<br>下午：九曲花街 Lombard St、叮叮車 Cable Car、彩繪女士 Painted Ladies，前往藝術宮。<br>晚餐<br>晚上：藝術宮湖畔欣賞夕陽、返回飯店。", transport: "惡魔島：碼頭步行。九曲花街/藝術宮： Powell-Hyde 纜車 🚋。", attractionKey: "惡魔島 Alcatraz", hotel: "Riu Plaza Fisherman's Wharf" }, 
                     { date: "2/28 (六)", loc: "舊金山", act: "NBA 賽事日", detail: "上午：悠閒早午餐、Ferry Building 散步。<br>下午：前往 Chase Center 周邊用晚餐。<br>午晚餐<br>晚上：17:30 觀賞 NBA 勇士隊 vs 湖人隊。", transport: "Ferry Building： MUNI 巴士。Chase Center： MUNI T-Line 輕軌直達。賽後： MUNI 或 Uber/Lyft 回飯店。", attractionKey: "大通中心 Chase Center", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "3/1 (日)", loc: "舊金山/周邊", act: "優勝美地國家公園", detail: "<strong>06:00 – </strong> Fisherman's Wharf Area（Look for the Pomegranate Café which is located opposite the meet-up point The Gray Line representative will meet you there.）<br><strong>07:30 – 11:30</strong>乘車前往優勝美地（中途休息 20-30 分）<br><strong>11:30 – 12:00</strong> 抵達國家公園（經南側或西側入口）<br><strong>12:00 – 16:30</strong> 優勝美地谷深度探索（午餐自理）<br>- 在優勝美地國家公園遊覽 4 小時<br>- 1 小時導覽和 3 小時自由活動時間<br>- 下瀑布遊覽不包含在導覽行程中<br><strong>17:00 – 20:40</strong> 返回舊金山", transport: "旅行社提供交通車。", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "3/1 (日)", loc: "舊金山/周邊", act: "優勝美地國家公園", detail: "<strong>06:00 – </strong> Fisherman's Wharf Area（Look for the Pomegranate Café which is located opposite the meet-up point The Gray Line representative will meet you there.）<br><strong>07:30 – 11:30</strong> 乘車前往優勝美地（中途休息 20-30 分）<br><strong>11:30 – 12:00</strong> 抵達國家公園（經南側或西側入口）<br><strong>12:00 – 16:30</strong> 優勝美地谷深度探索（午餐自理）<br>- 在優勝美地國家公園遊覽 4 小時<br>- 1 小時導覽和 3 小時自由活動時間<br>- 下瀑布遊覽不包含在導覽行程中<br><strong>17:00 – 20:40</strong> 返回舊金山", transport: "旅行社提供交通車。", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
                     { date: "3/2 (一)", loc: "舊金山", act: "城市文化巡禮", detail: "上午：聯合廣場逛街、前往唐人街午餐。<br>下午：搭車前往金門大橋北邊 Vista Point 拍照。<br>晚上：順路回程經 Crissy Field、晚餐、自由活動。", transport: "纜車/唐人街： Powell-Mason 纜車 🚋。金門大橋： 從唐人街搭 Uber/Lyft 直達。", attractionKey: "金門大橋 Golden Gate", hotel: "Riu Plaza Fisherman's Wharf" }
                 ]
             },
@@ -482,6 +484,59 @@
             }, {});
         }
 
+        // --- NEW: Helper to find attractions in text (FIX: Stricter matching but allows partial Chinese) ---
+        function findMentionedAttractions(text) {
+            if (!text) return [];
+            return attractions.filter(attraction => {
+                if (!attraction.name) return false;
+                
+                const name = attraction.name.trim();
+                
+                // 1. 完全符合 (Exact match)
+                if (text.includes(name)) return true;
+                
+                // 2. 寬鬆符合 (Loose match)
+                // 處理 "金門大橋 Golden Gate" 這種狀況，只要內文有 "金門大橋" 就算符合
+                // Assumes format like "中文 English"
+                const parts = name.split(' ');
+                // 確保切分後的第一部分長度足夠 (避免只匹配到單字或空格)
+                if (parts.length > 1 && parts[0].length >= 2) {
+                     if (text.includes(parts[0])) return true;
+                }
+                
+                return false;
+            });
+        }
+
+        // --- NEW: Helper to sanitize ID for linking ---
+        function sanitizeId(name) {
+            return 'attr-' + name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '');
+        }
+
+        // --- NEW: Jump to Attraction Function ---
+        function jumpToAttraction(name) {
+            // 1. Reset filter to ensure element exists in DOM
+            filterAttractions('all');
+            
+            // 2. Find and scroll to element with delay to allow render
+            setTimeout(() => {
+                const safeId = sanitizeId(name);
+                const el = document.getElementById(safeId);
+                if (el) {
+                    // Scroll
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Highlight Effect
+                    el.classList.add('ring-4', 'ring-[#d6b98c]', 'shadow-2xl', 'transform', 'scale-[1.02]', 'transition-all', 'duration-500');
+                    setTimeout(() => {
+                        el.classList.remove('ring-4', 'ring-[#d6b98c]', 'shadow-2xl', 'transform', 'scale-[1.02]');
+                    }, 2000);
+                } else {
+                    console.warn('Attraction element not found:', safeId);
+                }
+            }, 100);
+        }
+
         function getDomainFromUrl(url) {
             try {
                 if (!url) return '';
@@ -492,6 +547,7 @@
             }
         }
 
+        // ... (Keep existing weather functions: weatherIcon, wearAdvice, fetch3DayWeather, loadCurrentLocationWeather) ...
         function weatherIcon(code) {
           if (code === 0) return "☀️";
           if ([1, 2].includes(code)) return "🌤️";
@@ -987,86 +1043,7 @@
             }
         }
 
-        function handleExcelUpload(input) {
-            const file = input.files[0];
-            const status = document.getElementById('upload-status');
-            if (!file) return;
-
-            status.classList.remove('hidden');
-            status.innerText = "正在讀取檔案...";
-
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    
-                    if (workbook.Sheets['Itinerary']) {
-                        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets['Itinerary']);
-                        const newItineraryData = {};
-                        jsonData.forEach(row => {
-                            const pid = row.phase_id || 'phase1';
-                            if (!newItineraryData[pid]) {
-                                newItineraryData[pid] = {
-                                    title: row.phase_title || "My Phase",
-                                    icon: "📍",
-                                    badgeClass: "bg-[#cfdde6] text-[#475569]",
-                                    dateRange: "",
-                                    desc: "", // Remove default text
-                                    days: []
-                                };
-                                if(pid.includes('1')) { newItineraryData[pid].icon = "🌉"; }
-                                else if(pid.includes('2')) { newItineraryData[pid].icon = "🌊"; newItineraryData[pid].badgeClass = "bg-[#fef3c7] text-[#92400e]"; }
-                                else if(pid.includes('3')) { newItineraryData[pid].icon = "🎡"; newItineraryData[pid].badgeClass = "bg-[#f3e8ff] text-[#6b21a8]"; }
-                            }
-                            newItineraryData[pid].days.push({
-                                date: row.date || "TBD",
-                                loc: row.location || "",
-                                act: row.activity || "",
-                                detail: row.details ? row.details.toString().replace(/\r\n/g, "<br>").replace(/\n/g, "<br>") : "",
-                                transport: row.transport || "",
-                                hotel: row.hotel || "",
-                                attractionKey: row.attraction_key || ""
-                            });
-                        });
-                        itineraryData = newItineraryData;
-                    }
-                    if (workbook.Sheets['Flights']) {
-                        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets['Flights']);
-                        const newFlightData = { outbound: [], inbound: [] };
-                        jsonData.forEach(row => {
-                            const flight = { leg: row.leg, date: row.date, arr: row.arrival, note: row.note, number: row.number };
-                            if (row.direction === 'outbound') newFlightData.outbound.push(flight);
-                            else if (row.direction === 'inbound') newFlightData.inbound.push(flight);
-                        });
-                        flightData = newFlightData;
-                    }
-                    if (workbook.Sheets['Accommodation']) { accommodationData = XLSX.utils.sheet_to_json(workbook.Sheets['Accommodation']); }
-                    if (workbook.Sheets['Dining']) { diningData = XLSX.utils.sheet_to_json(workbook.Sheets['Dining']).map(d => ({ ...d, desc: d.desc ? d.desc.replace(/\n/g, "<br>") : "" })); }
-                    if (workbook.Sheets['Attractions']) { attractions = XLSX.utils.sheet_to_json(workbook.Sheets['Attractions']); }
-
-                    renderSidebar();
-                    const firstKey = Object.keys(itineraryData)[0];
-                    if(firstKey) renderItinerary(firstKey);
-                    renderFlightTable('outbound');
-                    renderAccommodation();
-                    createAttractionMap();
-                    renderAttractions('all');
-                    renderDining('all');
-                    saveToLocalStorage();
-
-                    status.innerText = "✅ 匯入成功！";
-                    status.className = "text-xs text-green-600 w-full mt-2 font-bold";
-
-                } catch (error) {
-                    console.error(error);
-                    status.innerText = "❌ 讀取失敗";
-                    status.className = "text-xs text-red-600 w-full mt-2 font-bold";
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
+        // Removed handleExcelUpload function as requested
 
         function saveToLocalStorage() {
             const allData = {
@@ -1410,8 +1387,9 @@
                   attractionHtml += '<div class="mt-4 space-y-2">'; // Container
                   displayedAttractions.forEach(attraction => {
                       const badgeColor = getAttractionBadgeColor(attraction.type);
+                      // UPDATED: Now uses jumpToAttraction function
                       attractionHtml += `
-                        <div onclick="scrollToSection('highlights')" class="bg-white border border-[#efe6d8] rounded-xl p-3 flex items-start gap-3 cursor-pointer hover:shadow-md hover:border-[#d6b98c] transition-all group/card">
+                        <div onclick="jumpToAttraction('${attraction.name}')" class="bg-white border border-[#efe6d8] rounded-xl p-3 flex items-start gap-3 cursor-pointer hover:shadow-md hover:border-[#d6b98c] transition-all group/card">
                             <div class="text-2xl bg-[#faf7f2] rounded-lg p-2 group-hover/card:scale-110 transition-transform">${attraction.icon}</div>
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
@@ -1443,7 +1421,7 @@
               if (currentHotel) {
                    hotelHtml = `
                     <div class="mt-2 inline-flex items-center gap-1.5 text-xs text-[#6b6b6b] bg-[#faf7f2] px-2 py-1 rounded-md border border-[#efe6d8]">
-                        <span>🛌</span> 住宿：${currentHotel.name}
+                        住宿：${currentHotel.name}
                     </div>`;
               } else if (day.hotel) {
                   hotelHtml = `
@@ -1487,7 +1465,7 @@
                         ${hotelHtml}
 
                         <div class="mt-4 pt-3 border-t border-[#efe6d8] flex items-center gap-2 text-xs text-[#a09a93]">
-                            <span class="bg-[#faf7f2] p-1 rounded">🚗 交通</span>
+                            <span class="bg-[#faf7f2] p-1 rounded">交通</span>
                             <span>${day.transport || '—'}</span>
                         </div>
                     </div>
@@ -1772,6 +1750,9 @@
 
                 const descId = `attr-desc-${index}`;
                 const arrowId = `attr-arrow-${index}`;
+                
+                // UPDATED: Generate unique ID for scrolling
+                const scrollId = sanitizeId(item.name);
 
                 // Image vs Emoji Logic
                 let headerContent = '';
@@ -1800,8 +1781,9 @@
                     `;
                 }
 
+                // UPDATED: Add ID attribute to the card div
                 html += `
-                    <div class="card-hover rounded-2xl overflow-hidden group block flex flex-col h-full ${item.image ? 'pt-0' : ''}">
+                    <div id="${scrollId}" class="card-hover rounded-2xl overflow-hidden group block flex flex-col h-full ${item.image ? 'pt-0' : ''}">
                         ${item.image ? headerContent : '<div class="p-6 pb-0">'}
                         
                         <div class="${item.image ? 'p-6 flex-grow' : 'flex-grow'}">
@@ -1820,7 +1802,6 @@
                                 <span>景點介紹</span>
                                 <svg id="${arrowId}" class="rotate-icon w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                             </button>
-
                             <!-- 官網連結 -->
                              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="text-[#a09a93] group-hover:text-[#d6b98c] group-hover:translate-x-1 transition-all text-xs font-bold flex items-center">
                                 前往官網 ➔
