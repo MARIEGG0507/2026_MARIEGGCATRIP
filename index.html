@@ -5,48 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>2026 美西｜舊金山與洛杉磯之旅</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 SheetJS 用於讀取 Excel -->
+    
+    <!-- 引入 SheetJS (用於匯出備份與匯入 Excel) -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    
     <!-- 引入 Leaflet 地圖套件 -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    
-    <!-- 
-      Application Structure:
-      Based on "Earthy Calm" Palette by User.
-      Fused into the existing layout.
-    -->
+
     <style>
         /* ==========================================================================
-           Palette: Earthy Calm (優化版)
+           Palette: Earthy Calm
            ========================================================================== */
         :root {
-            /* 1. 基礎色 (Base Colors) */
-            --color-bg-body: #fbf7f2;         /* 奶油白背景 */
-            --color-bg-card: #ffffff;         /* 卡片背景 */
-            --color-bg-secondary: #faf7f2;    /* 略深/暖的背景 (用於區塊分隔) */
-            --color-border-soft: #efe6d8;     /* 柔和邊框 */
+            --color-bg-body: #fbf7f2;
+            --color-bg-card: #ffffff;
+            --color-bg-secondary: #faf7f2;
+            --color-border-soft: #efe6d8;
             --color-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-
-            /* 2. 文字色 (Text Colors) */
-            --color-text-primary: #3a3a3a;    
-            --color-text-secondary: #6b6b6b;  
-            --color-text-muted: #a09a93;      /* 靜音/提示文字 */
-            --color-text-link-hover: #d6b98c; /* 連結懸停改為奶茶金 */
-
-            /* 3. 主題色 (Accent Colors) */
-            --color-accent-main: #d6b98c;     /* 奶茶金 */
+            --color-text-primary: #3a3a3a;
+            --color-text-secondary: #6b6b6b;
+            --color-text-muted: #a09a93;
+            --color-text-link-hover: #d6b98c;
+            --color-accent-main: #d6b98c;
             --color-accent-main-dark: #c3a36f;
             --color-accent-main-text: #a4855d;
-
-            /* 4. 輔助色 (Utility Colors) - 調整為暖色系以搭配 */
-            --color-utility-blue: #cfdde6;    
-            --color-utility-green: #d9e5d8;   
         }
 
-        /* ==========================================================================
-           A. 全域樣式 (Global Styles)
-           ========================================================================== */
         body {
             background-color: var(--color-bg-body);
             color: var(--color-text-primary);
@@ -55,429 +40,165 @@
             margin: 0;
         }
 
-        /* 捲軸優化 */
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-            height: 6px; /* 增加橫向捲軸高度 */
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: var(--color-bg-body);
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: var(--color-border-soft);
-            border-radius: 3px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: var(--color-text-muted);
-        }
-        
-        /* 隱藏預設捲軸但在手機上保持滑動功能 (Utility) */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        /* Scrollbars */
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: var(--color-bg-body); }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--color-border-soft); border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* ==========================================================================
-           B. 元件樣式 (Components)
-           ========================================================================== */
-
-        /* 活躍標籤 (用於航班切換) */
+        /* UI Components */
         .tab-active {
             border-bottom: 3px solid var(--color-accent-main-dark);
-            color: var(--color-text-primary) !important; 
-            font-weight: 700;
-            background-color: transparent !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
+            color: var(--color-text-primary) !important; font-weight: 700;
+            background-color: transparent !important; box-shadow: none !important; border-radius: 0 !important;
         }
-        
-        /* 非活躍標籤 */
-        .tab-inactive {
-            color: var(--color-text-muted);
-            border-bottom: 3px solid transparent;
-        }
+        .tab-inactive { color: var(--color-text-muted); border-bottom: 3px solid transparent; }
 
-        /* 卡片懸停 */
         .card-hover {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: var(--color-shadow);
-            border: 1px solid var(--color-border-soft);
-            background-color: var(--color-bg-card);
+            box-shadow: var(--color-shadow); border: 1px solid var(--color-border-soft); background-color: var(--color-bg-card);
         }
         .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-            border-color: var(--color-accent-main);
+            transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); border-color: var(--color-accent-main);
         }
 
-        /* 景點連結 */
-        .attraction-link {
-            transition: color 0.2s ease;
-            color: var(--color-text-primary);
-        }
-        .attraction-link:hover {
-            color: var(--color-accent-main-text);
-            text-decoration: underline;
-        }
-
-        /* 天氣卡片 */
         .weather-card {
-            background-color: var(--color-bg-secondary);
-            border: 1px solid var(--color-border-soft);
-            border-radius: 0.75rem;
-            padding: 0.75rem 0.5rem;
-            text-align: center;
-            min-width: 80px; /* 確保在手機上有寬度 */
+            background-color: var(--color-bg-secondary); border: 1px solid var(--color-border-soft);
+            border-radius: 0.75rem; padding: 0.75rem 0.5rem; text-align: center; min-width: 80px;
         }
         .weather-icon { font-size: 1.6rem; margin-bottom: 0.25rem; }
         .weather-date { font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600; }
         .weather-temp { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); }
 
-        /* 置頂按鈕樣式 (融合版) */
         .scroll-to-top-btn {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 50;
-            background-color: rgba(255,255,255,0.8);
-            backdrop-filter: blur(4px);
-            color: var(--color-accent-main-dark);
-            width: 3rem;
-            height: 3rem;
-            border-radius: 9999px;
-            border: 2px solid var(--color-accent-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            cursor: pointer;
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 50;
+            background-color: rgba(255,255,255,0.8); backdrop-filter: blur(4px);
+            color: var(--color-accent-main-dark); width: 3rem; height: 3rem;
+            border-radius: 9999px; border: 2px solid var(--color-accent-main);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer;
         }
-        .scroll-to-top-btn:hover {
-            background-color: var(--color-accent-main);
-            color: white;
-            transform: translateY(-3px);
-        }
+        .scroll-to-top-btn:hover { background-color: var(--color-accent-main); color: white; transform: translateY(-3px); }
 
-        /* Excel 按鈕樣式 */
-        .excel-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 700;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-        .excel-btn-primary {
-            background-color: #107c41; /* Excel Green */
-            color: white;
-        }
-        .excel-btn-primary:hover {
-            background-color: #0c5e31;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .excel-btn-secondary {
-            background-color: white;
-            color: #107c41;
-            border-color: #107c41;
-        }
-        .excel-btn-secondary:hover {
-            background-color: #f0fdf4;
-        }
-
-        /* ==========================================================================
-           E. 展開/收合動畫 (Expand/Collapse Animations) - NEW
-           ========================================================================== */
+        /* Expandable Content */
         .expandable-content {
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                        opacity 0.3s ease-in,
-                        margin-top 0.3s ease;
+            max-height: 0; overflow: hidden; opacity: 0;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-in, margin-top 0.3s ease;
         }
-        .expandable-content.open {
-            max-height: 500px; /* 足夠大的高度以容納內容 */
-            opacity: 1;
-            margin-top: 1rem;
-        }
-        .rotate-icon {
-            transition: transform 0.3s ease;
-            display: inline-block;
-        }
-        .rotate-icon.open {
-            transform: rotate(180deg);
-        }
+        .expandable-content.open { max-height: 500px; opacity: 1; margin-top: 1rem; }
+        .rotate-icon { transition: transform 0.3s ease; display: inline-block; }
+        .rotate-icon.open { transform: rotate(180deg); }
 
-        /* ==========================================================================
-           F. 地圖樣式 (Map Styles) - NEW
-           ========================================================================== */
-        .map-toggle-active {
-            background-color: var(--color-accent-main);
-            color: white;
-            border-color: var(--color-accent-main);
-        }
-        .map-toggle-inactive {
-            background-color: white;
-            color: var(--color-text-secondary);
-            border-color: var(--color-border-soft);
-        }
-        /* Leaflet Popup Customization */
-        .leaflet-popup-content-wrapper {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .leaflet-popup-content {
-            margin: 12px;
-            font-family: 'Inter', sans-serif;
-        }
+        /* Map Styles */
+        .map-toggle-active { background-color: var(--color-accent-main); color: white; border-color: var(--color-accent-main); }
+        .map-toggle-inactive { background-color: white; color: var(--color-text-secondary); border-color: var(--color-border-soft); }
+        .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .leaflet-popup-content { margin: 12px; font-family: 'Inter', sans-serif; }
 
-        /* ==========================================================================
-           G. 圖片卡片樣式 (Image Card) - NEW
-           ========================================================================== */
-        .card-image-header {
-            position: relative;
-            width: 100%;
-            height: 12rem; /* h-48 */
-            overflow: hidden;
-        }
-        .card-image-header img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        .card-hover:hover .card-image-header img {
-            transform: scale(1.1);
-        }
+        /* Image Cards */
+        .card-image-header { position: relative; width: 100%; height: 12rem; overflow: hidden; }
+        .card-image-header img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .card-hover:hover .card-image-header img { transform: scale(1.1); }
         .card-image-badge {
-            position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            z-index: 10;
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(4px);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: absolute; top: 0.75rem; right: 0.75rem; z-index: 10;
+            background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px);
+            padding: 0.25rem 0.75rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
-        /* ==========================================================================
-           H. 圖片來源標示 (Image Source Attribution) - NEW
-           ========================================================================== */
         .img-source-badge {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background-color: rgba(44, 36, 27, 0.7); /* 深咖啡色半透明背景 */
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.6rem;
-            padding: 2px 8px;
-            border-top-left-radius: 8px;
-            z-index: 10;
-            backdrop-filter: blur(2px);
-            max-width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            pointer-events: none; /* 讓點擊穿透，不影響卡片點擊 */
+            position: absolute; bottom: 0; right: 0;
+            background-color: rgba(44, 36, 27, 0.7); color: rgba(255, 255, 255, 0.9);
+            font-size: 0.6rem; padding: 2px 8px; border-top-left-radius: 8px;
+            z-index: 10; backdrop-filter: blur(2px); max-width: 100%;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none;
         }
 
-        /* ==========================================================================
-           C. 動畫 (Animations)
-           ========================================================================== */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Toast */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
+            text-align: center; border-radius: 8px; padding: 16px;
+            position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%);
+            font-size: 14px; opacity: 0; transition: opacity 0.5s, bottom 0.5s;
         }
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-        @keyframes drawLine {
-            from { height: 0; }
-            to { height: 100%; }
-        }
-        .timeline-line {
-            animation: drawLine 1s ease-out forwards;
-            background-color: var(--color-border-soft);
-        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
 
-        /* ==========================================================================
-           D. 響應式優化 (Mobile UX Optimizations)
-           ========================================================================== */
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes drawLine { from { height: 0; } to { height: 100%; } }
+        .timeline-line { animation: drawLine 1s ease-out forwards; background-color: var(--color-border-soft); }
+
         @media (max-width: 768px) {
-            /* 標題縮小 */
             h1 { font-size: 1.8rem !important; }
-
-            /* 導航列改為橫向滑動 */
-            nav ul {
-                flex-wrap: nowrap !important;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                justify-content: flex-start !important;
-                gap: 0.5rem;
-                padding: 0.5rem 1rem;
-            }
+            nav ul { flex-wrap: nowrap !important; overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start !important; gap: 0.5rem; padding: 0.5rem 1rem; }
             nav ul li { flex-shrink: 0; }
-
-            /* 行程區塊改為垂直排列 */
             #itinerary-container { flex-direction: column !important; height: auto !important; }
-            
-            /* 階段導航橫向滾動 */
-            #phase-nav-container {
-                width: 100% !important;
-                border-right: none !important;
-                border-bottom: 1px solid var(--color-border-soft);
-                overflow-x: auto;
-                display: flex;
-                padding: 1rem;
-                gap: 1rem;
-            }
-            /* 讓 JS 動態生成的按鈕在手機版也有固定寬度 */
+            #phase-nav-container { width: 100% !important; border-right: none !important; border-bottom: 1px solid var(--color-border-soft); overflow-x: auto; display: flex; padding: 1rem; gap: 1rem; }
             .phase-nav-btn { min-width: 260px; flex-shrink: 0; }
-
-            /* 天氣卡片橫滑 */
-            #weather-current, #weather-sf, #weather-la {
-                overflow-x: auto;
-                display: flex;
-                gap: 0.5rem;
-                padding-bottom: 0.5rem;
-                flex-wrap: nowrap !important;
-            }
+            #weather-current, #weather-sf, #weather-la { overflow-x: auto; display: flex; gap: 0.5rem; padding-bottom: 0.5rem; flex-wrap: nowrap !important; }
         }
     </style>
 </head>
 <body>
-
-    <!-- Hero Section -->
+    <div id="toast">訊息提示</div>
     <header class="bg-white shadow-sm border-b border-[#efe6d8] relative overflow-hidden">
-        <!-- 調整漸層為暖色調以配合主題 -->
         <div class="absolute inset-0 bg-gradient-to-r from-[#fbf7f2] via-[#faf0e6] to-[#f3e5d8] opacity-80"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center relative z-10">
-            <h1 class="text-4xl font-extrabold tracking-tight text-[#5c4d3c] sm:text-6xl mb-4">
-                美西舊金山與洛杉磯之旅
-            </h1>
-            <p class="text-xl text-[#8c7b66] mb-6 font-light">
-                2026年 2月26日 - 3月11日 <span class="mx-2 text-[#d6b98c]">|</span> 13 天 12 夜 <span class="mx-2 text-[#d6b98c]">|</span> 加州夢幻行
-            </p>                       
+            <h1 class="text-4xl font-extrabold tracking-tight text-[#5c4d3c] sm:text-6xl mb-4">美西舊金山與洛杉磯之旅</h1>
+            <p class="text-xl text-[#8c7b66] mb-6 font-light">2026年 2月26日 - 3月11日 <span class="mx-2 text-[#d6b98c]">|</span> 13 天 12 夜 <span class="mx-2 text-[#d6b98c]">|</span> 加州夢幻行</p>                       
         </div>
     </header>
 
-    <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-[#fbf7f2]/95 backdrop-blur-md shadow-sm border-b border-[#efe6d8] transition-all duration-300">
         <div class="max-w-7xl mx-auto px-0 md:px-4">
-            <!-- 移除 justify-center 以配合手機版橫向捲動的樣式 -->
             <ul class="flex md:justify-center h-auto md:h-16 items-center no-scrollbar">
-              <li>
-                  <button onclick="scrollToSection('logistics')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">
-                      🛫 行前準備
-                  </button>
-              </li>
-
-              <li>
-                  <button onclick="scrollToSection('itinerary')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">
-                     🗺️ 每日行程
-                  </button>
-              </li>
-
-              <li>
-                  <button onclick="scrollToSection('dining')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">
-                     🍽️ 美食推薦
-                  </button>
-              </li>
-
-              <li>
-                  <button onclick="scrollToSection('highlights')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">
-                     🏛️ 景點探索
-                  </button>
-              </li>
-
+              <li><button onclick="scrollToSection('logistics')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">🛫 行前準備</button></li>
+              <li><button onclick="scrollToSection('itinerary')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">🗺️ 每日行程</button></li>
+              <li><button onclick="scrollToSection('dining')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">🍽️ 美食推薦</button></li>
+              <li><button onclick="scrollToSection('highlights')" class="text-[#6b6b6b] hover:text-[#d6b98c] px-4 py-2 text-sm font-bold transition-colors whitespace-nowrap">🏛️ 景點探索</button></li>
               <li class="hidden md:block w-px h-6 bg-[#efe6d8] mx-2"></li>
-
-              <li>
-                  <a href="disneyland_itinerary.html" target="_blank"
-                     class="text-[#a4855d] hover:text-[#c3a36f] px-4 py-2 text-sm font-bold transition-colors flex items-center gap-1 bg-white border border-[#efe6d8] rounded-full mx-2 whitespace-nowrap shadow-sm hover:shadow-md">
-                      <span>🏰</span> 迪士尼
-                  </a>
-              </li>
-              <li>
-                  <a href="universal_hollywood.html" target="_blank"
-                     class="text-[#a4855d] hover:text-[#c3a36f] px-4 py-2 text-sm font-bold transition-colors flex items-center gap-1 bg-white border border-[#efe6d8] rounded-full whitespace-nowrap shadow-sm hover:shadow-md">
-                      <span>🎥</span> 環球影城
-                  </a>
-              </li>
+              <li><a href="disneyland_itinerary.html" target="_blank" class="text-[#a4855d] hover:text-[#c3a36f] px-4 py-2 text-sm font-bold transition-colors flex items-center gap-1 bg-white border border-[#efe6d8] rounded-full mx-2 whitespace-nowrap shadow-sm hover:shadow-md"><span>🏰</span> 迪士尼</a></li>
+              <li><a href="universal_hollywood.html" target="_blank" class="text-[#a4855d] hover:text-[#c3a36f] px-4 py-2 text-sm font-bold transition-colors flex items-center gap-1 bg-white border border-[#efe6d8] rounded-full whitespace-nowrap shadow-sm hover:shadow-md"><span>🎥</span> 環球影城</a></li>
           </ul>
-
         </div>
     </nav>
 
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-24">
-
-        <!-- Section 1: Logistics Hub -->
         <section id="logistics" class="scroll-mt-24">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-[#3a3a3a] inline-block relative z-10">
                     🛫 行前準備與資訊
-                    <!-- 裝飾底線改為奶茶金 -->
                     <div class="absolute bottom-0 left-0 w-full h-3 bg-[#d6b98c] opacity-20 -z-10 transform translate-y-1"></div>
                 </h2>
-                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">
-                    包含航班時間、必備文件檢查、以及當地天氣預測。
-                </p>
+                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">包含航班時間、必備文件檢查、以及當地天氣預測。</p>
             </div>
- 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Flight Info -->
                 <div class="bg-white rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] p-8 border border-[#efe6d8]">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-[#3a3a3a] flex items-center gap-2">
-                            <span class="bg-[#faf7f2] text-[#d6b98c] p-2 rounded-lg text-lg">✈️</span> 航班資訊
-                        </h3>
-                        <!-- Tab Buttons using new Styles -->
+                        <h3 class="text-xl font-bold text-[#3a3a3a] flex items-center gap-2"><span class="bg-[#faf7f2] text-[#d6b98c] p-2 rounded-lg text-lg">✈️</span> 航班資訊</h3>
                         <div class="flex space-x-4 border-b border-[#efe6d8] px-2">
                             <button onclick="switchFlightTab('outbound')" id="btn-outbound" class="tab-active text-sm transition-all pb-2">去程</button>
                             <button onclick="switchFlightTab('inbound')" id="btn-inbound" class="tab-inactive text-sm transition-all pb-2 hover:text-[#3a3a3a]">回程</button>
                         </div>
                     </div>
-                    
-                    <div id="flight-content" class="space-y-4">
-                        <!-- Dynamic Content Loaded via JS -->
-                    </div>
+                    <div id="flight-content" class="space-y-4"></div>
                 </div>
-            
-                <!-- Weather & Tips -->
                 <div class="bg-white rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] p-8 border border-[#efe6d8]">
-                  <h3 class="text-xl font-bold text-[#3a3a3a] mb-6 flex items-center gap-2">
-                      <span class="bg-[#faf7f2] text-[#d6b98c] p-2 rounded-lg text-lg">☀️</span> 所在地區・未來 3 天天氣
-                  </h3>
-
+                  <h3 class="text-xl font-bold text-[#3a3a3a] mb-6 flex items-center gap-2"><span class="bg-[#faf7f2] text-[#d6b98c] p-2 rounded-lg text-lg">☀️</span> 所在地區・未來 3 天天氣</h3>
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <!-- Current Location -->
                       <div class="bg-[#faf7f2] rounded-xl p-4 border border-[#efe6d8]">
                           <h4 class="text-xs font-bold text-[#a09a93] mb-2 uppercase tracking-wide">目前所在地</h4>
                           <p class="text-xs text-[#6b6b6b] mb-3 truncate font-bold" id="current-city">定位中…</p>
                           <div id="weather-current" class="flex gap-2 justify-center"></div>
                           <p id="wear-current" class="text-xs text-[#a4855d] mt-3 font-medium text-center"></p>
                       </div>
-
-                      <!-- San Francisco -->
                       <div class="bg-white rounded-xl p-4 border border-[#efe6d8]">
                           <h4 class="text-xs font-bold text-[#a09a93] mb-2 uppercase tracking-wide">舊金山 SF</h4>
                           <div id="weather-sf" class="flex gap-2 justify-center mt-1"></div>
                           <p id="wear-sf" class="text-xs text-[#a4855d] mt-3 font-medium text-center"></p>
                       </div>
-
-                      <!-- Los Angeles -->
                       <div class="bg-white rounded-xl p-4 border border-[#efe6d8]">
                           <h4 class="text-xs font-bold text-[#a09a93] mb-2 uppercase tracking-wide">洛杉磯 LA</h4>
                           <div id="weather-la" class="flex gap-2 justify-center mt-1"></div>
@@ -486,129 +207,74 @@
                   </div>
               </div>               
             </div>
-            <!-- ACCOMMODATION SUMMARY -->
             <div class="mt-8 bg-white rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] p-8 border border-[#efe6d8]">
-
-                <h3 class="text-xl font-bold text-[#3a3a3a] mb-6 flex items-center gap-2">
-                    <span class="bg-[#faf7f2] text-[#d6b98c] p-2 rounded-lg text-lg">🏨</span> 住宿規劃
-                </h3>
-
-                <div id="accommodation-content"
-                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Dynamic Content Loaded via JS -->
-                </div>
-
+                <h3 class="text-xl font-bold text-[#3a3a3a] mb-6 flex items-center gap-2"><span class="bg-[#faf7f2] text-[#d6b98c] p-2 rounded-lg text-lg">🏨</span> 住宿規劃</h3>
+                <div id="accommodation-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
             </div>           
-            <!-- Essential Checklist Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
                 <article class="bg-[#faf7f2] p-6 rounded-2xl border border-[#efe6d8] hover:shadow-md transition-all">
-                    <div class="text-3xl mb-3">📄</div>
-                    <h4 class="font-bold text-[#3a3a3a] text-lg">證件檢查</h4>
-                    <p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">護照、ESTA、國際駕照、台灣駕照正本。</p>
+                    <div class="text-3xl mb-3">📄</div><h4 class="font-bold text-[#3a3a3a] text-lg">證件檢查</h4><p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">護照、ESTA、國際駕照、台灣駕照正本。</p>
                 </article>
                 <article class="bg-[#faf7f2] p-6 rounded-2xl border border-[#efe6d8] hover:shadow-md transition-all">
-                    <div class="text-3xl mb-3">💵</div>
-                    <h4 class="font-bold text-[#3a3a3a] text-lg">貨幣小費</h4>
-                    <p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">使用 USD。餐廳小費約 15-20%。標價不含稅。</p>
+                    <div class="text-3xl mb-3">💵</div><h4 class="font-bold text-[#3a3a3a] text-lg">貨幣小費</h4><p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">使用 USD。餐廳小費約 15-20%。標價不含稅。</p>
                 </article>
                 <article class="bg-[#faf7f2] p-6 rounded-2xl border border-[#efe6d8] hover:shadow-md transition-all">
-                    <div class="text-3xl mb-3">📱</div>
-                    <h4 class="font-bold text-[#3a3a3a] text-lg">網路通訊</h4>
-                    <p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">提前購買 SIM 卡或租借 Wi-Fi 機。時區慢 16 小時。</p>
+                    <div class="text-3xl mb-3">📱</div><h4 class="font-bold text-[#3a3a3a] text-lg">網路通訊</h4><p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">提前購買 SIM 卡或租借 Wi-Fi 機。時區慢 16 小時。</p>
                 </article>
                 <article class="bg-[#faf7f2] p-6 rounded-2xl border border-[#efe6d8] hover:shadow-md transition-all">
-                    <div class="text-3xl mb-3">🚗</div>
-                    <h4 class="font-bold text-[#3a3a3a] text-lg">交通須知</h4>
-                    <p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">SF搭大眾運輸；LA搭Uber；PCH自駕前查路況。</p>
+                    <div class="text-3xl mb-3">🚗</div><h4 class="font-bold text-[#3a3a3a] text-lg">交通須知</h4><p class="text-sm text-[#6b6b6b] mt-2 leading-relaxed">SF搭大眾運輸；LA搭Uber；PCH自駕前查路況。</p>
                 </article>
             </div>
         </section>
 
-        <!-- Section 2: Itinerary -->
         <section id="itinerary" class="scroll-mt-24">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-[#3a3a3a] inline-block relative z-10">
                     🗺️ 13 天旅程規劃
                     <div class="absolute bottom-0 left-0 w-full h-3 bg-[#a5b4fc] opacity-20 -z-10 transform translate-y-1"></div>
                 </h2>
-                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">
-                    行程分為三大主題階段。點選左側可切換查看詳細時間軸與亮點。
-                </p>
-                
-                <!-- 原本的 Excel Controls 已移除，移動至頁尾 -->
+                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">行程分為三大主題階段。點選左側可切換查看詳細時間軸與亮點。</p>
             </div>
-
-            <!-- 使用新的 ID "itinerary-container" 來配合響應式 CSS -->
             <div id="itinerary-container" class="bg-white rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden border border-[#efe6d8] flex flex-col md:flex-row md:h-[750px] relative">
-                <!-- Sidebar: Phases (Dynamic) -->
                 <div id="phase-nav-container" class="w-full md:w-1/3 bg-[#fbf7f2] border-r border-[#efe6d8] md:overflow-y-auto custom-scroll z-10 relative">
-                    <div id="phase-nav-content" class="p-4 md:p-6 space-y-4 md:block">
-                        <!-- Dynamic Content injected via JS (renderSidebar) -->
-                    </div>
+                    <div id="phase-nav-content" class="p-4 md:p-6 space-y-4 md:block"></div>
                 </div>
-
-                <!-- Content: Daily Details & Map Container -->
                 <div class="w-full md:w-2/3 bg-white relative flex flex-col h-full">
-                    <!-- Sticky Header inside Content -->
-                    <div id="itinerary-header" class="shrink-0 bg-white/95 backdrop-blur border-b border-[#efe6d8] px-8 py-4 flex justify-between items-center shadow-sm z-20">
-                        <!-- Dynamic Header Content -->
-                    </div>
-                    
-                    <!-- Scrollable List View -->
+                    <div id="itinerary-header" class="shrink-0 bg-white/95 backdrop-blur border-b border-[#efe6d8] px-8 py-4 flex justify-between items-center shadow-sm z-20"></div>
                     <div id="itinerary-details" class="flex-grow p-6 md:p-8 md:overflow-y-auto custom-scroll transition-opacity duration-300">
-                        <div id="itinerary-list-content" class="pl-4 border-l-2 border-[#efe6d8] md:border-none">
-                            <!-- Content injected via JS -->
-                        </div>
+                        <div id="itinerary-list-content" class="pl-4 border-l-2 border-[#efe6d8] md:border-none"></div>
                     </div>
-
-                    <!-- Map View (Hidden by default) -->
-                    <!-- FIX: Added min-h-[500px] md:min-h-0 to ensure height on mobile -->
-                    <div id="itinerary-map" class="hidden flex-grow z-10 w-full h-full relative bg-[#fbf7f2] min-h-[500px] md:min-h-0">
-                        <!-- Leaflet map will be initialized here -->
-                    </div>
+                    <!-- Added min-h for mobile map visibility -->
+                    <div id="itinerary-map" class="hidden flex-grow z-10 w-full h-full relative bg-[#fbf7f2] min-h-[500px] md:min-h-0"></div>
                 </div>
             </div>
         </section>
 
-        <!-- Section: Dining Guide -->
         <section id="dining" class="scroll-mt-24">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-[#3a3a3a] inline-block relative z-10">
                     🍽️ 精選餐廳推薦
                     <div class="absolute bottom-0 left-0 w-full h-3 bg-[#d9e5d8] opacity-50 -z-10 transform translate-y-1"></div>
                 </h2>
-                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">
-                    從舊金山的經典酸麵包濃湯到洛杉磯的必吃漢堡，為您精選在地風味。
-                </p>
+                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">從舊金山的經典酸麵包濃湯到洛杉磯的必吃漢堡，為您精選在地風味。</p>
             </div>
-
-            <!-- Dining Filters -->
             <div class="flex flex-wrap justify-center gap-2 mb-10">
                  <button onclick="filterDining('all')" class="dining-filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="all">全部</button>
                  <button onclick="filterDining('SF')" class="dining-filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="SF">🌉 舊金山</button>
                  <button onclick="filterDining('PCH')" class="dining-filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="PCH">🌊 一號公路</button>
                  <button onclick="filterDining('LA')" class="dining-filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="LA">🍔 洛杉磯</button>
             </div>
-
-            <!-- Dining Grid -->
-            <div id="dining-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Content injected via JS -->
-            </div>
+            <div id="dining-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
 
-        <!-- Section 3: Highlights -->
         <section id="highlights" class="scroll-mt-24">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-[#3a3a3a] inline-block relative z-10">
                     🏛️ 精選景點探索
                     <div class="absolute bottom-0 left-0 w-full h-3 bg-[#fef3c7] opacity-50 -z-10 transform translate-y-1"></div>
                 </h2>
-                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">
-                    探索本次旅程的必訪亮點。**點擊下方景點卡片即可前往官方網站。**
-                </p>
+                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">探索本次旅程的必訪亮點。**點擊下方景點卡片即可前往官方網站。**</p>
             </div>
-
-            <!-- Filters -->
             <div class="flex flex-wrap justify-center gap-2 mb-10">
                 <button onclick="filterAttractions('all')" class="filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="all">全部顯示</button>
                 <button onclick="filterAttractions('SF')" class="filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="SF">🌉 舊金山</button>
@@ -616,11 +282,7 @@
                 <button onclick="filterAttractions('PCH')" class="filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="PCH">🌊 一號公路</button>
                 <button onclick="filterAttractions('LA')" class="filter-btn px-6 py-2 rounded-full text-sm font-bold shadow-sm transition-all transform hover:scale-105" data-filter="LA">🎬 洛杉磯</button>
             </div>
-
-            <!-- Grid -->
-            <div id="attraction-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Content injected via JS -->
-            </div>
+            <div id="attraction-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
 
     </main>
@@ -631,120 +293,64 @@
             <h3 class="text-2xl font-bold mb-2 tracking-wider">2026 美西之旅</h3>
             <p class="text-[#a09a93]">祝您的旅程充滿美好回憶！</p>
             <div class="w-12 h-1 bg-[#5c4d3c] mx-auto my-8 rounded-full"></div>
-            <div class="text-xs text-[#5c4d3c] mb-8">
-                Designed with Earthy Calm Theme
-            </div>
-
-            <!-- New: Stealthy Excel Controls in Footer -->
+            <div class="text-xs text-[#5c4d3c] mb-8">Designed with Earthy Calm Theme</div>
             <div class="inline-block px-6 py-4 rounded-2xl border border-[#3e3429] bg-[#251e16]">
                 <p class="text-[10px] text-[#5c4d3c] mb-3 font-bold uppercase tracking-widest">行程管理後台</p>
                 <div class="flex flex-wrap justify-center gap-3">
-                    <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(this)" />
-                    <label for="excel-upload" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
-                        <span>📂</span> 匯入資料
+                     <button onclick="downloadTemplate()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
+                        <span>⬇️</span> 匯出備份 (Excel)
+                    </button>
+                     <!-- Hidden file input for Excel Import -->
+                     <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(this)" />
+                     <label for="excel-upload" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
+                        <span>📂</span> Excel 匯入
                     </label>
-                    
-                    <button onclick="downloadTemplate()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
-                        <span>⬇️</span> 下載範本
+
+                    <button onclick="loadFromGoogleSheet()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-white bg-[#107c41] border border-[#107c41] hover:bg-[#0c5e31] transition-all flex items-center gap-2 shadow-sm">
+                        <span>☁️</span> Google 同步
+                    </button>
+                    <button onclick="resetToDefault()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-red-400 border border-red-900 hover:bg-red-900/30 transition-all flex items-center gap-2 ml-2">
+                        <span>🔄</span> 重置
                     </button>
                 </div>
                 <p id="upload-status" class="text-[10px] text-[#a09a93] mt-2 hidden"></p>
+                <p id="save-status" class="text-[10px] text-[#d6b98c] mt-1 hidden italic">✨ 已自動儲存您的自訂行程</p>
             </div>
         </div>
     </footer>
 
-    <!-- 捲動至頂部按鈕 (使用新樣式) -->
-    <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="scroll-to-top-btn">
-        <span class="text-xl">⬆️</span>
-    </button>
+    <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="scroll-to-top-btn"><span class="text-xl">⬆️</span></button>
 
     <script>
-        // --- Data Storage (All converted to LET for mutation) ---
+        // --- 1. Global constants & Variables ---
+        const STORAGE_KEY = 'trip_planner_data';
+        const GOOGLE_SHEET_ID = '1KktXemxMf99qn8Qa1Kocom7SoJ0aaVgBZE7flC9qDKU';
+        let currentMap = null;
+        let isMapMode = false;
+        let currentPhaseKey = 'phase1';
 
+        // --- 2. Default Data ---
         let flightData = {
-            outbound: [
-                { leg: "TPE ➜ HKG", date: "2/26 20:15", arr: "22:00", note: "轉機", number: "CX531" }, 
-                { leg: "HKG ➜ SFO", date: "2/26 01:00 (+1)", arr: "21:15 (2/26)", note: "需調整時差", number: "CX872" }
-            ],
-            inbound: [
-                { leg: "LAX ➜ HKG", date: "3/09 22:15", arr: "05:05 (3/11)", note: "跨越國際換日線", number: "CX883" },
-                { leg: "HKG ➜ TPE", date: "3/11 08:00", arr: "09:45 (3/11)", note: "抵達溫暖的家", number: "CX488" }
-            ]
+            outbound: [ { leg: "TPE ➜ HKG", date: "2/26 20:15", arr: "22:00", note: "轉機", number: "CX531" }, { leg: "HKG ➜ SFO", date: "2/26 01:00 (+1)", arr: "21:15 (2/26)", note: "需調整時差", number: "CX872" } ],
+            inbound: [ { leg: "LAX ➜ HKG", date: "3/09 22:15", arr: "05:05 (3/11)", note: "跨越國際換日線", number: "CX883" }, { leg: "HKG ➜ TPE", date: "3/11 08:00", arr: "09:45 (3/11)", note: "抵達溫暖的家", number: "CX488" } ]
         };
 
         // Added Lat/Lng for Map Mode
         let accommodationData = [
-            {
-                city: "舊金山",
-                name: "Riu Plaza Fisherman's Wharf",
-                checkinDate: "2026-02-26",
-                checkoutDate: "2026-03-03",
-                checkin: "15:00 起",
-                checkout: "12:00 前",
-                room: "豪華加大雙人床房（2 張加大床）",
-                highlight: "🍳 含早餐｜🚭 禁菸房",
-                facilities: "高速網路、私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機",
-                address: "2500 Mason Street, San Francisco, CA 94133, USA",
-                mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166",
-                lat: 37.8070, lng: -122.4135
-            },
-            {
-                city: "蒙特雷",
-                name: "隆恩橡木酒店",
-                checkinDate: "2026-03-03",
-                checkoutDate: "2026-03-04",
-                checkin: "15:00～23:00",
-                checkout: "05:00～11:00",
-                room: "特大雙人床房 × 2 間",
-                highlight: "🚭 禁菸房",
-                facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣",
-                address: "2221 North Fremont Street, Monterey, CA 93940, USA",
-                mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579",
-                lat: 36.5970, lng: -121.8581
-            },
-            {
-                city: "莫羅貝",
-                name: "海港屋酒店",
-                checkinDate: "2026-03-04",
-                checkoutDate: "2026-03-05",
-                checkin: "15:00 起",
-                checkout: "11:00 前",
-                room: "海景豪華特大床房 × 2 間",
-                highlight: "🌊 海景陽台｜🚭 禁菸房",
-                facilities: "空調、微波爐、咖啡機、暖氣",
-                address: "1095 Main Street, Morro Bay, CA 93442, USA",
-                mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805",
-                lat: 35.3682, lng: -120.8502
-            },
-            {
-                city: "洛杉磯",
-                name: "Hollywood Franklin Hotel",
-                checkinDate: "2026-03-05",
-                checkoutDate: "2026-03-09",
-                checkin: "15:00 起",
-                checkout: "11:00 前",
-                room: "加大雙人床房（2 張加大床）",
-                highlight: "🚭 禁菸房",
-                facilities: "游泳池、空調、微波爐、咖啡機、保險箱",
-                address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA",
-                mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599",
-                lat: 34.1054, lng: -118.3235
-            }
+            { city: "舊金山", name: "Riu Plaza Fisherman's Wharf", checkinDate: "2026-02-26", checkoutDate: "2026-03-03", room: "豪華加大雙人床房（2 張加大床）", highlight: "🍳 含早餐｜🚭 禁菸房", facilities: "高速網路、私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機", address: "2500 Mason Street, San Francisco, CA 94133, USA", mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166", lat: 37.8070, lng: -122.4135 },
+            { city: "蒙特雷", name: "隆恩橡木酒店", checkinDate: "2026-03-03", checkoutDate: "2026-03-04", room: "特大雙人床房 × 2 間", highlight: "🚭 禁菸房", facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣", address: "2221 North Fremont Street, Monterey, CA 93940, USA", mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579", lat: 36.5970, lng: -121.8581 },
+            { city: "莫羅貝", name: "海港屋酒店", checkinDate: "2026-03-04", checkoutDate: "2026-03-05", room: "海景豪華特大床房 × 2 間", highlight: "🌊 海景陽台｜🚭 禁菸房", facilities: "空調、微波爐、咖啡機、暖氣", address: "1095 Main Street, Morro Bay, CA 93442, USA", mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805", lat: 35.3682, lng: -120.8502 },
+            { city: "洛杉磯", name: "Hollywood Franklin Hotel", checkinDate: "2026-03-05", checkoutDate: "2026-03-09", room: "加大雙人床房（2 張加大床）", highlight: "🚭 禁菸房", facilities: "游泳池、空調、微波爐、咖啡機、保險箱", address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA", mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599", lat: 34.1054, lng: -118.3235 }
         ];
 
         let diningData = [
-            // SF
             { name: "Fog Harbor Fish House", city: "SF", type: "Seafood", desc: "漁人碼頭排隊名店，海鮮品質極佳，必點獲獎的 Clam Chowder (蛤蜊濃湯)、Garlic Roasted Whole Dungeness Crab (蒜香烤大螃蟹)。", icon: "🦀", url: "https://fogharbor.com/", image: "" },
             { name: "Boudin Bakery", city: "SF", type: "Classic", desc: "舊金山酸麵包創始店，蛤蜊濃湯 (Clam Chowder) 是觀光客必嚐經典。", icon: "🥣", url: "https://boudinbakery.com/", image: "" },
             { name: "Hog Island Oyster Co.", city: "SF", type: "Seafood", desc: "位於 Ferry Building 內，提供最新鮮的生蠔與絕美海灣景觀。", icon: "🦪", url: "https://hogislandoysters.com/restaurants/ferry-building/", image: "" },
             { name: "In-N-Out Burger", city: "SF", type: "FastFood", desc: "加州的靈魂美食，平價、新鮮、在地人最愛。漁人碼頭分店是唯一有這家分店的觀光區。</br>推薦菜色： Double-Double (雙層起司堡)。</br>內行隱藏點法 (Secret Menu)：</br>◎Animal Style：漢堡肉會塗上芥末煎烤，加入額外的特製醬料和碎烤洋蔥。</br>◎Protein Style：用大片生菜代替麵包</br>◎Animal Style Fries：薯條加上起司、洋蔥和特製醬。</br>舊金山： 333 Jefferson St (就在 Riu Plaza 附近，步行可達)。</br>洛杉磯： 9149 S Sepulveda Blvd (就在 LAX 機場旁邊，可以看到飛機低空掠過，非常適合 D12 離境前吃)。", icon: "🍔", url: "https://www.in-n-out.com/", image: "" },
-            
-            // PCH
             { name: "Dametra Cafe", city: "PCH", type: "Mediterranean", desc: "卡梅爾排名第一的地中海料理，氣氛歡樂，經常有現場音樂演奏。", icon: "🥗", url: "https://dametracafe.com/", image: "" },
             { name: "Passionfish", city: "PCH", type: "Seafood", desc: "太平洋叢林市 (Pacific Grove) ，評價極高的海鮮餐廳，特色美食：</br>◎海鮮料理：經典菜色包括干貝（Sea Scallops）配番茄松露奶油、燻鱒魚醃魚（Smoked Trout Ceviche）以及珍寶蟹沙拉（Dungeness Crab Salad）。</br>◎其他推薦：除了海鮮，其油封鴨（Duck Confit）和 12 小時慢燉羊胸肉（Spoon-able Lamb）也深受好評。</br>◎甜點：楓糖香蕉麵包布丁（Maple-Banana Bread Pudding）是該店的招牌甜點。\n                </br>◎酒單：該餐廳以其豐富且價格合理的酒單獲得多次獎項，定價通常遠低於一般高級餐廳。", icon: "🐟", url: "https://www.passionfish.net/", image: "" },
             { name: "Nepenthe", city: "PCH", type: "View", desc: "Big Sur 懸崖上的景觀餐廳，擁有無敵海景，推薦素漢堡與薯條，缺點是價格偏高。", icon: "🌅", url: "https://www.nepenthe.com/", image: "" },
-            
-            // LA
             { name: "The Boiling Crab", city: "LA", type: "Seafood", desc: "手抓海鮮的始祖，路易斯安那肯瓊風味，重口味愛好者天堂。</br>推薦菜色：招牌的 हाउस स्पेशल (House Special) 醬料和多種辣度選擇，與新鮮海鮮（如帝王蟹腿、小龍蝦）搭配極佳。", icon: "🦐", url: "https://theboilingcrab.com/", image: "" },
             { name: "Grand Central Market", city: "LA", type: "Market", desc: "中央市場，洛杉磯美食集散地，包含 Eggslut、Tacos 等多樣化平價選擇。", icon: "🌮", url: "https://www.grandcentralmarket.com/", image: "" },
             { name: "BCD Tofu House", city: "LA", type: "Korean", desc: "北倉洞豆腐，在南加州及紐約韓國城相當知名的嫩豆腐煲，附贈無限續的小菜與石鍋飯。", icon: "🥘", url: "https://www.bcdtofuhouse.com/", image: "" },
@@ -752,7 +358,6 @@
         ];
 
         let attractionMap = {};
-        // Added Lat/Lng for Map Mode
         let attractions = [
             // --- 舊金山 (SF) 景點 ---
             { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "金門大橋（英語：Golden Gate Bridge）是美國舊金山的地標。它跨越聯接舊金山灣和太平洋的金門海峽，南端連接舊金山的北端，北端接通加州的馬林縣。金門大橋的橋墩跨距長1280.2公尺，建成時曾是世界上跨距最大的懸索橋，寬度27.5公尺，雙向共6條行車線，橋身呈褐紅色，金門大橋擁有世界第四高的橋塔，高達227.4公尺，全橋總長度是2737.4公尺。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/", lat: 37.8199, lng: -122.4783, image: "https://skyhorseauto.com/wp-content/uploads/2025/05/Highway-one-01.png" }, 
@@ -848,7 +453,6 @@
         };
 
         // --- Core Functions ---
-
         function createAttractionMap() {
             attractionMap = attractions.reduce((map, item) => {
                 map[item.name] = item;
@@ -856,12 +460,11 @@
             }, {});
         }
 
-        // --- NEW: Extract Domain Helper ---
         function getDomainFromUrl(url) {
             try {
                 if (!url) return '';
                 const hostname = new URL(url).hostname;
-                return hostname.replace('www.', ''); // 去除 www. 讓顯示更簡潔
+                return hostname.replace('www.', ''); 
             } catch (e) {
                 return 'Source';
             }
@@ -893,7 +496,6 @@
                 container.innerHTML = "";
 
                 data.daily.time.forEach((date, i) => {
-                    // Update to use .weather-card class
                     const card = document.createElement("div");
                     card.className = "weather-card";
                     const maxTemp = Math.round(data.daily.temperature_2m_max[i]);
@@ -927,8 +529,405 @@
           );
         }
 
+        // --- Persistence Logic ---
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        // --- GOOGLE SHEET INTEGRATION ---
+        function normalizeKey(key) {
+            return key.toLowerCase().replace(/[^a-z0-9]/g, '');
+        }
+
+        function parseGoogleVizResponse(json, expectedKey = '') {
+            const cols = json.table.cols;
+            const rows = json.table.rows;
+            if (!rows || rows.length === 0) return [];
+
+            let headers = cols.map(col => col.label ? col.label.trim() : '');
+            
+            const firstHeader = headers.find(h => h.length > 0);
+            
+            let dataStartIndex = 0;
+            // Simplified check: if column A's label is empty or just "A", grab row 0
+            const normExpected = normalizeKey(expectedKey);
+            const hasValidHeaders = headers.some(h => normalizeKey(h).includes(normExpected));
+
+            if (expectedKey && !hasValidHeaders) {
+                 if (rows[0]) {
+                     headers = rows[0].c.map(cell => cell ? (cell.v !== null ? String(cell.v).trim() : "") : "");
+                     dataStartIndex = 1; 
+                 }
+            }
+
+            const headerMap = headers.map(h => normalizeKey(h));
+
+            const result = [];
+            for (let i = dataStartIndex; i < rows.length; i++) {
+                const row = rows[i];
+                if (!row) continue;
+                
+                let obj = {};
+                row.c.forEach((cell, colIndex) => {
+                    if (headerMap[colIndex]) {
+                        obj[headerMap[colIndex]] = cell ? (cell.v !== null ? cell.v : "") : "";
+                    }
+                });
+                result.push(obj);
+            }
+            return result;
+        }
+
+        async function fetchGoogleSheetData(sheetName, checkKey) {
+            // Add cache busting
+            const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}&headers=1&_=${Date.now()}`;
+            
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                const jsonString = text.substring(47).slice(0, -2);
+                const json = JSON.parse(jsonString);
+                
+                if (json.status === 'error') {
+                    console.error(`Error fetching sheet ${sheetName}:`, json.errors);
+                    return [];
+                }
+                
+                return parseGoogleVizResponse(json, checkKey);
+            } catch (error) {
+                console.error(`Fetch failed for ${sheetName}`, error);
+                return [];
+            }
+        }
+
+        async function loadFromGoogleSheet(isAutoLoad = false) {
+            const statusEl = document.getElementById('upload-status');
+            statusEl.innerText = "⏳ 正在連線 Google Sheet...";
+            statusEl.classList.remove('hidden');
+            statusEl.className = "text-[10px] text-[#d6b98c] mt-2 animate-pulse";
+
+            try {
+                const [itineraryRaw, flightsRaw, accRaw, diningRaw, attrRaw] = await Promise.all([
+                    fetchGoogleSheetData('Itinerary', 'phase_id'),
+                    fetchGoogleSheetData('Flights', 'leg'),
+                    fetchGoogleSheetData('Accommodation', 'name'), 
+                    fetchGoogleSheetData('Dining', 'type'),
+                    fetchGoogleSheetData('Attractions', 'short_desc')
+                ]);
+
+                if (itineraryRaw.length > 0) {
+                    const newItineraryData = {};
+                    itineraryRaw.forEach(row => {
+                        const pid = row.phaseid || 'phase1';
+                        if (!newItineraryData[pid]) {
+                            newItineraryData[pid] = {
+                                title: row.phasetitle || "My Phase",
+                                icon: "📍",
+                                badgeClass: "bg-[#cfdde6] text-[#475569]",
+                                dateRange: "",
+                                desc: "自定義行程",
+                                days: []
+                            };
+                            if(pid.includes('1')) { newItineraryData[pid].icon = "🌉"; }
+                            else if(pid.includes('2')) { newItineraryData[pid].icon = "🌊"; newItineraryData[pid].badgeClass = "bg-[#fef3c7] text-[#92400e]"; }
+                            else if(pid.includes('3')) { newItineraryData[pid].icon = "🎡"; newItineraryData[pid].badgeClass = "bg-[#f3e8ff] text-[#6b21a8]"; }
+                        }
+                        newItineraryData[pid].days.push({
+                            date: row.date || "TBD",
+                            loc: row.location || "",
+                            act: row.activity || "",
+                            detail: row.details ? String(row.details).replace(/\n/g, "<br>") : "",
+                            transport: row.transport || "",
+                            hotel: row.hotel || "",
+                            attractionKey: row.attractionkey || ""
+                        });
+                    });
+                    itineraryData = newItineraryData;
+                }
+
+                if (flightsRaw.length > 0) {
+                    const newFlightData = { outbound: [], inbound: [] };
+                    flightsRaw.forEach(row => {
+                        const flight = {
+                            leg: row.leg,
+                            date: row.date, 
+                            arr: row.arrival,
+                            note: row.note,
+                            number: row.number
+                        };
+                        if (row.direction === 'outbound') newFlightData.outbound.push(flight);
+                        else if (row.direction === 'inbound') newFlightData.inbound.push(flight);
+                    });
+                    flightData = newFlightData;
+                }
+
+                if (accRaw.length > 0) {
+                    accommodationData = accRaw.map(r => ({
+                        city: r.city,
+                        name: r.name,
+                        checkinDate: r.checkindate,
+                        checkoutDate: r.checkoutdate,
+                        room: r.room,
+                        highlight: r.highlight,
+                        facilities: r.facilities,
+                        address: r.address,
+                        mapLink: r.maplink,
+                        lat: parseFloat(r.lat),
+                        lng: parseFloat(r.lng)
+                    }));
+                }
+
+                if (diningRaw.length > 0) {
+                    diningData = diningRaw.map(d => ({
+                        ...d,
+                        desc: d.desc ? String(d.desc).replace(/\n/g, "<br>") : ""
+                    }));
+                }
+
+                if (attrRaw.length > 0) {
+                    attractions = attrRaw.map(a => ({
+                        ...a,
+                        short_desc: a.shortdesc || a.short_desc,
+                        lat: parseFloat(a.lat),
+                        lng: parseFloat(a.lng)
+                    }));
+                }
+
+                renderSidebar();
+                const firstKey = Object.keys(itineraryData)[0];
+                if(firstKey) renderItinerary(firstKey);
+                renderFlightTable('outbound');
+                renderAccommodation();
+                createAttractionMap();
+                renderAttractions('all');
+                renderDining('all');
+
+                saveToLocalStorage();
+
+                statusEl.innerText = "✅ Google Sheet 同步成功！";
+                statusEl.className = "text-[10px] text-green-500 mt-2 font-bold";
+                if (isAutoLoad) {
+                    showToast("☁️ 已自動載入最新行程資料");
+                } else {
+                    showToast("☁️ 資料已從 Google Sheet 同步更新！");
+                }
+
+            } catch (error) {
+                console.error("Sync Error:", error);
+                statusEl.innerText = "❌ 同步失敗";
+                statusEl.className = "text-[10px] text-red-500 mt-2 font-bold";
+                if (!isAutoLoad) {
+                    alert("同步失敗，請檢查：\n1. 試算表權限是否公開 (Anyone with link)\n2. 分頁名稱是否正確 (Itinerary, Flights 等)\n3. 網路連線狀態");
+                }
+            }
+        }
+
+        // 3. 動態產生側邊欄
+        function renderSidebar() {
+            const container = document.getElementById('phase-nav-content');
+            if(!container) return;
+            container.innerHTML = ''; 
+
+            Object.keys(itineraryData).forEach((key, index) => {
+                const phase = itineraryData[key];
+                const btnId = `nav-${key}`;
+                const mt = index > 0 ? "mt-4 md:mt-0" : "";
+                
+                const html = `
+                <button onclick="renderItinerary('${key}')" id="${btnId}"
+                  class="phase-nav-btn w-full text-left p-6 rounded-2xl transition-all duration-300 border border-transparent group relative overflow-hidden bg-white shadow-sm hover:border-[#d6b98c] ${mt}">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <span class="text-6xl text-[#3a3a3a]">${phase.icon}</span>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold px-2 py-1 rounded ${phase.badgeClass} uppercase tracking-wider">Part ${index + 1}</span>
+                            <span class="text-xs text-[#a09a93] font-medium">${phase.dateRange || ""}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">${phase.title}</h3>
+                        <p class="text-sm text-[#6b6b6b] line-clamp-2">${phase.desc}</p>
+                    </div>
+                </button>
+                `;
+                container.innerHTML += html;
+            });
+        }
+        
+        function downloadTemplate() {
+            const wb = XLSX.utils.book_new();
+
+            const itineraryHeaders = ["phase_id", "phase_title", "date", "location", "activity", "details", "transport", "hotel", "attraction_key"];
+            let itineraryRows = [itineraryHeaders];
+            Object.keys(itineraryData).forEach(key => {
+                const phase = itineraryData[key];
+                phase.days.forEach(day => {
+                    itineraryRows.push([
+                        key, phase.title, day.date, day.loc, day.act,
+                        day.detail.replace(/<div class="h-2"><\/div>/g, "<br>"),
+                        day.transport, day.hotel, day.attractionKey || ""
+                    ]);
+                });
+            });
+            const wsItinerary = XLSX.utils.aoa_to_sheet(itineraryRows);
+            XLSX.utils.book_append_sheet(wb, wsItinerary, "Itinerary");
+
+            const flightHeaders = ["direction", "leg", "date", "arrival", "note", "number"];
+            let flightRows = [flightHeaders];
+            flightData.outbound.forEach(f => flightRows.push(["outbound", f.leg, f.date, f.arr, f.note, f.number]));
+            flightData.inbound.forEach(f => flightRows.push(["inbound", f.leg, f.date, f.arr, f.note, f.number]));
+            const wsFlights = XLSX.utils.aoa_to_sheet(flightRows);
+            XLSX.utils.book_append_sheet(wb, wsFlights, "Flights");
+
+            const accHeaders = ["city", "name", "checkinDate", "checkoutDate", "room", "highlight", "facilities", "address", "mapLink", "lat", "lng"];
+            let accRows = [accHeaders];
+            const accList = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
+            accList.forEach(a => accRows.push([a.city, a.name, a.checkinDate, a.checkoutDate, a.room, a.highlight, a.facilities, a.address, a.mapLink, a.lat, a.lng]));
+            const wsAcc = XLSX.utils.aoa_to_sheet(accRows);
+            XLSX.utils.book_append_sheet(wb, wsAcc, "Accommodation");
+
+            const diningHeaders = ["city", "name", "type", "desc", "icon", "url", "image"];
+            let diningRows = [diningHeaders];
+            diningData.forEach(d => diningRows.push([d.city, d.name, d.type, d.desc.replace(/<\/br>/g, "\n"), d.icon, d.url, d.image || ""]));
+            const wsDining = XLSX.utils.aoa_to_sheet(diningRows);
+            XLSX.utils.book_append_sheet(wb, wsDining, "Dining");
+
+            const attrHeaders = ["city", "name", "type", "desc", "short_desc", "icon", "url", "lat", "lng", "image"];
+            let attrRows = [attrHeaders];
+            attractions.forEach(a => attrRows.push([a.city, a.name, a.type, a.desc, a.short_desc, a.icon, a.url, a.lat, a.lng, a.image || ""]));
+            const wsAttr = XLSX.utils.aoa_to_sheet(attrRows);
+            XLSX.utils.book_append_sheet(wb, wsAttr, "Attractions");
+
+            XLSX.writeFile(wb, "My_Trip_Backup.xlsx");
+        }
+
+        function handleExcelUpload(input) {
+            const file = input.files[0];
+            const status = document.getElementById('upload-status');
+            if (!file) return;
+
+            status.classList.remove('hidden');
+            status.innerText = "正在讀取檔案...";
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    
+                    if (workbook.Sheets['Itinerary']) {
+                        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets['Itinerary']);
+                        const newItineraryData = {};
+                        jsonData.forEach(row => {
+                            const pid = row.phase_id || 'phase1';
+                            if (!newItineraryData[pid]) {
+                                newItineraryData[pid] = {
+                                    title: row.phase_title || "My Phase",
+                                    icon: "📍",
+                                    badgeClass: "bg-[#cfdde6] text-[#475569]",
+                                    dateRange: "",
+                                    desc: "自定義行程",
+                                    days: []
+                                };
+                                if(pid.includes('1')) { newItineraryData[pid].icon = "🌉"; }
+                                else if(pid.includes('2')) { newItineraryData[pid].icon = "🌊"; newItineraryData[pid].badgeClass = "bg-[#fef3c7] text-[#92400e]"; }
+                                else if(pid.includes('3')) { newItineraryData[pid].icon = "🎡"; newItineraryData[pid].badgeClass = "bg-[#f3e8ff] text-[#6b21a8]"; }
+                            }
+                            newItineraryData[pid].days.push({
+                                date: row.date || "TBD",
+                                loc: row.location || "",
+                                act: row.activity || "",
+                                detail: row.details ? row.details.toString().replace(/\r\n/g, "<br>").replace(/\n/g, "<br>") : "",
+                                transport: row.transport || "",
+                                hotel: row.hotel || "",
+                                attractionKey: row.attraction_key || ""
+                            });
+                        });
+                        itineraryData = newItineraryData;
+                    }
+                    if (workbook.Sheets['Flights']) {
+                        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets['Flights']);
+                        const newFlightData = { outbound: [], inbound: [] };
+                        jsonData.forEach(row => {
+                            const flight = { leg: row.leg, date: row.date, arr: row.arrival, note: row.note, number: row.number };
+                            if (row.direction === 'outbound') newFlightData.outbound.push(flight);
+                            else if (row.direction === 'inbound') newFlightData.inbound.push(flight);
+                        });
+                        flightData = newFlightData;
+                    }
+                    if (workbook.Sheets['Accommodation']) { accommodationData = XLSX.utils.sheet_to_json(workbook.Sheets['Accommodation']); }
+                    if (workbook.Sheets['Dining']) { diningData = XLSX.utils.sheet_to_json(workbook.Sheets['Dining']).map(d => ({ ...d, desc: d.desc ? d.desc.replace(/\n/g, "<br>") : "" })); }
+                    if (workbook.Sheets['Attractions']) { attractions = XLSX.utils.sheet_to_json(workbook.Sheets['Attractions']); }
+
+                    renderSidebar();
+                    const firstKey = Object.keys(itineraryData)[0];
+                    if(firstKey) renderItinerary(firstKey);
+                    renderFlightTable('outbound');
+                    renderAccommodation();
+                    createAttractionMap();
+                    renderAttractions('all');
+                    renderDining('all');
+                    saveToLocalStorage();
+
+                    status.innerText = "✅ 匯入成功！";
+                    status.className = "text-xs text-green-600 w-full mt-2 font-bold";
+
+                } catch (error) {
+                    console.error(error);
+                    status.innerText = "❌ 讀取失敗";
+                    status.className = "text-xs text-red-600 w-full mt-2 font-bold";
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function saveToLocalStorage() {
+            const allData = {
+                flightData,
+                accommodationData,
+                diningData,
+                attractions,
+                itineraryData
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+            const statusEl = document.getElementById('save-status');
+            if(statusEl) statusEl.classList.remove('hidden');
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if(parsed.flightData) flightData = parsed.flightData;
+                    if(parsed.accommodationData) accommodationData = parsed.accommodationData;
+                    if(parsed.diningData) diningData = parsed.diningData;
+                    if(parsed.attractions) {
+                        attractions = parsed.attractions;
+                        createAttractionMap(); 
+                    }
+                    if(parsed.itineraryData) itineraryData = parsed.itineraryData;
+                    return true;
+                } catch(e) {
+                    console.error("Error loading saved data", e);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        function resetToDefault() {
+            if(confirm("確定要重置所有資料回到預設值嗎？您自訂的行程將會被清除。")) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        }
+
         function init() {
-            // FIX: Fix Leaflet's default icon paths issue with CDN
             delete L.Icon.Default.prototype._getIconUrl;
             L.Icon.Default.mergeOptions({
                 iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -936,16 +935,27 @@
                 shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
             });
 
-            createAttractionMap();
+            const hasSavedData = loadFromLocalStorage();
+
+            createAttractionMap(); 
             renderFlightTable('outbound');
             renderAccommodation();
-            renderSidebar(); // New: dynamic sidebar
-            renderItinerary('phase1'); // Load first phase
+            renderSidebar(); 
+            renderItinerary('phase1'); 
             renderAttractions('all');
             renderDining('all');
             loadCurrentLocationWeather();       
             fetch3DayWeather(37.7749, -122.4194, "weather-sf", "wear-sf");
             fetch3DayWeather(34.0522, -118.2437, "weather-la", "wear-la");
+
+            if(hasSavedData) {
+                const statusEl = document.getElementById('save-status');
+                if(statusEl) statusEl.classList.remove('hidden');
+                showToast("👋 歡迎回來！已載入您的自訂行程");
+            } else {
+                // NEW: Auto-load from Google Sheet if no local data
+                loadFromGoogleSheet(true);
+            }
         }
 
         function scrollToSection(id) {
@@ -1026,6 +1036,7 @@
 
         // 渲染住宿資訊
         const toUTCDate = iso => {
+            if(!iso) return new Date();
             const d = new Date(iso);
             return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
         };
@@ -1073,7 +1084,7 @@
                     <!-- 日期 -->
                     <div class="bg-[#faf7f2] p-2 rounded mb-3 border border-[#efe6d8]">
                         <p class="text-xs text-[#6b6b6b]">
-                            📅 <span class="font-semibold">${hotel.checkinDate.slice(5)}</span> - <span class="font-semibold">${hotel.checkoutDate.slice(5)}</span>
+                            📅 <span class="font-semibold">${(hotel.checkinDate || "").slice(5)}</span> - <span class="font-semibold">${(hotel.checkoutDate || "").slice(5)}</span>
                         </p>
                     </div>
 
@@ -1100,207 +1111,7 @@
             container.innerHTML = html;
         }
 
-        // --- EXCEL & DYNAMIC ITINERARY FUNCTIONS ---
-
-        // 1. 下載多工作表範本
-        function downloadTemplate() {
-            const wb = XLSX.utils.book_new();
-
-            // 1. Itinerary Sheet
-            const itineraryHeaders = ["phase_id", "phase_title", "date", "location", "activity", "details", "transport", "hotel", "attraction_key"];
-            let itineraryRows = [itineraryHeaders];
-            Object.keys(itineraryData).forEach(key => {
-                const phase = itineraryData[key];
-                phase.days.forEach(day => {
-                    itineraryRows.push([
-                        key, phase.title, day.date, day.loc, day.act,
-                        day.detail.replace(/<div class="h-2"><\/div>/g, "<br>"),
-                        day.transport, day.hotel, day.attractionKey || ""
-                    ]);
-                });
-            });
-            const wsItinerary = XLSX.utils.aoa_to_sheet(itineraryRows);
-            XLSX.utils.book_append_sheet(wb, wsItinerary, "Itinerary");
-
-            // 2. Flights Sheet
-            const flightHeaders = ["direction", "leg", "date", "arrival", "note", "number"];
-            let flightRows = [flightHeaders];
-            flightData.outbound.forEach(f => flightRows.push(["outbound", f.leg, f.date, f.arr, f.note, f.number]));
-            flightData.inbound.forEach(f => flightRows.push(["inbound", f.leg, f.date, f.arr, f.note, f.number]));
-            const wsFlights = XLSX.utils.aoa_to_sheet(flightRows);
-            XLSX.utils.book_append_sheet(wb, wsFlights, "Flights");
-
-            // 3. Accommodation Sheet
-            const accHeaders = ["city", "name", "checkinDate", "checkoutDate", "room", "highlight", "facilities", "address", "mapLink", "lat", "lng"];
-            let accRows = [accHeaders];
-            // Support object or array source
-            const accList = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
-            accList.forEach(a => accRows.push([a.city, a.name, a.checkinDate, a.checkoutDate, a.room, a.highlight, a.facilities, a.address, a.mapLink, a.lat, a.lng]));
-            const wsAcc = XLSX.utils.aoa_to_sheet(accRows);
-            XLSX.utils.book_append_sheet(wb, wsAcc, "Accommodation");
-
-            // 4. Dining Sheet
-            const diningHeaders = ["city", "name", "type", "desc", "icon", "url", "image"];
-            let diningRows = [diningHeaders];
-            diningData.forEach(d => diningRows.push([d.city, d.name, d.type, d.desc.replace(/<\/br>/g, "\n"), d.icon, d.url, d.image || ""]));
-            const wsDining = XLSX.utils.aoa_to_sheet(diningRows);
-            XLSX.utils.book_append_sheet(wb, wsDining, "Dining");
-
-            // 5. Attractions Sheet
-            const attrHeaders = ["city", "name", "type", "desc", "short_desc", "icon", "url", "lat", "lng", "image"];
-            let attrRows = [attrHeaders];
-            attractions.forEach(a => attrRows.push([a.city, a.name, a.type, a.desc, a.short_desc, a.icon, a.url, a.lat, a.lng, a.image || ""]));
-            const wsAttr = XLSX.utils.aoa_to_sheet(attrRows);
-            XLSX.utils.book_append_sheet(wb, wsAttr, "Attractions");
-
-            // 下載檔案
-            XLSX.writeFile(wb, "My_Trip_Full_Plan.xlsx");
-        }
-
-        // 2. 處理 Excel 上傳 (支援多 Sheet)
-        function handleExcelUpload(input) {
-            const file = input.files[0];
-            const status = document.getElementById('upload-status');
-            
-            if (!file) return;
-
-            status.classList.remove('hidden');
-            status.innerText = "正在讀取檔案...";
-
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    
-                    // --- 1. Process Itinerary ---
-                    if (workbook.Sheets['Itinerary']) {
-                        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets['Itinerary']);
-                        const newItineraryData = {};
-                        jsonData.forEach(row => {
-                            const pid = row.phase_id || 'phase1';
-                            if (!newItineraryData[pid]) {
-                                newItineraryData[pid] = {
-                                    title: row.phase_title || "My Phase",
-                                    icon: "📍",
-                                    badgeClass: "bg-[#cfdde6] text-[#475569]",
-                                    dateRange: "",
-                                    desc: "自定義行程",
-                                    days: []
-                                };
-                                if(pid.includes('1')) { newItineraryData[pid].icon = "🌉"; }
-                                else if(pid.includes('2')) { newItineraryData[pid].icon = "🌊"; newItineraryData[pid].badgeClass = "bg-[#fef3c7] text-[#92400e]"; }
-                                else if(pid.includes('3')) { newItineraryData[pid].icon = "🎡"; newItineraryData[pid].badgeClass = "bg-[#f3e8ff] text-[#6b21a8]"; }
-                            }
-                            newItineraryData[pid].days.push({
-                                date: row.date || "TBD",
-                                loc: row.location || "",
-                                act: row.activity || "",
-                                detail: row.details ? row.details.toString().replace(/\r\n/g, "<br>").replace(/\n/g, "<br>") : "",
-                                transport: row.transport || "",
-                                hotel: row.hotel || "",
-                                attractionKey: row.attraction_key || ""
-                            });
-                        });
-                        itineraryData = newItineraryData;
-                        renderSidebar();
-                        renderItinerary(Object.keys(itineraryData)[0]);
-                    }
-
-                    // --- 2. Process Flights ---
-                    if (workbook.Sheets['Flights']) {
-                        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets['Flights']);
-                        const newFlightData = { outbound: [], inbound: [] };
-                        jsonData.forEach(row => {
-                            const flight = {
-                                leg: row.leg,
-                                date: row.date,
-                                arr: row.arrival,
-                                note: row.note,
-                                number: row.number
-                            };
-                            if (row.direction === 'outbound') newFlightData.outbound.push(flight);
-                            else if (row.direction === 'inbound') newFlightData.inbound.push(flight);
-                        });
-                        flightData = newFlightData;
-                        renderFlightTable('outbound');
-                    }
-
-                    // --- 3. Process Accommodation ---
-                    if (workbook.Sheets['Accommodation']) {
-                        // Directly map to array of objects
-                        accommodationData = XLSX.utils.sheet_to_json(workbook.Sheets['Accommodation']);
-                        renderAccommodation();
-                    }
-
-                    // --- 4. Process Dining ---
-                    if (workbook.Sheets['Dining']) {
-                        diningData = XLSX.utils.sheet_to_json(workbook.Sheets['Dining']).map(d => ({
-                            ...d,
-                            desc: d.desc ? d.desc.replace(/\n/g, "</br>") : ""
-                        }));
-                        renderDining('all');
-                    }
-
-                    // --- 5. Process Attractions ---
-                    if (workbook.Sheets['Attractions']) {
-                        attractions = XLSX.utils.sheet_to_json(workbook.Sheets['Attractions']);
-                        createAttractionMap(); // Important: rebuild the map for itinerary linking
-                        renderAttractions('all');
-                    }
-
-                    status.innerText = "✅ 匯入成功！所有資料已更新。";
-                    status.className = "text-xs text-green-600 w-full mt-2 font-bold";
-
-                } catch (error) {
-                    console.error(error);
-                    status.innerText = "❌ 讀取失敗，請確認檔案格式正確。";
-                    status.className = "text-xs text-red-600 w-full mt-2 font-bold";
-                }
-            };
-
-            reader.readAsArrayBuffer(file);
-        }
-
-        // 3. 動態產生側邊欄 (取代原本寫死的 HTML)
-        function renderSidebar() {
-            const container = document.getElementById('phase-nav-content');
-            container.innerHTML = ''; // Clear existing
-
-            Object.keys(itineraryData).forEach((key, index) => {
-                const phase = itineraryData[key];
-                const btnId = `nav-${key}`;
-                
-                // Determine margin top based on index to mimic original design
-                const mt = index > 0 ? "mt-4 md:mt-0" : "";
-                
-                const html = `
-                <button onclick="renderItinerary('${key}')" id="${btnId}"
-                  class="phase-nav-btn w-full text-left p-6 rounded-2xl transition-all duration-300 border border-transparent group relative overflow-hidden bg-white shadow-sm hover:border-[#d6b98c] ${mt}">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <span class="text-6xl text-[#3a3a3a]">${phase.icon}</span>
-                    </div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold px-2 py-1 rounded ${phase.badgeClass} uppercase tracking-wider">Part ${index + 1}</span>
-                            <span class="text-xs text-[#a09a93] font-medium">${phase.dateRange || ""}</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-[#3a3a3a] mb-1 group-hover:text-[#d6b98c] transition-colors">${phase.title}</h3>
-                        <p class="text-sm text-[#6b6b6b] line-clamp-2">${phase.desc}</p>
-                    </div>
-                </button>
-                `;
-                container.innerHTML += html;
-            });
-        }
-
         // --- MAP & ITINERARY LOGIC ---
-
-        // State to track current map instance
-        let currentMap = null;
-        let isMapMode = false;
-        let currentPhaseKey = 'phase1';
 
         function getAttractionBadgeColor(type) {
             if (type === 'History') return 'bg-[#fef3c7] text-[#92400e] border-[#fcd34d]'; // Amber
