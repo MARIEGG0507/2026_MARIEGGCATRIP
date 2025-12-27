@@ -509,7 +509,8 @@
                     </div>
 
                     <!-- Map View (Hidden by default) -->
-                    <div id="itinerary-map" class="hidden flex-grow z-10 w-full h-full relative bg-[#fbf7f2]">
+                    <!-- FIX: Added min-h-[500px] md:min-h-0 to ensure height on mobile -->
+                    <div id="itinerary-map" class="hidden flex-grow z-10 w-full h-full relative bg-[#fbf7f2] min-h-[500px] md:min-h-0">
                         <!-- Leaflet map will be initialized here -->
                     </div>
                 </div>
@@ -1421,6 +1422,10 @@
             }
 
             // 2. Initialize Map
+            // FIX: Ensure container has dimensions before init
+            const mapContainer = document.getElementById('itinerary-map');
+            if(!mapContainer) return;
+            
             currentMap = L.map('itinerary-map').setView([37.7749, -122.4194], 10); // Default SF
 
             // 3. Add Tile Layer (OpenStreetMap - Free)
@@ -1428,6 +1433,11 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                 maxZoom: 19
             }).addTo(currentMap);
+            
+            // FIX: Force resize calculation
+            setTimeout(() => {
+                currentMap.invalidateSize();
+            }, 200);
 
             // 4. Collect Markers
             let bounds = [];
