@@ -241,6 +241,59 @@
         }
 
         /* ==========================================================================
+           G. 圖片卡片樣式 (Image Card) - NEW
+           ========================================================================== */
+        .card-image-header {
+            position: relative;
+            width: 100%;
+            height: 12rem; /* h-48 */
+            overflow: hidden;
+        }
+        .card-image-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .card-hover:hover .card-image-header img {
+            transform: scale(1.1);
+        }
+        .card-image-badge {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* ==========================================================================
+           H. 圖片來源標示 (Image Source Attribution) - NEW
+           ========================================================================== */
+        .img-source-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(44, 36, 27, 0.7); /* 深咖啡色半透明背景 */
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-top-left-radius: 8px;
+            z-index: 10;
+            backdrop-filter: blur(2px);
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            pointer-events: none; /* 讓點擊穿透，不影響卡片點擊 */
+        }
+
+        /* ==========================================================================
            C. 動畫 (Animations)
            ========================================================================== */
         @keyframes fadeIn {
@@ -643,7 +696,7 @@
                 checkin: "15:00～23:00",
                 checkout: "05:00～11:00",
                 room: "特大雙人床房 × 2 間",
-                highlight: "🍽️ 不含餐｜🚭 禁菸房",
+                highlight: "🚭 禁菸房",
                 facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣",
                 address: "2221 North Fremont Street, Monterey, CA 93940, USA",
                 mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579",
@@ -658,7 +711,7 @@
                 checkout: "11:00 前",
                 room: "海景豪華特大床房 × 2 間",
                 highlight: "🌊 海景陽台｜🚭 禁菸房",
-                facilities: "私人陽台、海景、空調、微波爐、咖啡機、暖氣",
+                facilities: "空調、微波爐、咖啡機、暖氣",
                 address: "1095 Main Street, Morro Bay, CA 93442, USA",
                 mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805",
                 lat: 35.3682, lng: -120.8502
@@ -671,8 +724,8 @@
                 checkin: "15:00 起",
                 checkout: "11:00 前",
                 room: "加大雙人床房（2 張加大床）",
-                highlight: "🎬 近環球影城｜🚭 禁菸房",
-                facilities: "游泳池、市景、空調、微波爐、咖啡機、保險箱",
+                highlight: "🚭 禁菸房",
+                facilities: "游泳池、空調、微波爐、咖啡機、保險箱",
                 address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA",
                 mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599",
                 lat: 34.1054, lng: -118.3235
@@ -681,73 +734,75 @@
 
         let diningData = [
             // SF
-            { name: "Fog Harbor Fish House", city: "SF", type: "Seafood", desc: "漁人碼頭排隊名店，海鮮品質極佳，必點獲獎的 Clam Chowder (蛤蜊濃湯)、Garlic Roasted Whole Dungeness Crab (蒜香烤大螃蟹)。", icon: "🦀", url: "https://fogharbor.com/" },
-            { name: "Boudin Bakery", city: "SF", type: "Classic", desc: "舊金山酸麵包創始店，蛤蜊濃湯 (Clam Chowder) 是觀光客必嚐經典。", icon: "🥣", url: "https://boudinbakery.com/" },
-            { name: "Hog Island Oyster Co.", city: "SF", type: "Seafood", desc: "位於 Ferry Building 內，提供最新鮮的生蠔與絕美海灣景觀。", icon: "🦪", url: "https://hogislandoysters.com/" },
-            { name: "In-N-Out Burger", city: "SF", type: "FastFood", desc: "加州的靈魂美食，平價、新鮮、在地人最愛。漁人碼頭分店是唯一有這家分店的觀光區。</br>推薦菜色： Double-Double (雙層起司堡)。</br>內行隱藏點法 (Secret Menu)：</br>◎Animal Style：漢堡肉會塗上芥末煎烤，加入額外的特製醬料和碎烤洋蔥。</br>◎Protein Style：用大片生菜代替麵包</br>◎Animal Style Fries：薯條加上起司、洋蔥和特製醬。</br>舊金山： 333 Jefferson St (就在 Riu Plaza 附近，步行可達)。</br>洛杉磯： 9149 S Sepulveda Blvd (就在 LAX 機場旁邊，可以看到飛機低空掠過，非常適合 D12 離境前吃)。", icon: "🍔", url: "https://www.in-n-out.com/" },
+            { name: "Fog Harbor Fish House", city: "SF", type: "Seafood", desc: "漁人碼頭排隊名店，海鮮品質極佳，必點獲獎的 Clam Chowder (蛤蜊濃湯)、Garlic Roasted Whole Dungeness Crab (蒜香烤大螃蟹)。", icon: "🦀", url: "https://fogharbor.com/", image: "" },
+            { name: "Boudin Bakery", city: "SF", type: "Classic", desc: "舊金山酸麵包創始店，蛤蜊濃湯 (Clam Chowder) 是觀光客必嚐經典。", icon: "🥣", url: "https://boudinbakery.com/", image: "" },
+            { name: "Hog Island Oyster Co.", city: "SF", type: "Seafood", desc: "位於 Ferry Building 內，提供最新鮮的生蠔與絕美海灣景觀。", icon: "🦪", url: "https://hogislandoysters.com/restaurants/ferry-building/", image: "" },
+            { name: "In-N-Out Burger", city: "SF", type: "FastFood", desc: "加州的靈魂美食，平價、新鮮、在地人最愛。漁人碼頭分店是唯一有這家分店的觀光區。</br>推薦菜色： Double-Double (雙層起司堡)。</br>內行隱藏點法 (Secret Menu)：</br>◎Animal Style：漢堡肉會塗上芥末煎烤，加入額外的特製醬料和碎烤洋蔥。</br>◎Protein Style：用大片生菜代替麵包</br>◎Animal Style Fries：薯條加上起司、洋蔥和特製醬。</br>舊金山： 333 Jefferson St (就在 Riu Plaza 附近，步行可達)。</br>洛杉磯： 9149 S Sepulveda Blvd (就在 LAX 機場旁邊，可以看到飛機低空掠過，非常適合 D12 離境前吃)。", icon: "🍔", url: "https://www.in-n-out.com/", image: "" },
             
             // PCH
-            { name: "Dametra Cafe", city: "PCH", type: "Mediterranean", desc: "卡梅爾排名第一的地中海料理，氣氛歡樂，經常有現場音樂演奏。", icon: "🥗", url: "https://dametracafe.com/" },
-            { name: "Passionfish", city: "PCH", type: "Seafood", desc: "太平洋叢林市 (Pacific Grove) 評價極高的海鮮餐廳，強調永續漁法。", icon: "🐟", url: "https://www.passionfish.net/" },
-            { name: "Nepenthe", city: "PCH", type: "View", desc: "Big Sur 懸崖上的景觀餐廳，擁有無敵海景，適合享用漢堡與薯條。", icon: "🌅", url: "https://www.nepenthe.com/" },
+            { name: "Dametra Cafe", city: "PCH", type: "Mediterranean", desc: "卡梅爾排名第一的地中海料理，氣氛歡樂，經常有現場音樂演奏。", icon: "🥗", url: "https://dametracafe.com/", image: "" },
+            { name: "Passionfish", city: "PCH", type: "Seafood", desc: "太平洋叢林市 (Pacific Grove) ，評價極高的海鮮餐廳，特色美食：</br>◎海鮮料理：經典菜色包括干貝（Sea Scallops）配番茄松露奶油、燻鱒魚醃魚（Smoked Trout Ceviche）以及珍寶蟹沙拉（Dungeness Crab Salad）。</br>◎其他推薦：除了海鮮，其油封鴨（Duck Confit）和 12 小時慢燉羊胸肉（Spoon-able Lamb）也深受好評。</br>◎甜點：楓糖香蕉麵包布丁（Maple-Banana Bread Pudding）是該店的招牌甜點。\n                </br>◎酒單：該餐廳以其豐富且價格合理的酒單獲得多次獎項，定價通常遠低於一般高級餐廳。", icon: "🐟", url: "https://www.passionfish.net/", image: "" },
+            { name: "Nepenthe", city: "PCH", type: "View", desc: "Big Sur 懸崖上的景觀餐廳，擁有無敵海景，推薦素漢堡與薯條，缺點是價格偏高。", icon: "🌅", url: "https://www.nepenthe.com/", image: "" },
             
             // LA
-            { name: "The Boiling Crab", city: "LA", type: "Seafood", desc: "手抓海鮮的始祖，路易斯安那肯瓊風味，重口味愛好者天堂。", icon: "🦐", url: "https://theboilingcrab.com/" },
-            { name: "Grand Central Market", city: "LA", type: "Market", desc: "洛杉磯美食集散地，包含 Eggslut、Tacos 等多樣化平價選擇。", icon: "🌮", url: "https://www.grandcentralmarket.com/" },
-            { name: "BCD Tofu House", city: "LA", type: "Korean", desc: "韓國城知名的 24 小時嫩豆腐煲，附贈無限續的小菜與石鍋飯。", icon: "🥘", url: "http://bcdtofu.com/" },
-            { name: "Shake Shack", city: "LA", type: "FastFood", desc: "精緻漢堡代表，牛肉品質極高，奶昔是一絕。</br>推薦菜色： ShackBurger、Cheese Fries。</br>推薦飲品： Hand-Spun Shakes (經典奶昔)。</br>洛杉磯： 6201 Hollywood Blvd (離好萊塢的飯店 The Hollywood Franklin 極近)。</br>", icon: "🍔", url: "https://shakeshack.com/" }
+            { name: "The Boiling Crab", city: "LA", type: "Seafood", desc: "手抓海鮮的始祖，路易斯安那肯瓊風味，重口味愛好者天堂。</br>推薦菜色：招牌的 हाउस स्पेशल (House Special) 醬料和多種辣度選擇，與新鮮海鮮（如帝王蟹腿、小龍蝦）搭配極佳。", icon: "🦐", url: "https://theboilingcrab.com/", image: "" },
+            { name: "Grand Central Market", city: "LA", type: "Market", desc: "中央市場，洛杉磯美食集散地，包含 Eggslut、Tacos 等多樣化平價選擇。", icon: "🌮", url: "https://www.grandcentralmarket.com/", image: "" },
+            { name: "BCD Tofu House", city: "LA", type: "Korean", desc: "北倉洞豆腐，在南加州及紐約韓國城相當知名的嫩豆腐煲，附贈無限續的小菜與石鍋飯。", icon: "🥘", url: "https://www.bcdtofuhouse.com/", image: "" },
+            { name: "Shake Shack", city: "LA", type: "FastFood", desc: "精緻漢堡代表，牛肉品質極高，奶昔是一絕。</br>推薦菜色： ShackBurger、Cheese Fries。</br>推薦飲品： Hand-Spun Shakes (經典奶昔)。</br>洛杉磯： 6201 Hollywood Blvd (離好萊塢的飯店 The Hollywood Franklin 極近)。</br>", icon: "🍔", url: "https://shakeshack.com/", image: "" }
         ];
 
         let attractionMap = {};
         // Added Lat/Lng for Map Mode
         let attractions = [
             // --- 舊金山 (SF) 景點 ---
-            { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "舊金山最著名的象徵。這座橘紅色的懸索橋橫跨金門海峽，無論是在霧中若隱若現還是晴天下的鮮豔，都是旅人的必看之處。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/", lat: 37.8199, lng: -122.4783 }, 
-            { name: "漁人碼頭與 39 號碼頭", city: "SF", type: "Food", desc: "舊金山人氣最旺的觀光區，充滿商店、餐廳和街頭藝人。最著名的莫過於棲息在浮筒上的野生海獅。必嚐酸麵包蛤蜊濃湯。", short_desc: "人氣觀光區，必看野生海獅與享用酸麵包濃湯。", icon: "🦀", url: "https://www.fishermanswharf.org/", lat: 37.8080, lng: -122.4177 },
-            { name: "惡魔島 Alcatraz", city: "SF", type: "History", desc: "曾是關押全美最危險罪犯（如卡彭）的聯邦監獄。島上充滿神祕色彩，提供世界級的導覽系統。需提早數月訂票。", short_desc: "傳奇聯邦監獄，充滿神祕色彩與歷史故事。", icon: "🏝️", url: "https://www.alcatrazcruises.com/", lat: 37.8270, lng: -122.4230 },
-            { name: "九曲花街 Lombard St", city: "SF", type: "Photo", desc: "世界上最彎曲的街道。為了緩衝極度陡峭的坡度而設計了八個急轉彎，路旁種滿繡球花，景緻迷人。", short_desc: "世界上最彎曲的街道，繡球花與急轉彎的視覺饗宴。", icon: "🌸", url: "https://www.sftravel.com/article/guide-to-lombard-street", lat: 37.8021, lng: -122.4187 },
-            { name: "彩繪女士 Painted Ladies", city: "SF", type: "Photo", desc: "舊金山最具代表性的維多利亞式排屋，背景正是現代化的市中心高樓大廈，呈現出古典與現代的完美對比。", short_desc: "經典維多利亞式排屋，阿拉莫廣場的絕美明信片景緻。", icon: "🏠", url: "https://www.sftravel.com/article/guide-alamo-square-painted-ladies", lat: 37.7762, lng: -122.4328 },
-            { name: "渡輪大廈 Ferry Building", city: "SF", type: "Food", desc: "舊金山的美食殿堂。這座歷史悠久的渡輪站內進駐了許多在地手工藝品、精品咖啡、乳酪與特色美食。", short_desc: "歷史悠久的美食殿堂，匯集在地農產與精品咖啡。", icon: "⛴️", url: "https://www.ferrybuildingmarketplace.com/", lat: 37.7955, lng: -122.3937 },
-            { name: "叮叮車 Cable Car", city: "SF", type: "Fun", desc: "世界上唯一仍在運行的手動纜車系統，也是舊金山的移動名片。搭乘它穿梭在陡坡間，極具復古情懷。", short_desc: "體驗世界唯一手動纜車，穿梭陡坡的復古情懷。", icon: "🚋", url: "https://www.sfmta.com/getting-around/muni/cable-cars", lat: 37.7941, lng: -122.4089 },
-            { name: "藝術宮", city: "SF", type: "Photo", desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", short_desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", icon: "🏛️", url: "https://palaceoffinearts.com/", lat: 37.8029, lng: -122.4484 },
-            { name: "Chase Center", city: "SF", type: "Fun", desc: "金州勇士隊主場，現代化且熱血沸騰。", short_desc: "金州勇士隊主場，現代化且熱血沸騰。", icon: "🏀", url: "https://www.chasecenter.com/", lat: 37.7680, lng: -122.3877 },
+            { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "金門大橋（英語：Golden Gate Bridge）是美國舊金山的地標。它跨越聯接舊金山灣和太平洋的金門海峽，南端連接舊金山的北端，北端接通加州的馬林縣。金門大橋的橋墩跨距長1280.2公尺，建成時曾是世界上跨距最大的懸索橋，寬度27.5公尺，雙向共6條行車線，橋身呈褐紅色，金門大橋擁有世界第四高的橋塔，高達227.4公尺，全橋總長度是2737.4公尺。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/", lat: 37.8199, lng: -122.4783, image: "https://skyhorseauto.com/wp-content/uploads/2025/05/Highway-one-01.png" }, 
+            { name: "漁人碼頭與 39 號碼頭", city: "SF", type: "Food", desc: "舊金山人氣最旺的觀光區，充滿商店、餐廳和街頭藝人。最著名的莫過於棲息在浮筒上的野生海獅。必嚐酸麵包蛤蜊濃湯。", short_desc: "人氣觀光區，必看野生海獅與享用酸麵包濃湯。", icon: "🦀", url: "https://www.fishermanswharf.org/", lat: 37.8080, lng: -122.4177, image: "https://www.bring-you.info/imgs/2019/10/San_Francisco-12-900x600.jpg" },
+            { name: "惡魔島 Alcatraz", city: "SF", type: "History", desc: "惡魔島在1800年代中期發展起來，是一個軍事基地，配備了西海岸第一座燈塔，最終於1934年被改建為現在臭名昭著的惡魔島聯邦監獄，一些美國最臭名昭著的罪犯被送往那裡，而最著名的囚犯幾乎可以肯定是芝加哥黑幫老大“疤面煞星”阿爾·卡彭，於 1934 年被轉移到惡魔島聯邦監獄。一句匿名的監獄諺語非常簡潔地總結了這一點：「打破規則，你就進監獄，打破監獄規則，你就去惡魔島。」", short_desc: "傳奇聯邦監獄，充滿神祕色彩與歷史故事。", icon: "🏝️", url: "https://www.alcatrazcruises.com/", lat: 37.8270, lng: -122.4230, image: "https://images.hornblower.com/1200x840/images/tours/hacco/ec9aa226-bd16-4f2b-8f20-f48eea6e4187.jpeg" },
+            { name: "叮叮車 Cable Car", city: "SF", type: "Fun", desc: "世界上唯一仍在運行的手動纜車系統，也是舊金山的移動名片。搭乘它穿梭在陡坡間，極具復古情懷。", short_desc: "體驗世界唯一手動纜車，穿梭陡坡的復古情懷。", icon: "🚋", url: "https://www.sfmta.com/getting-around/muni/cable-cars", lat: 37.7941, lng: -122.4089, image: "https://www.sfmta.com/files/styles/hero_slideshow_large_2x/public/hero-images/2017/09/160924_mh_050.jpg?itok=jPOWc1U4" },
+            { name: "九曲花街 Lombard St", city: "SF", type: "Photo", desc: "世界上最彎曲的街道。為了緩衝極度陡峭的坡度而設計了八個急轉彎，路旁種滿繡球花，景緻迷人。", short_desc: "世界上最彎曲的街道，繡球花與急轉彎的視覺饗宴。倫巴底街，是美國加利福尼亞州舊金山一條東西方向貫穿要塞公園及牛洞區的街道，因其有一路段由八個急彎組成而聞名，並因此有「九曲花街」之稱。倫巴底街係由賈斯珀·奧法雷爾發起的，取名自費城的同名街道。", icon: "🌸", url: "https://www.sftravel.com/things-to-do/attractions/iconic-sf/lombard-street", lat: 37.8021, lng: -122.4187, image: "https://www.sftravel.com/sites/default/files/styles/hero/public/2022-10/lombard-street-aerial.jpg.webp?itok=BqBM3IRW" },
+            { name: "彩繪女士 Painted Ladies", city: "SF", type: "Photo", desc: "舊金山最具代表性的維多利亞式排屋，背景正是現代化的市中心高樓大廈，呈現出古典與現代的完美對比。", short_desc: "經典維多利亞式排屋，阿拉莫廣場的絕美明信片景緻。", icon: "🏠", url: "https://www.sftravel.com/things-to-do/attractions/iconic-sf/painted-ladies", lat: 37.7762, lng: -122.4328, image: "https://www.sftravel.com/sites/default/files/styles/hero/public/2024-08/painted-ladies-skyline-twilight.jpg.webp?itok=0JKeRcGf" },
+            { name: "渡輪大廈 Ferry Building", city: "SF", type: "Food", desc: "舊金山的美食殿堂。這座歷史悠久的渡輪站內進駐了許多在地手工藝品、精品咖啡、乳酪與特色美食。", short_desc: "歷史悠久的美食殿堂，匯集在地農產與精品咖啡。", icon: "⛴️", url: "https://www.ferrybuildingmarketplace.com/", lat: 37.7955, lng: -122.3937, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgT6FB-xGlIkWm4EZJcp6okRXUt2n-AfJwYg&s" },
+            { name: "藝術宮", city: "SF", type: "Photo", desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", short_desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", icon: "🏛️", url: "https://palaceoffinearts.com/", lat: 37.8029, lng: -122.4484, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Palace_of_Fine_Arts_%2816794p%29.jpg/500px-Palace_of_Fine_Arts_%2816794p%29.jpg" },
+            { name: "Chase Center", city: "SF", type: "Fun", desc: "金州勇士隊主場，現代化且熱血沸騰。", short_desc: "金州勇士隊主場，現代化且熱血沸騰。", icon: "🏀", url: "https://www.chasecenter.com/", lat: 37.7680, lng: -122.3877, image: "https://cdn.nba.com/teams/uploads/sites/1610612744/2025/08/LAL_1005x600.jpg" },
             
             // --- 優勝美地 (Yosemite) 景點 ---
-            { name: "隧道景觀 Tunnel View", city: "Yosemite", type: "Photo", desc: "進入優勝美地谷地時最經典的觀景台。從這裡可以一次飽覽酋長岩、新娘面紗瀑布和半圓頂三大地標，是攝影愛好者的天堂。", short_desc: "優勝美地象徵性視角，一次飽覽三大地標。", icon: "🏞️", url: "https://www.nps.gov/yose/planyourvisit/tunnelview.htm", lat: 37.7156, lng: -119.6772 },
-            { name: "酋長岩 El Capitan", city: "Yosemite", type: "Nature", desc: "世界上最大的單塊花崗岩巨石，垂直高度超過 900 公尺。雖然遊客不能攀登，但從谷底仰望其氣勢，已足夠令人震撼。", short_desc: "全球最大單塊花崗岩，攀岩者的夢想聖地。", icon: "🧗", url: "https://www.nps.gov/yose/planyourvisit/elcapitan.htm", lat: 37.7339, lng: -119.6377 },
-            { name: "優勝美地瀑布 Yosemite Falls", city: "Yosemite", type: "Nature", desc: "由上、中、下三段瀑布組成，總落差達 739 公尺，是北美最高的瀑布之一。春末夏初雪水融化時，水量最大，氣勢最為磅礡。", short_desc: "北美最高瀑布之一，春季水量最為壯觀。", icon: "🌊", url: "https://www.nps.gov/yose/planyourvisit/waterfalls.htm", lat: 37.7562, lng: -119.5969 },
-            { name: "半圓頂 Half Dome", city: "Yosemite", type: "Nature", desc: "優勝美地最著名的地標，形狀像一顆被切開的巨大圓頂。它代表著優勝美地的精神——堅毅與壯麗。從谷底或冰川點遠眺皆極為壯觀。", short_desc: "優勝美地精神象徵，獨特半圓形花崗岩地標。", icon: "⛰️", url: "https://www.nps.gov/yose/planyourvisit/halfdome.htm", lat: 37.7459, lng: -119.5332 },
+            { name: "隧道景觀 Tunnel View", city: "Yosemite", type: "Photo", desc: "進入優勝美地谷地時最經典的觀景台。從這裡可以一次飽覽酋長岩、新娘面紗瀑布和半圓頂三大地標，是攝影愛好者的天堂。", short_desc: "優勝美地象徵性視角，一次飽覽三大地標。", icon: "🏞️", url: "https://timtingtravel.com/yosemite/#t-1730697281859", lat: 37.7155615, lng: -119.6963897, image: "https://imgs.gvm.com.tw/upload/gallery/20210402/78779_03.jpg" },
+            { name: "優勝美地谷 Yosemite Valley", city: "Yosemite", type: "Nature", desc: "優勝美地谷 (Yosemite Valley) 位於美國加州內華達山脈西坡，是優勝美地國家公園的核心區域，以其由冰河雕刻出的壯觀 U 型谷、巨大花崗岩懸崖（如酋長岩 El Capitan、半圓頂 Half Dome）、世界級瀑布（如優勝美地瀑布 Yosemite Falls）、巨型紅杉林與豐富的生態聞名，是全球知名的世界自然遺產，每年吸引大量遊客造訪。 ", short_desc: "在清晨或傍晚，河面如鏡能映照出峽谷的倒影，是攝影愛好者不可錯過的攝影點。", icon: "🏞️", url: "https://timtingtravel.com/yosemite/#t-1730697281859", lat: 37.7156, lng: -119.6772, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Yosemite_Valley_-_Flickr_-_Moo.The.Cow.jpg/500px-Yosemite_Valley_-_Flickr_-_Moo.The.Cow.jpg" },         
+            { name: "新娘頭紗瀑布 Bridalveil Fall", city: "Yosemite", type: "Nature", desc: "當你進入優勝美地山谷時，新娘面紗瀑布便映入眼簾——你就會明白為什麼優勝美地的早期開拓者們會把它命名為新娘面紗瀑布，因為它的形態酷似新娘在微風中飄動的面紗。新娘面紗瀑布全年流水不斷，五月是流量最大的月份。 ", short_desc: "新娘面紗瀑布全年流水不斷，景色優美。然而，與優勝美地國家公園的所有瀑布一樣，新娘面紗瀑佈在夏末秋初水量會減少。", icon: "🏞️", url: "https://www.travelyosemite.com/plan/points-of-interest/waterfalls", lat: 37.7166741, lng: -119.648932, image: "https://assets.milestoneinternet.com/cdn-cgi/image/f=auto/aramark-parent/yosemite-national-park/site-images/plan/yosemite-national-park-lodging-and-activities-california-united-states-bridalveil-fall.jpg?width=1240&height=760" },       
+          { name: "酋長岩 El Capitan", city: "Yosemite", type: "Nature", desc: "世界上最大的單塊花崗岩巨石，垂直高度超過 900 公尺。雖然遊客不能攀登，但從谷底仰望其氣勢，已足夠令人震撼。", short_desc: "全球最大單塊花崗岩，攀岩者的夢想聖地。", icon: "🧗", url: "https://www.travelyosemite.com/plan/points-of-interest/rock-formations-cliffs", lat: 37.7339, lng: -119.6377, image: "https://assets.milestoneinternet.com/cdn-cgi/image/f=auto/aramark-parent/yosemite-national-park/site-images/plan/cathedral-rocks-yosemite-national-park-lodging-and-activities-california-united-states.jpg?cropY=110&cropW=6000&cropH=3677&width=1240&height=760" },
+            { name: "優勝美地瀑布 Yosemite Falls", city: "Yosemite", type: "Nature", desc: "由上、中、下三段瀑布組成，總落差達 739 公尺，是北美最高的瀑布之一。春末夏初雪水融化時，水量最大，氣勢最為磅礡。", short_desc: "北美最高瀑布之一，春季水量最為壯觀。", icon: "🌊", url: "https://www.travelyosemite.com/plan/points-of-interest/waterfalls", lat: 37.7562, lng: -119.5969, image: "https://assets.milestoneinternet.com/cdn-cgi/image/f=auto/aramark-parent/yosemite-national-park/site-images/plan/yosemite-national-park-lodging-and-activities-california-united-states-yosemite-falls.jpg?cropW=2000&cropH=1226&width=1240&height=760" },
+            { name: "半圓頂 Half Dome", city: "Yosemite", type: "Nature", desc: "優勝美地最著名的地標，形狀像一顆被切開的巨大圓頂。它代表著優勝美地的精神——堅毅與壯麗。從谷底或冰川點遠眺皆極為壯觀。", short_desc: "優勝美地精神象徵，獨特半圓形花崗岩地標。", icon: "⛰️", url: "https://www.travelyosemite.com/plan/points-of-interest/rock-formations-cliffs", lat: 37.7459, lng: -119.5332, image: "https://assets.milestoneinternet.com/cdn-cgi/image/f=auto/aramark-parent/yosemite-national-park/site-images/plan/yosemite-national-park-lodging-and-activities-california-united-states-half-dome.jpeg?cropY=310&cropW=5760&cropH=3530&width=1240&height=760" },
 
             // --- 舊金山到卡梅爾 PCH 景點 ---
-            { name: "鴿子點燈塔", city: "PCH", type: "History", desc: "建於 1871 年，是美國西海岸最高的燈塔之一。戶外園區全天開放，是經典的海岸攝影據點。", short_desc: "經典海岸燈塔，美國西海岸最高之一。", icon: "💡", url: "https://www.parks.ca.gov/?page_id=533", lat: 37.1844, lng: -122.3947 },
-            { name: "鯊魚鰭灣", city: "PCH", type: "Nature", desc: "因海中巨石形狀酷似鯊魚背鰭而得名。擁有原始的自然美感與獨特的海蝕洞景觀。", short_desc: "形狀酷似鯊魚背鰭的巨石海灘。", icon: "🦈", url: "https://www.californiacoastline.org/cgi-bin/image.cgi?image=4583&mode=big&options=0", lat: 37.0097, lng: -122.1816 },
-            { name: "聖塔克魯茲碼頭與樂園", city: "PCH", type: "Fun", desc: "加州最古老的海濱遊樂園，擁有百年歷史的木質過山車。碼頭下方常有成群海獅休憩。", short_desc: "加州最古老海濱樂園，經典木質過山車。", icon: "🎡", url: "https://beachboardwalk.com/", lat: 36.9641, lng: -122.0181 },
-            { name: "蒙特雷灣水族館", city: "PCH", type: "Nature", desc: "全美最受推崇的水族館，必看巨型海藻森林與海獺餵食秀。座落於歷史罐頭廠街。", short_desc: "全美頂尖水族館，巨型海藻森林景觀。", icon: "🐠", url: "https://www.montereybayaquarium.org/", lat: 36.6183, lng: -121.9015 },
-            { name: "17-Mile Drive", city: "PCH", type: "Nature", desc: "私人景觀公路，欣賞碧海藍天、孤柏樹、海豹與豪華住宅。需付入園費$12.25/車。", short_desc: "海岸線私人景觀公路，必看孤柏與鳥岩。", icon: "🌲", url: "https://www.pebblebeach.com/17-mile-drive/", lat: 36.6022, lng: -121.9546 },
-            { name: "卡梅爾小鎮", city: "PCH", type: "Culture", desc: "充滿歐式童話氛圍的藝術小鎮，擁有薑餅屋般的房舍和潔白沙灘，適合散步與藝廊之旅。", short_desc: "歐式童話藝術小鎮，無霓虹燈與速食店。", icon: "🏡", url: "https://www.carmelcalifornia.com/", lat: 36.5552, lng: -121.9233 },
+            { name: "半月灣 Half Moon Bay", city: "PCH", type: "Nature", desc: "半月灣距離舊金山車程半個多小時，因絕美的海岸線和沙灘而聞名。", short_desc: "半月灣距離舊金山車程半個多小時，因絕美的海岸線和沙灘而聞名。", icon: "💡", url: "https://www.parks.ca.gov/?page_id=533", lat:37.472832, lng: -122.4466594, image: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcSrA7ReYNgiMd7-AzraqkyAvVLULwz4rbaSPbbcMR_IKBYQl2lVmZSZtj0RE_sB_NkLCcb5F11Kn437QtrXvsWlqq0&s=19" },
+            { name: "柏樹隧道 Seal Cove Cypress Tree Tunnel", city: "PCH", type: "Nature", desc: "半月灣以北Moss Beach 附近的一片小樹林，《魔戒》取景地，裡面有很多高大的柏樹和橫倒的枯木。停車：Fitzgerald Marine Ranger Station & Parking，停好車走一分鐘就能到入口；也可以導航 Seal Cove Inn 在旁邊街趴，入口就在它旁邊。", short_desc: "半月灣距離舊金山車程半個多小時，因絕美的海岸線和沙灘而聞名。", icon: "💡", url: "https://www.parks.ca.gov/?page_id=533", lat:37.5220228, lng: -122.5135715, image: "https://www.17ybm.com/wp-content/uploads/2023/08/wx_20230831222131-1024x730.jpg" }, 
+          { name: "鴿點燈塔 Pigeon Point Lighthouse", city: "PCH", type: "History", desc: "建於 1871 年，是美國西海岸最高的燈塔之一。1853年，一艘名為信鴿號的商船，在波士頓 – 舊金山的處女航中遭遇大霧天氣，加之船長判斷失誤，導致船隻失事在現燈塔所在位置為了避免悲劇的再次發生，由國會撥款在1871年建造了這座燈塔，並於1872年11月15日投入使用。為了紀念信鴿號，故取名鴿點燈塔Pigeon Point Lighthouse。燈塔所在地是州立歷史公園，不需要門票，也不需要停車費", short_desc: "經典海岸燈塔，美國西海岸最高之一。", icon: "💡", url: "https://www.parks.ca.gov/?page_id=533", lat: 37.1844, lng: -122.3947, image: "https://www.17ybm.com/wp-content/uploads/2023/08/wx_20230829114939.jpg" },
+            { name: "鯊魚鰭海灣 Shark Fin Cove", city: "PCH", type: "Nature", desc: "因海中巨石形狀酷似鯊魚背鰭而得名。擁有原始的自然美感與獨特的海蝕洞景觀。", short_desc: "形狀酷似鯊魚背鰭的巨石海灘。", icon: "🦈", url: "https://www.californiacoastline.org/cgi-bin/image.cgi?image=4583&mode=big&options=0", lat: 37.0043322, lng: -122.1850961, image: "https://lh3.googleusercontent.com/pw/ADCreHf1UekAPNuSMeY8xpnD3IL3dWH-696KH5rhT6qFvnYcl3fc-QPQZOIVrNGhCGq4Kd90RAELCX9OBBW52kz_5_rkZx98iysCmpuOmjtckszQWFgnU_paGMzwxWFNxV5UYYv9efX1G5hmUT8cPrJ1w6X4yA=w2400-h1600-no" },
+            { name: "聖塔克魯茲碼頭與樂園", city: "PCH", type: "Fun", desc: "加州最古老的海濱遊樂園，擁有百年歷史的木質過山車。碼頭下方常有成群海獅休憩。", short_desc: "加州最古老海濱樂園，經典木質過山車。", icon: "🎡", url: "https://beachboardwalk.com/", lat: 36.9641, lng: -122.0181, image: "https://lh3.googleusercontent.com/pw/ADCreHcvlivlQdIpHfGBtBwi7O_kTAG3SnGkGvG4y9G73F0tuahmguNmOt0BVE23UMD-Sp9KjkEKeXSnM9slKsQe_dx2351wguI9DGixwmQ8_aTU5WokDg936Cz-wy7JZNt9-LJuB2Yj-fBUB577vg74hF5mHQ=w2400-h1600-no" },
+            { name: "蒙特雷水族館 Monterey Bay Aquarium", city: "PCH", type: "Nature", desc: "全美最受推崇的水族館，必看巨型海藻森林與海獺餵食秀。座落於歷史罐頭廠街。<br>票價：18 – 69歲$65，4歲以下免費，其餘$50，如果是假日前往，最好提前幾天訂票，當天買很可能售罄。<br>營業時間：10 am – 5 pm<br>停車：水族館本身不附停車場，但附近有許多收費停車場，基本上都是按次收費，一次$20左右", short_desc: "全美頂尖水族館，巨型海藻森林景觀。", icon: "🐠", url: "https://www.montereybayaquarium.org/", lat: 36.6182622, lng: -121.9019542, image: "https://www.17ybm.com/wp-content/uploads/2023/11/%E8%92%99%E7%89%B9%E9%9B%B7%E6%B0%B4%E6%97%8F%E9%A6%86%E5%86%85%E9%83%A8.jpg" },
+            { name: "罐頭廠街 Cannery Row", city: "PCH", type: "Nature", desc: "水族館門口那條路就是罐頭廠街，是蒙特雷的商業街，由沙丁魚罐頭廠慢慢演變而來，很像美國電影裡的場景，有一些美式街景可以拍照，也有很多特色小店可以逛。", short_desc: "罐頭廠街（Cannery Row）是加州蒙特雷市一條歷史悠久的海濱街道，曾是沙丁魚罐頭產業的繁榮中心。", icon: "🐠", url: "https://www.montereybayaquarium.org/", lat: 36.6138456, lng: -121.9010282, image: "https://www.17ybm.com/wp-content/uploads/2023/09/Monterey-cannery-row.jpg" },
+          { name: "17哩灣 17-Mile Drive", city: "PCH", type: "Nature", desc: "私人景觀公路，欣賞碧海藍天、孤柏樹、海豹與豪華住宅。需付入園費$12.25/車。<br>門票：$12.25/車，可以刷卡，如果在裡面吃飯並消費$35以上，可報銷門票費用，所以記得保存好門票，行人和腳踏車免門票，住裡面飯店也免門票。<br>玩多久：一般2-3小時<br>1號景點：牧羊人嶺Shepherd's Knoll<br>2號景點：越橘樹丘Huckleberry Hill<br>3號景點：西班牙灣海灘Spanish Bay Beach<br>4號景點：不眠海Restless Sea<br>5號景點：喬角Point Joe<br>6號景點：中國岩China Rock<br>7號景點：鳥岩Bird Rock<br>8號景點：海豹岩Seal Rock<br>9號景點：風扇貝海灘觀景景點Fanshell Beach Overlook<br>10號景點：柏樹角觀景點Cypress Point Lookout<br>11號景點：克羅克樹林Crocker Grove<br>12號景點：孤獨樹The Lone Cypress<br>13號景點：鬼樹Ghost Tree<br>14號景點：遊客中心Visit Center<br>15號景點：高爾夫球場Pebble Beach Golf Links<br>16號景點：馬術中心Pebble Beach Equestrain Center<br>17號景點：Ford Meadow", short_desc: "海岸線私人景觀公路，必看孤柏與鳥岩。", icon: "🌲", url: "https://www.pebblebeach.com/17-mile-drive/", lat: 36.6022, lng: -121.9546, image: "https://skyhorseauto.com/wp-content/uploads/2025/05/Highway-one-02.png" },
+            { name: "卡梅爾小鎮", city: "PCH", type: "Culture", desc: "充滿歐式童話氛圍的藝術小鎮，擁有薑餅屋般的房舍和潔白沙灘，適合散步與藝廊之旅。", short_desc: "歐式童話藝術小鎮，無霓虹燈與速食店。", icon: "🏡", url: "https://www.carmelcalifornia.com/", lat: 36.5552, lng: -121.9233, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Kocher_Building_%28cropped%29.jpg/960px-Kocher_Building_%28cropped%29.jpg" },
 
             // --- PCH 景點 ---
-            { name: "羅伯斯角州立自然保護區 Point Lobos", city: "PCH", type: "Nature", desc: "被譽為「加州州立公園系統中的皇冠」。這裡有豐富的海鳥、海豹與海獺生態，以及壯觀的海蝕景觀。", short_desc: "加州皇冠級自然保護區，觀賞海獺海豹。", icon: "🦭", url: "https://www.parks.ca.gov/?page_id=571", lat: 36.5222, lng: -121.9525 },
-            { name: "Bixby Bridge", city: "PCH", type: "Photo", desc: "一號公路最具代表性的攝影點。巨大的單跨混凝土拱橋完工於 1932 年，橫跨在陡峭的斷崖深谷之間。", short_desc: "一號公路最著名的單拱橋，懸崖絕景。", icon: "🌉", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10924", lat: 36.3715, lng: -121.9017 },
-            { name: "菲佛海灘 Pfeiffer Beach", city: "PCH", type: "Photo", desc: "隱藏在山谷中的秘境海灘。著名的「紫色」沙灘與海上巨大的 Keyhole Rock 石洞拱門。", short_desc: "欣賞 Keyhole Rock 與獨特的紫色沙灘。", icon: "💜", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10921", lat: 36.2381, lng: -121.8152 },
-            { name: "麥克威瀑布 McWay Falls", city: "PCH", type: "Nature", desc: "加州極少數直接落入海灘的瀑布。碧綠的海水配上細白的瀑布，美得像一幅畫。", short_desc: "世外桃源般的海岸瀑布，寶石色海灣。", icon: "💧", url: "https://www.parks.ca.gov/?page_id=570", lat: 36.1579, lng: -121.6722 },
-            { name: "赫氏古堡 Hearst Castle", city: "PCH", type: "History", desc: "報業大亨赫斯特的私人領地，融合地中海風情與無數歐洲骨董，極盡奢華。", short_desc: "極致奢華的私人莊園，融合歐洲藝術。", icon: "🏰", url: "https://hearstcastle.org/", lat: 35.6852, lng: -121.1666 },
-            { name: "象鼻海豹灘 Elephant Seal Rookery", city: "PCH", type: "Nature", desc: "全年都可以在此觀賞到成百上千隻巨大的象鼻海豹在沙灘上休息、換毛或育雛。", short_desc: "免費生態觀察點，觀賞成群象鼻海豹。", icon: "🦭", url: "https://www.elephantseal.org/", lat: 35.6630, lng: -121.2574 },
-            { name: "月光石海灘 Moonstone Beach", city: "PCH", type: "Nature", desc: "以海灘上散布的小玉石得名。擁有風景極佳的濱海木棧道，適合悠閒散步。", short_desc: "以小玉石聞名，擁有絕美濱海木棧道。", icon: "💎", url: "https://visitcambriaca.com/moonstone-beach/", lat: 35.5714, lng: -121.1197 },
-            { name: "莫羅貝與莫羅岩 Morro Rock", city: "PCH", type: "Photo", desc: "巨大的海上岩漿岩矗立在海港入口。碼頭區充滿了海鮮餐廳與水上活動。", short_desc: "巨型海上岩漿岩地標，海鮮美食碼頭。", icon: "🌋", url: "https://www.morrobay.org/", lat: 35.3719, lng: -120.8672 },
-            { name: "皮斯莫比奇 Pismo Beach", city: "PCH", type: "Fun", desc: "這段旅程的終點，是一個充滿陽光氣息的海邊渡假小鎮。以廣大的沙灘和沙丘活動聞名。", short_desc: "海邊渡假小鎮，沙灘碼頭與沙丘活動。", icon: "🏖️", url: "https://experiencepismobeach.com/", lat: 35.1428, lng: -120.6413 },
+            { name: "羅伯斯角州立自然保護區 Point Lobos", city: "PCH", type: "Nature", desc: "被譽為「加州州立公園系統中的皇冠」。這裡有豐富的海鳥、海豹與海獺生態，以及壯觀的海蝕景觀。", short_desc: "加州皇冠級自然保護區，觀賞海獺海豹。", icon: "🦭", url: "hhttps://lh3.googleusercontent.com/geougc-cs/AMBA38sSJwPcXyx0dakudXv94o8KyL1m8fPG2qVrM9r5xc8B-SiNfNo168T2TO4tvCGii99h2Ua7jGgQggPzzl2hABv5y09vjXsme1LVUX_mdTU47nF2ZX7a01AznTA3qYZnVEhsbPwJHjetAxAN=s3072-w3072-h1460-rw", lat: 36.5222, lng: -121.9525, image: "https://lh3.googleusercontent.com/gps-cs-s/AG0ilSz7j7IvRpcnirTU8iygdy-rfymiAn90ciKWWPNujuw3WZX80F5qH3CtYkXavUHJAxdvte-Li01FzNmABr5phm_rtjSraxhTD1xMYTEo5OywWcSOysR7lNUBkJd8bageP9rBAoSHoqOE3MAC=s1360-w1360-h1020-rw" },
+            { name: "比克斯比河大橋 Bixby Creek Bridge", city: "PCH", type: "Photo", desc: "一號公路最具代表性的攝影點。巨大的單跨混凝土拱橋完工於 1932 年，橫跨在陡峭的斷崖深谷之間。經常出現在美劇中的景點，是一號公路大蘇爾地區最具代表性的地標之一，推薦把車停在Bixby Bridge Vista Point 靠山的一側，能拍到更美的風景。", short_desc: "一號公路最著名的單拱橋，懸崖絕景。", icon: "🌉", url: "https://www.fs.usda.gov/recarea/lpnf/recarea/?recid=10924", lat: 36.3715, lng: -121.9017, image: "https://www.17ybm.com/wp-content/uploads/2023/08/wx_20230829143439.jpg" },
+            { name: "菲佛海灘 Pfeiffer Beach", city: "PCH", type: "Photo", desc: "隱藏在山谷中的秘境海灘。著名的「紫色」沙灘與海上巨大的 Keyhole Rock 石洞拱門。<br>停車費用：每輛車  $15.00、每輛麵包車 $30.00、每輛巴士 $50.00(現金優先，但也接受信用卡需加收3.5%手續費）。<br>提示：梧桐峽谷路(Sycamore Canyon Road)是1號公路以西，比格蘇爾郵局和菲佛比格蘇爾州立公園之間唯一一條鋪設路面、沒有閘門且向下延伸的道路。您會在路口看到一個醒目的黃色交通警示牌。找到這條路後，沿著它行駛約兩英里（約3.2公里）直到盡頭。請小心駕駛—這條路狹窄且蜿蜒，不適合拖車和大型車輛通行。", short_desc: "欣賞 Keyhole Rock 與獨特的紫色沙灘。", icon: "💜", url: "hhttps://campone.com/campgrounds/pfeiffer-beach-day-use-area/", lat: 36.2383719, lng: -121.8180743, image: "https://imgc.ssmedia.com/imgc335_55519/q:95/o:webp/bigsurcalifornia/webart/listings/more/80_3.jpg" },
+            { name: "麥克威瀑布 McWay Falls", city: "PCH", type: "Nature", desc: "加州極少數直接落入海灘的瀑布。碧綠的海水配上細白的瀑布，美得像一幅畫。可以把車停到停車場 McWay Beach Parking Lot，$10/車/天（17點以後免費），然後走專用Trail 去近距離觀賞。也可以把車停在路邊，在 McWay Falls View Point 遠眺，但注意車輪要完全停在標線以外，不能壓線，不然會吃罰單", short_desc: "麥克威瀑布（McWay Falls）是美國加州朱莉婭·菲佛·伯恩斯州立公園的主要景觀，也是美國直接入海瀑布之一。", icon: "💧", url: "https://www.parks.ca.gov/?page_id=570", lat: 36.1579, lng: -121.6722, image: "https://www.17ybm.com/wp-content/uploads/2023/08/wx_20230829144455.jpg" },
+            { name: "赫氏古堡 Hearst Castle", city: "PCH", type: "History", desc: "號稱全世界最奢華的古堡，曾是世界出版大亨 William Randolph Hearst 的私人宅邸，耗時近30年於1947年建成，收藏了眾多藝術品，每個角落都彰顯財富。需要買票進入，只能報團不能自由參觀，票可以現場買，也可以提前在網上預訂，目前共有4個tour：<br>1.Grand Rooms $35：室外泳池、室外建築、花園、會客廳、餐廳、遊戲室、劇院、室內泳池，第一次參觀建議選這個tour<br>2.Upstairs Suites $35：室外泳池、圖書館、主要家庭成員的臥室、室內泳池<br>3.Cottages & Kitchen %35：酒窖、廚房、花園、附屬建築、兩個泳池<br>4.Designing the Dream $40：附樓、更衣室，主要介紹藝術品及建築設計<br>由於古堡建在山頂，需要在山腳下坐景區的擺渡車前往，單程半小時，一定要提前至少10分鐘以上到達，因為要先去售票處換手環，晚一分鐘擺渡車也不會等，但可以找工作人員改到下一班。", short_desc: "極致奢華的私人莊園，融合歐洲藝術。", icon: "🏰", url: "https://hearstcastle.org/", lat: 35.6852, lng: -121.1666, image: "https://lh3.googleusercontent.com/p/AF1QipO8VcWxzehKcVAKgFnkhxAUz62BnD4sudWomUmK=s1360-w1360-h1020-rw" },
+            { name: "象鼻海豹灘 Elephant Seal Rookery", city: "PCH", type: "Nature", desc: "全年都可以在此觀賞到成百上千隻巨大的象鼻海豹在沙灘上休息、換毛或育雛。※ 海豹每年十一月到隔年三月來到沙灘繁殖，四月到八月在沙灘蛻皮，其他時間很難見到", short_desc: "免費生態觀察點，觀賞成群象鼻海豹。", icon: "🦭", url: "https://www.elephantseal.org/", lat: 35.6630, lng: -121.2574, image: "https://www.17ybm.com/wp-content/uploads/2023/08/wx_20230829145415.jpg" },
+            { name: "莫羅貝與莫羅岩 Morro Rock", city: "PCH", type: "Photo", desc: "莫羅岩（Morro Rock）現為加州歷史地標，形成於約2,300萬年前，由一座早已熄滅的火山爆發物形成。您可以沿著Embarcadero Road向北行駛，即可到達莫羅岩腳下。請注意：攀爬莫羅岩是違法的。", short_desc: "巨型海上岩漿岩地標，海鮮美食碼頭。", icon: "🌋", url: "https://www.morrobay.org/things-to-do/outdoors/morro-rock/", lat: 35.556268, lng: -121.102345, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Morro_Rock_1.jpg/500px-Morro_Rock_1.jpg" },
+            { name: "皮斯莫比奇 Pismo Beach", city: "PCH", type: "Fun", desc: "Pismo Beach 最有名的景-碼頭Pismo Beach Pier，有一座長達1200英尺延伸到海裡的棧橋，橋下很適合拍照，Pismo Beach的大Logo也在這裡。Pismo Beach有「世界蛤蜊之都」的稱號，沙灘上到處都是蛤蜊，可以帶趕海工具來挖，但是，想帶走必須要有漁證Fishing License，且只能帶走4.5吋以上的，數量不能超過10只。", short_desc: "海邊渡假小鎮，沙灘碼頭與沙丘活動。", icon: "🏖️", url: "https://experiencepismobeach.com/", lat: 35.1428, lng: -120.6413, image: "https://live.staticflickr.com/65535/50437362958_dddcfa49d7_b.jpg" },
 
             // --- PCH 終段景點 ---
-            { name: "丹麥村 Solvang", city: "PCH", type: "Culture", desc: "由丹麥移民建立，完美保留了丹麥建築風格與文化。隨處可見巨大的風車、傳統木造房屋以及傳統服飾的木偶裝飾。", short_desc: "充滿北歐童話氣息的丹麥移民小鎮，經典風車地標。", icon: "🇩🇰", url: "https://solvangusa.com/", lat: 34.5958, lng: -120.1376 },
-            { name: "聖塔芭芭拉 Santa Barbara", city: "PCH", type: "Culture", desc: "被譽為「美西的蔚藍海岸」，城市規定所有建築必須維持紅瓦、白牆的西班牙殖民風格，散發著優雅的度假氛圍。", short_desc: "具備紅瓦白牆西班牙風格的優雅海岸城市，必登法院鐘樓。", icon: "🇪🇸", url: "https://santabarbaraca.com/", lat: 34.4208, lng: -119.6982 },
+            { name: "丹麥村 Solvang", city: "PCH", type: "Culture", desc: "由丹麥移民建立，完美保留了丹麥建築風格與文化。隨處可見巨大的風車、傳統木造房屋以及傳統服飾的木偶裝飾。", short_desc: "充滿北歐童話氣息的丹麥移民小鎮，經典風車地標。", icon: "🇩🇰", url: "https://solvangusa.com/", lat: 34.5958, lng: -120.1376, image: "https://www.17ybm.com/wp-content/uploads/2023/10/solvang-rasmussens.jpg" },
+            { name: "聖塔芭芭拉 Santa Barbara", city: "PCH", type: "Culture", desc: "被譽為「美西的蔚藍海岸」，城市規定所有建築必須維持紅瓦、白牆的西班牙殖民風格，散發著優雅的度假氛圍。推薦Downtown 逛逛吃吃喝喝，這裡有最好吃的冰淇淋店– McConnell's Fine Ice Creams，排隊時間通常20分鐘起，算得上聖塔芭芭拉土特產，在San Luis Obispo有分店，Ins上超火的商業街 Paseo Nuevo 也在這裡，有跳蚤市場、Vintage Shop 以及很多好吃的，還有一個很多人打卡的花磚樓梯，以及彩虹門Santa Barbara Chromatic Gate", short_desc: "具備紅瓦白牆西班牙風格的優雅海岸城市，必登法院鐘樓。", icon: "🇪🇸", url: "https://santabarbaraca.com/", lat: 34.4208, lng: -119.6982, image: "https://www.17ybm.com/wp-content/uploads/2023/10/Santa-Barbara.jpg" },
 
             // --- 洛杉磯 (LA) 景點 ---
-            { name: "聖塔莫尼卡碼頭 Santa Monica Pier", city: "LA", type: "Fun", desc: "這不僅是一號公路接近尾聲的經典站點，也是傳奇「母親之路」66 號公路的終點站。碼頭充滿了復古的海濱遊樂設施與熱鬧氛圍。", short_desc: "66號公路終點，經典海濱樂園與摩天輪。", icon: "🎠", url: "https://www.santamonicapier.org/", lat: 34.0100, lng: -118.4960 },
-            { name: "迪士尼樂園", city: "LA", type: "Fun", desc: "元祖樂園，充滿童話與魔法。建議使用 Genie+。", short_desc: "元祖樂園，充滿童話與魔法。", icon: "🎢", url: "https://disneyland.disney.go.com/", lat: 33.8121, lng: -117.9190 },
-            { name: "好萊塢環球影城 Universal Studios", city: "LA", type: "Fun", desc: "全球首座環球影城，結合真實片場與遊樂設施。必玩：超級任天堂世界（馬力歐賽車）、Studio Tour（玩命關頭/大白鯊）、哈利波特禁忌之旅。建議購買 Express Pass 省時。", short_desc: "電影主題樂園，必玩任天堂世界與片場導覽。", icon: "🎬", url: "https://www.universalstudioshollywood.com/", lat: 34.1381, lng: -118.3534 },
-            { name: "華納兄弟影城 Warner Bros. Tour", city: "LA", type: "Culture", desc: "相較於環球影城，提供更具知性深度的片場參觀。走入《六人行》咖啡館、《蝙蝠俠》道具間與真實製片廠。需提前預約。", short_desc: "深度片場參觀，走入六人行與蝙蝠俠場景。", icon: "🎥", url: "https://www.wbstudiotour.com/", lat: 34.1485, lng: -118.3377 },
-            { name: "格里斐斯天文台 Griffith Observatory", city: "LA", type: "Photo", desc: "洛杉磯地標，《樂來越愛你》(La La Land) 取景地。戶外露台可眺望好萊塢標誌與絕美市景夕陽。Samuel Oschin 天象館秀需現場購票。", short_desc: "俯瞰 LA 夜景與好萊塢標誌的最佳地點。", icon: "🔭", url: "https://griffithobservatory.org/", lat: 34.1184, lng: -118.3004 },
-            { name: "好萊塢星光大道 Walk of Fame", city: "LA", type: "History", desc: "尋找鑲嵌在人行道上的粉紅星形獎章，參觀 TCL 中國劇院（明星手腳印）與杜比劇院。建議上午前往避開人潮。", short_desc: "尋找心儀明星的星星與手印。", icon: "⭐", url: "https://www.walkoffame.com/", lat: 34.1016, lng: -118.3267 },
+            { name: "聖莫尼卡海灘 Santa Monica Beach", city: "LA", type: "Fun", desc: "這不僅是一號公路接近尾聲的經典站點，也是傳奇「母親之路」66 號公路的終點站。碼頭充滿了復古的海濱遊樂設施與熱鬧氛圍。", short_desc: "66號公路終點，經典海濱樂園與摩天輪。", icon: "🎠", url: "https://www.santamonicapier.org/", lat: 34.0100, lng: -118.4960, image: "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w" },
+            { name: "華納兄弟影城 Warner Bros. Tour", city: "LA", type: "Culture", desc: "相較於環球影城，提供更具知性深度的片場參觀。走入《六人行》咖啡館、《蝙蝠俠》道具間與真實製片廠。需提前預約。", short_desc: "深度片場參觀，走入六人行與蝙蝠俠場景。", icon: "🎥", url: "https://www.wbstudiotour.com/", lat: 34.1485, lng: -118.3377, image: "https://res.klook.com/image/upload/activities/ucvgbtrllb67boihxd3f.jpg" },
+            { name: "格里斐斯天文台 Griffith Observatory", city: "LA", type: "Photo", desc: "洛杉磯地標，《樂來越愛你》(La La Land) 取景地。戶外露台可眺望好萊塢標誌與絕美市景夕陽。Samuel Oschin 天象館秀需現場購票。", short_desc: "俯瞰 LA 夜景與好萊塢標誌的最佳地點。", icon: "🔭", url: "https://griffithobservatory.org/", lat: 34.1184, lng: -118.3004, image: "https://griffithobservatory.org/wp-content/uploads/2021/03/cameron-venti-PiqHSHYO3Uw-unsplash_noCautionTape_web-1600x800-1638571193.jpg" },
+            { name: "好萊塢星光大道 Walk of Fame", city: "LA", type: "History", desc: "尋找鑲嵌在人行道上的粉紅星形獎章，參觀 TCL 中國劇院（明星手腳印）與杜比劇院。建議上午前往避開人潮。", short_desc: "尋找心儀明星的星星與手印。", icon: "⭐", url: "https://www.walkoffame.com/", lat: 34.1016, lng: -118.3267, image: "https://explorehollywood.com/wp-content/uploads/2019/07/Walf_of_Fame_Header_1920x500.jpg" },
         ];
         
         let itineraryData = {
@@ -800,6 +855,18 @@
                 return map;
             }, {});
         }
+
+        // --- NEW: Extract Domain Helper ---
+        function getDomainFromUrl(url) {
+            try {
+                if (!url) return '';
+                const hostname = new URL(url).hostname;
+                return hostname.replace('www.', ''); // 去除 www. 讓顯示更簡潔
+            } catch (e) {
+                return 'Source';
+            }
+        }
+
         function weatherIcon(code) {
           if (code === 0) return "☀️";
           if ([1, 2].includes(code)) return "🌤️";
@@ -861,6 +928,14 @@
         }
 
         function init() {
+            // FIX: Fix Leaflet's default icon paths issue with CDN
+            delete L.Icon.Default.prototype._getIconUrl;
+            L.Icon.Default.mergeOptions({
+                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            });
+
             createAttractionMap();
             renderFlightTable('outbound');
             renderAccommodation();
@@ -1065,16 +1140,16 @@
             XLSX.utils.book_append_sheet(wb, wsAcc, "Accommodation");
 
             // 4. Dining Sheet
-            const diningHeaders = ["city", "name", "type", "desc", "icon", "url"];
+            const diningHeaders = ["city", "name", "type", "desc", "icon", "url", "image"];
             let diningRows = [diningHeaders];
-            diningData.forEach(d => diningRows.push([d.city, d.name, d.type, d.desc.replace(/<\/br>/g, "\n"), d.icon, d.url]));
+            diningData.forEach(d => diningRows.push([d.city, d.name, d.type, d.desc.replace(/<\/br>/g, "\n"), d.icon, d.url, d.image || ""]));
             const wsDining = XLSX.utils.aoa_to_sheet(diningRows);
             XLSX.utils.book_append_sheet(wb, wsDining, "Dining");
 
             // 5. Attractions Sheet
-            const attrHeaders = ["city", "name", "type", "desc", "short_desc", "icon", "url", "lat", "lng"];
+            const attrHeaders = ["city", "name", "type", "desc", "short_desc", "icon", "url", "lat", "lng", "image"];
             let attrRows = [attrHeaders];
-            attractions.forEach(a => attrRows.push([a.city, a.name, a.type, a.desc, a.short_desc, a.icon, a.url, a.lat, a.lng]));
+            attractions.forEach(a => attrRows.push([a.city, a.name, a.type, a.desc, a.short_desc, a.icon, a.url, a.lat, a.lng, a.image || ""]));
             const wsAttr = XLSX.utils.aoa_to_sheet(attrRows);
             XLSX.utils.book_append_sheet(wb, wsAttr, "Attractions");
 
@@ -1291,8 +1366,10 @@
             if (isMapMode) {
                 listContainer.classList.add('hidden');
                 mapContainer.classList.remove('hidden');
-                // Need a slight delay to allow div to become visible before rendering map sizing
-                setTimeout(() => renderPhaseMap(phase), 100);
+                // FIX: Use requestAnimationFrame for smoother paint
+                requestAnimationFrame(() => {
+                    renderPhaseMap(phase);
+                });
             } else {
                 listContainer.classList.remove('hidden');
                 mapContainer.classList.add('hidden');
@@ -1402,14 +1479,20 @@
             container.innerHTML = html;
         }
 
-        // --- NEW: Helper to find attractions in text ---
+        // --- NEW: Helper to find attractions in text (FIX: Stricter matching) ---
         function findMentionedAttractions(text) {
             if (!text) return [];
             return attractions.filter(attraction => {
-                // 拆解名稱，例如 "金門大橋 Golden Gate" -> ["金門大橋", "Golden", "Gate"]
-                const keywords = attraction.name.split(/[\s,]+/);
-                // 只要中文名或英文名有出現在文中就算 (忽略太短的詞以防誤判)
-                return keywords.some(keyword => keyword.length >= 2 && text.includes(keyword));
+                // FIX: Simply check if the FULL name exists in text.
+                // This prevents "Gate" (from boarding gate) matching "Golden Gate".
+                // But we still want to catch cases where "Golden Gate" is in "Golden Gate Bridge".
+                // String.includes does exactly this.
+                if (!attraction.name) return false;
+                
+                // Optional: You could add logic here to match "Golden Gate" OR "Golden Gate Bridge" if you had an alias field.
+                // For now, matching the primary name is the safest, least noisy approach.
+                // We trim spaces to be safe.
+                return text.includes(attraction.name.trim());
             });
         }
 
@@ -1548,7 +1631,7 @@
             }
         }
 
-        // --- NEW: Dining Logic (Updated for Expandable) ---
+        // --- NEW: Dining Logic (Updated for Expandable & Image) ---
         function filterDining(filter) {
             document.querySelectorAll('.dining-filter-btn').forEach(btn => {
                 btn.classList.remove('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
@@ -1578,16 +1661,37 @@
                 const descId = `dining-desc-${index}`;
                 const arrowId = `dining-arrow-${index}`;
 
+                // Image vs Emoji Logic
+                let headerContent = '';
+                if (item.image) {
+                    const domain = getDomainFromUrl(item.image);
+                    headerContent = `
+                    <div class="card-image-header">
+                        <img src="${item.image}" alt="${item.name}" loading="lazy">
+                        <div class="card-image-badge ${badgeClass}">
+                            ${cityLabel}
+                        </div>
+                        <div class="img-source-badge">
+                            📷 ${domain}
+                        </div>
+                    </div>
+                    `;
+                } else {
+                    headerContent = `
+                    <div class="relative z-10 flex justify-between items-start mb-4">
+                        <div class="text-4xl shadow-sm bg-white rounded-full w-12 h-12 flex items-center justify-center border border-[#efe6d8]">${item.icon}</div>
+                        <span class="text-xs px-2 py-1 rounded-full font-bold ${badgeClass}">${cityLabel}</span>
+                    </div>
+                    `;
+                }
+
                 // 注意：外層改為 div，不作為連結，避免點擊衝突
                 html += `
-                    <div class="card-hover rounded-2xl p-6 group block relative overflow-hidden h-full flex flex-col justify-between">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-[#faf7f2] rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 group-hover:bg-[#d6b98c]/20"></div>
+                    <div class="card-hover rounded-2xl p-6 group block relative overflow-hidden h-full flex flex-col justify-between ${item.image ? 'pt-0 px-0' : ''}">
+                        ${item.image ? headerContent : `<div class="absolute top-0 right-0 w-24 h-24 bg-[#faf7f2] rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 group-hover:bg-[#d6b98c]/20"></div>`}
                         
-                        <div>
-                            <div class="relative z-10 flex justify-between items-start mb-4">
-                                <div class="text-4xl shadow-sm bg-white rounded-full w-12 h-12 flex items-center justify-center border border-[#efe6d8]">${item.icon}</div>
-                                <span class="text-xs px-2 py-1 rounded-full font-bold ${badgeClass}">${cityLabel}</span>
-                            </div>
+                        <div class="${item.image ? 'p-6 pb-0' : ''}">
+                            ${!item.image ? headerContent : ''}
                             <h4 class="text-lg font-bold text-[#3a3a3a] mb-2 relative z-10 group-hover:text-[#d6b98c] transition-colors">${item.name}</h4>
                             
                             <!-- 隱藏的內容 -->
@@ -1596,7 +1700,7 @@
                             </div>
                         </div>
                         
-                        <div class="relative z-10 flex items-center justify-between pt-4 border-t border-[#efe6d8] mt-4">
+                        <div class="relative z-10 flex items-center justify-between pt-4 border-t border-[#efe6d8] mt-4 ${item.image ? 'mx-6' : ''}">
                             <!-- 展開按鈕 -->
                             <button onclick="toggleExpand('${descId}', '${arrowId}')" class="text-xs font-bold text-[#a09a93] hover:text-[#d6b98c] transition-colors flex items-center gap-1 focus:outline-none">
                                 <span>餐點介紹</span>
@@ -1615,7 +1719,7 @@
             container.innerHTML = html;
         }
 
-        // --- Attraction Logic (Updated for Expandable) ---
+        // --- Attraction Logic (Updated for Expandable & Image) ---
         function filterAttractions(filter) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
@@ -1642,16 +1746,39 @@
                 const descId = `attr-desc-${index}`;
                 const arrowId = `attr-arrow-${index}`;
 
+                // Image vs Emoji Logic
+                let headerContent = '';
+                if (item.image) {
+                    const domain = getDomainFromUrl(item.image);
+                    headerContent = `
+                    <div class="card-image-header">
+                        <img src="${item.image}" alt="${item.name}" loading="lazy">
+                        <div class="card-image-badge ${badgeColor} border">
+                            ${typeLabel}
+                        </div>
+                        <div class="img-source-badge">
+                            📷 ${domain}
+                        </div>
+                    </div>
+                    `;
+                } else {
+                    headerContent = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="text-4xl transform group-hover:scale-110 transition-transform duration-300">${item.icon}</div>
+                        <div class="flex flex-col items-end gap-1">
+                            <span class="text-[10px] uppercase font-bold text-[#a09a93] tracking-wider">${cityLabel}</span>
+                            <span class="text-xs px-2 py-1 rounded-full font-bold border ${badgeColor}">${typeLabel}</span>
+                        </div>
+                    </div>
+                    `;
+                }
+
                 html += `
-                    <div class="card-hover rounded-2xl overflow-hidden group block flex flex-col h-full">
-                        <div class="p-6 flex-grow">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="text-4xl transform group-hover:scale-110 transition-transform duration-300">${item.icon}</div>
-                                <div class="flex flex-col items-end gap-1">
-                                    <span class="text-[10px] uppercase font-bold text-[#a09a93] tracking-wider">${cityLabel}</span>
-                                    <span class="text-xs px-2 py-1 rounded-full font-bold border ${badgeColor}">${typeLabel}</span>
-                                </div>
-                            </div>
+                    <div class="card-hover rounded-2xl overflow-hidden group block flex flex-col h-full ${item.image ? 'pt-0' : ''}">
+                        ${item.image ? headerContent : '<div class="p-6 pb-0">'}
+                        
+                        <div class="${item.image ? 'p-6 flex-grow' : 'flex-grow'}">
+                            ${!item.image ? headerContent : ''}
                             <h4 class="text-lg font-bold text-[#3a3a3a] mb-2 group-hover:text-[#d6b98c] transition-colors">${item.name}</h4>
                             
                             <!-- 隱藏的內容 -->
@@ -1672,6 +1799,7 @@
                                 前往官網 ➔
                             </a>
                         </div>
+                        ${!item.image ? '</div>' : ''}
                     </div>
                 `;
             });
