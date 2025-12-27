@@ -9,6 +9,9 @@
     <!-- 引入 SheetJS (用於匯出備份與匯入 Excel) -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     
+    <!-- 引入 PptxGenJS (用於匯出 PowerPoint) -->
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    
     <!-- 引入 Leaflet 地圖套件 -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -143,11 +146,24 @@
 </head>
 <body>
     <div id="toast">訊息提示</div>
-    <header class="bg-white shadow-sm border-b border-[#efe6d8] relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-[#fbf7f2] via-[#faf0e6] to-[#f3e5d8] opacity-80"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center relative z-10">
-            <h1 class="text-4xl font-extrabold tracking-tight text-[#5c4d3c] sm:text-6xl mb-4">美西舊金山與洛杉磯之旅</h1>
-            <p class="text-xl text-[#8c7b66] mb-6 font-light">2026年 2月26日 - 3月11日 <span class="mx-2 text-[#d6b98c]">|</span> 13 天 12 夜 <span class="mx-2 text-[#d6b98c]">|</span> 加州夢幻行</p>                       
+    <header class="relative overflow-hidden h-[400px] md:h-[500px] flex items-end border-b border-[#efe6d8]">
+        <!-- 背景圖片 -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://raw.githubusercontent.com/MARIEGG0507/2026_MARIEGGCATRIP/refs/heads/main/image/Image_herobanner.png" alt="Hero Banner" class="w-full h-full object-cover">
+            <!-- 漸層遮罩：確保文字可讀性 -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        </div>
+
+        <!-- 標題內容 -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center relative z-10 w-full mb-4">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-6xl mb-3 drop-shadow-lg">美西舊金山與洛杉磯之旅</h1>
+            <p class="text-xl text-white/90 font-light drop-shadow-md flex flex-wrap justify-center items-center gap-2">
+                2026年 2月26日 - 3月11日 
+                <span class="hidden md:inline mx-2 text-[#d6b98c]">|</span> 
+                <span class="block md:inline">13 天 12 夜</span>
+                <span class="hidden md:inline mx-2 text-[#d6b98c]">|</span> 
+                <span class="block md:inline">加州夢幻行</span>
+            </p>                       
         </div>
     </header>
 
@@ -233,7 +249,7 @@
                     🗺️ 13 天旅程規劃
                     <div class="absolute bottom-0 left-0 w-full h-3 bg-[#a5b4fc] opacity-20 -z-10 transform translate-y-1"></div>
                 </h2>
-                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">行程分為三大主題階段。點選左側可切換查看詳細時間軸與亮點。</p>
+                <p class="mt-4 text-[#6b6b6b] max-w-2xl mx-auto">行程分為三大主題階段：舊金山 × 一號公路 × 洛杉磯。</p>
             </div>
             <div id="itinerary-container" class="bg-white rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden border border-[#efe6d8] flex flex-col md:flex-row md:h-[750px] relative">
                 <div id="phase-nav-container" class="w-full md:w-1/3 bg-[#fbf7f2] border-r border-[#efe6d8] md:overflow-y-auto custom-scroll z-10 relative">
@@ -289,11 +305,9 @@
 
     <footer class="bg-[#2c241b] text-white py-16 mt-12">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <div class="text-4xl mb-6">🇺🇸</div>
-            <h3 class="text-2xl font-bold mb-2 tracking-wider">2026 美西之旅</h3>
-            <p class="text-[#a09a93]">祝您的旅程充滿美好回憶！</p>
+            <p class="text-[#a09a93] text-lg mb-8">祝您的旅程充滿美好回憶！</p>
             <div class="w-12 h-1 bg-[#5c4d3c] mx-auto my-8 rounded-full"></div>
-            <div class="text-xs text-[#5c4d3c] mb-8">Designed with Earthy Calm Theme</div>
+            <div class="text-xs text-[#5c4d3c] mb-8">Designed with Jeff & Marie</div>
             <div class="inline-block px-6 py-4 rounded-2xl border border-[#3e3429] bg-[#251e16]">
                 <p class="text-[10px] text-[#5c4d3c] mb-3 font-bold uppercase tracking-widest">行程管理後台</p>
                 <div class="flex flex-wrap justify-center gap-3">
@@ -306,11 +320,15 @@
                         <span>📂</span> Excel 匯入
                     </label>
 
-                    <button onclick="loadFromGoogleSheet()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-white bg-[#107c41] border border-[#107c41] hover:bg-[#0c5e31] transition-all flex items-center gap-2 shadow-sm">
+                    <button onclick="loadFromGoogleSheet()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
                         <span>☁️</span> Google 同步
                     </button>
-                    <button onclick="resetToDefault()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-red-400 border border-red-900 hover:bg-red-900/30 transition-all flex items-center gap-2 ml-2">
+                    <button onclick="resetToDefault()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
                         <span>🔄</span> 重置
+                    </button>
+                    <!-- 新增的一鍵列印按鈕 -->
+                    <button onclick="exportToPPTX()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
+                        <span>📽️</span> 一鍵列印 (PPT)
                     </button>
                 </div>
                 <p id="upload-status" class="text-[10px] text-[#a09a93] mt-2 hidden"></p>
@@ -337,7 +355,7 @@
 
         // Added Lat/Lng for Map Mode
         let accommodationData = [
-            { city: "舊金山", name: "Riu Plaza Fisherman's Wharf", checkinDate: "2026-02-26", checkoutDate: "2026-03-03", room: "豪華加大雙人床房（2 張加大床）", highlight: "🍳 含早餐｜🚭 禁菸房", facilities: "高速網路、私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機", address: "2500 Mason Street, San Francisco, CA 94133, USA", mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166", lat: 37.8070, lng: -122.4135 },
+            { city: "舊金山", name: "Riu Plaza Fisherman's Wharf", checkinDate: "2026-02-26", checkoutDate: "2026-03-03", room: "豪華加大雙人床房（2 張加大床）", highlight: "🍳 含早餐｜🚭 禁菸房", facilities: "私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機", address: "2500 Mason Street, San Francisco, CA 94133, USA", mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166", lat: 37.8070, lng: -122.4135 },
             { city: "蒙特雷", name: "隆恩橡木酒店", checkinDate: "2026-03-03", checkoutDate: "2026-03-04", room: "特大雙人床房 × 2 間", highlight: "🚭 禁菸房", facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣", address: "2221 North Fremont Street, Monterey, CA 93940, USA", mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579", lat: 36.5970, lng: -121.8581 },
             { city: "莫羅貝", name: "海港屋酒店", checkinDate: "2026-03-04", checkoutDate: "2026-03-05", room: "海景豪華特大床房 × 2 間", highlight: "🌊 海景陽台｜🚭 禁菸房", facilities: "空調、微波爐、咖啡機、暖氣", address: "1095 Main Street, Morro Bay, CA 93442, USA", mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805", lat: 35.3682, lng: -120.8502 },
             { city: "洛杉磯", name: "Hollywood Franklin Hotel", checkinDate: "2026-03-05", checkoutDate: "2026-03-09", room: "加大雙人床房（2 張加大床）", highlight: "🚭 禁菸房", facilities: "游泳池、空調、微波爐、咖啡機、保險箱", address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA", mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599", lat: 34.1054, lng: -118.3235 }
@@ -361,14 +379,14 @@
         let attractions = [
             // --- 舊金山 (SF) 景點 ---
             { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "金門大橋（英語：Golden Gate Bridge）是美國舊金山的地標。它跨越聯接舊金山灣和太平洋的金門海峽，南端連接舊金山的北端，北端接通加州的馬林縣。金門大橋的橋墩跨距長1280.2公尺，建成時曾是世界上跨距最大的懸索橋，寬度27.5公尺，雙向共6條行車線，橋身呈褐紅色，金門大橋擁有世界第四高的橋塔，高達227.4公尺，全橋總長度是2737.4公尺。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/", lat: 37.8199, lng: -122.4783, image: "https://skyhorseauto.com/wp-content/uploads/2025/05/Highway-one-01.png" }, 
-            { name: "漁人碼頭與 39 號碼頭", city: "SF", type: "Food", desc: "舊金山人氣最旺的觀光區，充滿商店、餐廳和街頭藝人。最著名的莫過於棲息在浮筒上的野生海獅。必嚐酸麵包蛤蜊濃湯。", short_desc: "人氣觀光區，必看野生海獅與享用酸麵包濃湯。", icon: "🦀", url: "https://www.fishermanswharf.org/", lat: 37.8080, lng: -122.4177, image: "https://www.bring-you.info/imgs/2019/10/San_Francisco-12-900x600.jpg" },
+            { name: "漁人碼頭與 39 號碼頭 Fisherman's Wharf & Pier 39", city: "SF", type: "Food", desc: "舊金山人氣最旺的觀光區，充滿商店、餐廳和街頭藝人。最著名的莫過於棲息在浮筒上的野生海獅。必嚐酸麵包蛤蜊濃湯。", short_desc: "人氣觀光區，必看野生海獅與享用酸麵包濃湯。", icon: "🦀", url: "https://www.fishermanswharf.org/", lat: 37.8080, lng: -122.4177, image: "https://www.bring-you.info/imgs/2019/10/San_Francisco-12-900x600.jpg" },
             { name: "惡魔島 Alcatraz", city: "SF", type: "History", desc: "惡魔島在1800年代中期發展起來，是一個軍事基地，配備了西海岸第一座燈塔，最終於1934年被改建為現在臭名昭著的惡魔島聯邦監獄，一些美國最臭名昭著的罪犯被送往那裡，而最著名的囚犯幾乎可以肯定是芝加哥黑幫老大“疤面煞星”阿爾·卡彭，於 1934 年被轉移到惡魔島聯邦監獄。一句匿名的監獄諺語非常簡潔地總結了這一點：「打破規則，你就進監獄，打破監獄規則，你就去惡魔島。」", short_desc: "傳奇聯邦監獄，充滿神祕色彩與歷史故事。", icon: "🏝️", url: "https://www.alcatrazcruises.com/", lat: 37.8270, lng: -122.4230, image: "https://images.hornblower.com/1200x840/images/tours/hacco/ec9aa226-bd16-4f2b-8f20-f48eea6e4187.jpeg" },
             { name: "叮叮車 Cable Car", city: "SF", type: "Fun", desc: "世界上唯一仍在運行的手動纜車系統，也是舊金山的移動名片。搭乘它穿梭在陡坡間，極具復古情懷。", short_desc: "體驗世界唯一手動纜車，穿梭陡坡的復古情懷。", icon: "🚋", url: "https://www.sfmta.com/getting-around/muni/cable-cars", lat: 37.7941, lng: -122.4089, image: "https://www.sfmta.com/files/styles/hero_slideshow_large_2x/public/hero-images/2017/09/160924_mh_050.jpg?itok=jPOWc1U4" },
             { name: "九曲花街 Lombard St", city: "SF", type: "Photo", desc: "世界上最彎曲的街道。為了緩衝極度陡峭的坡度而設計了八個急轉彎，路旁種滿繡球花，景緻迷人。", short_desc: "世界上最彎曲的街道，繡球花與急轉彎的視覺饗宴。倫巴底街，是美國加利福尼亞州舊金山一條東西方向貫穿要塞公園及牛洞區的街道，因其有一路段由八個急彎組成而聞名，並因此有「九曲花街」之稱。倫巴底街係由賈斯珀·奧法雷爾發起的，取名自費城的同名街道。", icon: "🌸", url: "https://www.sftravel.com/things-to-do/attractions/iconic-sf/lombard-street", lat: 37.8021, lng: -122.4187, image: "https://www.sftravel.com/sites/default/files/styles/hero/public/2022-10/lombard-street-aerial.jpg.webp?itok=BqBM3IRW" },
             { name: "彩繪女士 Painted Ladies", city: "SF", type: "Photo", desc: "舊金山最具代表性的維多利亞式排屋，背景正是現代化的市中心高樓大廈，呈現出古典與現代的完美對比。", short_desc: "經典維多利亞式排屋，阿拉莫廣場的絕美明信片景緻。", icon: "🏠", url: "https://www.sftravel.com/things-to-do/attractions/iconic-sf/painted-ladies", lat: 37.7762, lng: -122.4328, image: "https://www.sftravel.com/sites/default/files/styles/hero/public/2024-08/painted-ladies-skyline-twilight.jpg.webp?itok=0JKeRcGf" },
             { name: "渡輪大廈 Ferry Building", city: "SF", type: "Food", desc: "舊金山的美食殿堂。這座歷史悠久的渡輪站內進駐了許多在地手工藝品、精品咖啡、乳酪與特色美食。", short_desc: "歷史悠久的美食殿堂，匯集在地農產與精品咖啡。", icon: "⛴️", url: "https://www.ferrybuildingmarketplace.com/", lat: 37.7955, lng: -122.3937, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgT6FB-xGlIkWm4EZJcp6okRXUt2n-AfJwYg&s" },
-            { name: "藝術宮", city: "SF", type: "Photo", desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", short_desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", icon: "🏛️", url: "https://palaceoffinearts.com/", lat: 37.8029, lng: -122.4484, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Palace_of_Fine_Arts_%2816794p%29.jpg/500px-Palace_of_Fine_Arts_%2816794p%29.jpg" },
-            { name: "Chase Center", city: "SF", type: "Fun", desc: "金州勇士隊主場，現代化且熱血沸騰。", short_desc: "金州勇士隊主場，現代化且熱血沸騰。", icon: "🏀", url: "https://www.chasecenter.com/", lat: 37.7680, lng: -122.3877, image: "https://cdn.nba.com/teams/uploads/sites/1610612744/2025/08/LAL_1005x600.jpg" },
+            { name: "藝術宮 Palace of Fine Arts", city: "SF", type: "Photo", desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", short_desc: "古羅馬廢墟風格建築，適合夕陽時分拍照。", icon: "🏛️", url: "https://palaceoffinearts.com/", lat: 37.8029, lng: -122.4484, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Palace_of_Fine_Arts_%2816794p%29.jpg/500px-Palace_of_Fine_Arts_%2816794p%29.jpg" },
+            { name: "大通中心 Chase Center", city: "SF", type: "Fun", desc: "金州勇士隊主場，現代化且熱血沸騰。", short_desc: "金州勇士隊主場，現代化且熱血沸騰。", icon: "🏀", url: "https://www.chasecenter.com/", lat: 37.7680, lng: -122.3877, image: "https://raw.githubusercontent.com/MARIEGG0507/2026_MARIEGGCATRIP/refs/heads/main/image/LAL.jpg" },
             
             // --- 優勝美地 (Yosemite) 景點 ---
             { name: "隧道景觀 Tunnel View", city: "Yosemite", type: "Photo", desc: "進入優勝美地谷地時最經典的觀景台。從這裡可以一次飽覽酋長岩、新娘面紗瀑布和半圓頂三大地標，是攝影愛好者的天堂。", short_desc: "優勝美地象徵性視角，一次飽覽三大地標。", icon: "🏞️", url: "https://timtingtravel.com/yosemite/#t-1730697281859", lat: 37.7155615, lng: -119.6963897, image: "https://imgs.gvm.com.tw/upload/gallery/20210402/78779_03.jpg" },
@@ -383,11 +401,11 @@
             { name: "柏樹隧道 Seal Cove Cypress Tree Tunnel", city: "PCH", type: "Nature", desc: "半月灣以北Moss Beach 附近的一片小樹林，《魔戒》取景地，裡面有很多高大的柏樹和橫倒的枯木。停車：Fitzgerald Marine Ranger Station & Parking，停好車走一分鐘就能到入口；也可以導航 Seal Cove Inn 在旁邊街趴，入口就在它旁邊。", short_desc: "半月灣距離舊金山車程半個多小時，因絕美的海岸線和沙灘而聞名。", icon: "💡", url: "https://www.parks.ca.gov/?page_id=533", lat:37.5220228, lng: -122.5135715, image: "https://www.17ybm.com/wp-content/uploads/2023/08/wx_20230831222131-1024x730.jpg" }, 
           { name: "鴿點燈塔 Pigeon Point Lighthouse", city: "PCH", type: "History", desc: "建於 1871 年，是美國西海岸最高的燈塔之一。1853年，一艘名為信鴿號的商船，在波士頓 – 舊金山的處女航中遭遇大霧天氣，加之船長判斷失誤，導致船隻失事在現燈塔所在位置為了避免悲劇的再次發生，由國會撥款在1871年建造了這座燈塔，並於1872年11月15日投入使用。為了紀念信鴿號，故取名鴿點燈塔Pigeon Point Lighthouse。燈塔所在地是州立歷史公園，不需要門票，也不需要停車費", short_desc: "經典海岸燈塔，美國西海岸最高之一。", icon: "💡", url: "https://www.parks.ca.gov/?page_id=533", lat: 37.1844, lng: -122.3947, image: "https://www.17ybm.com/wp-content/uploads/2023/08/wx_20230829114939.jpg" },
             { name: "鯊魚鰭海灣 Shark Fin Cove", city: "PCH", type: "Nature", desc: "因海中巨石形狀酷似鯊魚背鰭而得名。擁有原始的自然美感與獨特的海蝕洞景觀。", short_desc: "形狀酷似鯊魚背鰭的巨石海灘。", icon: "🦈", url: "https://www.californiacoastline.org/cgi-bin/image.cgi?image=4583&mode=big&options=0", lat: 37.0043322, lng: -122.1850961, image: "https://lh3.googleusercontent.com/pw/ADCreHf1UekAPNuSMeY8xpnD3IL3dWH-696KH5rhT6qFvnYcl3fc-QPQZOIVrNGhCGq4Kd90RAELCX9OBBW52kz_5_rkZx98iysCmpuOmjtckszQWFgnU_paGMzwxWFNxV5UYYv9efX1G5hmUT8cPrJ1w6X4yA=w2400-h1600-no" },
-            { name: "聖塔克魯茲碼頭與樂園", city: "PCH", type: "Fun", desc: "加州最古老的海濱遊樂園，擁有百年歷史的木質過山車。碼頭下方常有成群海獅休憩。", short_desc: "加州最古老海濱樂園，經典木質過山車。", icon: "🎡", url: "https://beachboardwalk.com/", lat: 36.9641, lng: -122.0181, image: "https://lh3.googleusercontent.com/pw/ADCreHcvlivlQdIpHfGBtBwi7O_kTAG3SnGkGvG4y9G73F0tuahmguNmOt0BVE23UMD-Sp9KjkEKeXSnM9slKsQe_dx2351wguI9DGixwmQ8_aTU5WokDg936Cz-wy7JZNt9-LJuB2Yj-fBUB577vg74hF5mHQ=w2400-h1600-no" },
+            { name: "聖塔克魯茲碼頭與樂園 beachboardwalk", city: "PCH", type: "Fun", desc: "加州最古老的海濱遊樂園，擁有百年歷史的木質過山車。碼頭下方常有成群海獅休憩。", short_desc: "加州最古老海濱樂園，經典木質過山車。", icon: "🎡", url: "https://beachboardwalk.com/", lat: 36.9641, lng: -122.0181, image: "https://lh3.googleusercontent.com/pw/ADCreHcvlivlQdIpHfGBtBwi7O_kTAG3SnGkGvG4y9G73F0tuahmguNmOt0BVE23UMD-Sp9KjkEKeXSnM9slKsQe_dx2351wguI9DGixwmQ8_aTU5WokDg936Cz-wy7JZNt9-LJuB2Yj-fBUB577vg74hF5mHQ=w2400-h1600-no" },
             { name: "蒙特雷水族館 Monterey Bay Aquarium", city: "PCH", type: "Nature", desc: "全美最受推崇的水族館，必看巨型海藻森林與海獺餵食秀。座落於歷史罐頭廠街。<br>票價：18 – 69歲$65，4歲以下免費，其餘$50，如果是假日前往，最好提前幾天訂票，當天買很可能售罄。<br>營業時間：10 am – 5 pm<br>停車：水族館本身不附停車場，但附近有許多收費停車場，基本上都是按次收費，一次$20左右", short_desc: "全美頂尖水族館，巨型海藻森林景觀。", icon: "🐠", url: "https://www.montereybayaquarium.org/", lat: 36.6182622, lng: -121.9019542, image: "https://www.17ybm.com/wp-content/uploads/2023/11/%E8%92%99%E7%89%B9%E9%9B%B7%E6%B0%B4%E6%97%8F%E9%A6%86%E5%86%85%E9%83%A8.jpg" },
             { name: "罐頭廠街 Cannery Row", city: "PCH", type: "Nature", desc: "水族館門口那條路就是罐頭廠街，是蒙特雷的商業街，由沙丁魚罐頭廠慢慢演變而來，很像美國電影裡的場景，有一些美式街景可以拍照，也有很多特色小店可以逛。", short_desc: "罐頭廠街（Cannery Row）是加州蒙特雷市一條歷史悠久的海濱街道，曾是沙丁魚罐頭產業的繁榮中心。", icon: "🐠", url: "https://www.montereybayaquarium.org/", lat: 36.6138456, lng: -121.9010282, image: "https://www.17ybm.com/wp-content/uploads/2023/09/Monterey-cannery-row.jpg" },
           { name: "17哩灣 17-Mile Drive", city: "PCH", type: "Nature", desc: "私人景觀公路，欣賞碧海藍天、孤柏樹、海豹與豪華住宅。需付入園費$12.25/車。<br>門票：$12.25/車，可以刷卡，如果在裡面吃飯並消費$35以上，可報銷門票費用，所以記得保存好門票，行人和腳踏車免門票，住裡面飯店也免門票。<br>玩多久：一般2-3小時<br>1號景點：牧羊人嶺Shepherd's Knoll<br>2號景點：越橘樹丘Huckleberry Hill<br>3號景點：西班牙灣海灘Spanish Bay Beach<br>4號景點：不眠海Restless Sea<br>5號景點：喬角Point Joe<br>6號景點：中國岩China Rock<br>7號景點：鳥岩Bird Rock<br>8號景點：海豹岩Seal Rock<br>9號景點：風扇貝海灘觀景景點Fanshell Beach Overlook<br>10號景點：柏樹角觀景點Cypress Point Lookout<br>11號景點：克羅克樹林Crocker Grove<br>12號景點：孤獨樹The Lone Cypress<br>13號景點：鬼樹Ghost Tree<br>14號景點：遊客中心Visit Center<br>15號景點：高爾夫球場Pebble Beach Golf Links<br>16號景點：馬術中心Pebble Beach Equestrain Center<br>17號景點：Ford Meadow", short_desc: "海岸線私人景觀公路，必看孤柏與鳥岩。", icon: "🌲", url: "https://www.pebblebeach.com/17-mile-drive/", lat: 36.6022, lng: -121.9546, image: "https://skyhorseauto.com/wp-content/uploads/2025/05/Highway-one-02.png" },
-            { name: "卡梅爾小鎮", city: "PCH", type: "Culture", desc: "充滿歐式童話氛圍的藝術小鎮，擁有薑餅屋般的房舍和潔白沙灘，適合散步與藝廊之旅。", short_desc: "歐式童話藝術小鎮，無霓虹燈與速食店。", icon: "🏡", url: "https://www.carmelcalifornia.com/", lat: 36.5552, lng: -121.9233, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Kocher_Building_%28cropped%29.jpg/960px-Kocher_Building_%28cropped%29.jpg" },
+            { name: "卡梅爾小鎮 Carmel-by-the-Sea", city: "PCH", type: "Culture", desc: "充滿歐式童話氛圍的藝術小鎮，擁有薑餅屋般的房舍和潔白沙灘，適合散步與藝廊之旅。", short_desc: "歐式童話藝術小鎮，無霓虹燈與速食店。", icon: "🏡", url: "https://www.carmelcalifornia.com/", lat: 36.5552, lng: -121.9233, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Kocher_Building_%28cropped%29.jpg/960px-Kocher_Building_%28cropped%29.jpg" },
 
             // --- PCH 景點 ---
             { name: "羅伯斯角州立自然保護區 Point Lobos", city: "PCH", type: "Nature", desc: "被譽為「加州州立公園系統中的皇冠」。這裡有豐富的海鳥、海豹與海獺生態，以及壯觀的海蝕景觀。", short_desc: "加州皇冠級自然保護區，觀賞海獺海豹。", icon: "🦭", url: "hhttps://lh3.googleusercontent.com/geougc-cs/AMBA38sSJwPcXyx0dakudXv94o8KyL1m8fPG2qVrM9r5xc8B-SiNfNo168T2TO4tvCGii99h2Ua7jGgQggPzzl2hABv5y09vjXsme1LVUX_mdTU47nF2ZX7a01AznTA3qYZnVEhsbPwJHjetAxAN=s3072-w3072-h1460-rw", lat: 36.5222, lng: -121.9525, image: "https://lh3.googleusercontent.com/gps-cs-s/AG0ilSz7j7IvRpcnirTU8iygdy-rfymiAn90ciKWWPNujuw3WZX80F5qH3CtYkXavUHJAxdvte-Li01FzNmABr5phm_rtjSraxhTD1xMYTEo5OywWcSOysR7lNUBkJd8bageP9rBAoSHoqOE3MAC=s1360-w1360-h1020-rw" },
@@ -419,9 +437,9 @@
                 desc: "金門大橋、惡魔島、NBA 賽事",
                 days: [
                     { date: "2/26 (四)", loc: "舊金山", act: "抵達與時差調適", detail: "21:15 SFO 抵達、前往 Riu Plaza Fisherman's Wharf、休息調適時差。", transport: "Shared Shuttle 或 Uber/Lyft (費用較高但最方便)。", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "上午：惡魔島參觀。<br>午餐：漁人碼頭<br>下午：Lombard Street (纜車體驗)、前往藝術宮。<br>晚餐<br>晚上：藝術宮湖畔欣賞夕陽、返回飯店。", transport: "惡魔島：碼頭步行。九曲花街/藝術宮： Powell-Hyde 纜車 🚋。", attractionKey: "惡魔島 Alcatraz", hotel: "Riu Plaza Fisherman's Wharf" }, 
-                    { date: "2/28 (六)", loc: "舊金山", act: "NBA 賽事日", detail: "上午：悠閒早午餐、Ferry Building 散步。<br>下午：前往 Chase Center 周邊用晚餐。<br>午晚餐<br>晚上：17:30 觀賞 NBA 勇士隊 vs 湖人隊。", transport: "Ferry Building： MUNI 巴士。Chase Center： MUNI T-Line 輕軌直達。賽後： MUNI 或 Uber/Lyft 回飯店。", attractionKey: "Chase Center", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "3/1 (日)", loc: "舊金山/周邊", act: "內陸自然探索 (優勝美地)", detail: "<strong>06:30 – 07:30</strong> 舊金山市區上車 (視地點而定，請準時)<br><strong>07:30 – 11:30</strong> 乘車前往優勝美地 (中途休息 20-30 分)<br><strong>11:30 – 12:00</strong> 抵達國家公園 (經南側或西側入口)<br><strong>12:00 – 16:30</strong> 優勝美地谷深度探索 (自由午餐)<br><strong>16:30 – 17:00</strong> 觀賞 Tunnel View (重點觀景台)<br><strong>17:00 – 21:30</strong> 返回舊金山 (中途休息，晚餐時段抵達)", transport: "旅行社提供交通車。", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "上午：08:00 至Pier 33 售票亭（Pre-Paid，或叫will call）兌換門票（網路預約訂票必須在集合時間 30 分鐘前到「Pier 33 售票亭（Pre-Paid，或叫will call）」兌換門票，所以一定要把訂票證明（ORDER CONFIRMATION）印出來或存在手機裡出示，且要帶有照片的身分證件、購票用信用卡，檢查後才能換到登船、登島門票。）<br><strong>08:40梯次</strong> 參觀惡魔島。<br>午餐：漁人碼頭<br>下午：九曲花街 Lombard St、叮叮車 Cable Car、彩繪女士 Painted Ladies，前往藝術宮。<br>晚餐<br>晚上：藝術宮湖畔欣賞夕陽、返回飯店。", transport: "惡魔島：碼頭步行。九曲花街/藝術宮： Powell-Hyde 纜車 🚋。", attractionKey: "惡魔島 Alcatraz", hotel: "Riu Plaza Fisherman's Wharf" }, 
+                    { date: "2/28 (六)", loc: "舊金山", act: "NBA 賽事日", detail: "上午：悠閒早午餐、Ferry Building 散步。<br>下午：前往 Chase Center 周邊用晚餐。<br>午晚餐<br>晚上：17:30 觀賞 NBA 勇士隊 vs 湖人隊。", transport: "Ferry Building： MUNI 巴士。Chase Center： MUNI T-Line 輕軌直達。賽後： MUNI 或 Uber/Lyft 回飯店。", attractionKey: "大通中心 Chase Center", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "3/1 (日)", loc: "舊金山/周邊", act: "優勝美地國家公園", detail: "<strong>06:00 – </strong> Fisherman's Wharf Area（Look for the Pomegranate Café which is located opposite the meet-up point The Gray Line representative will meet you there.）<br><strong>07:30 – 11:30</strong> 乘車前往優勝美地（中途休息 20-30 分）<br><strong>11:30 – 12:00</strong> 抵達國家公園（經南側或西側入口）<br><strong>12:00 – 16:30</strong> 優勝美地谷深度探索（午餐自理）<br>- 在優勝美地國家公園遊覽 4 小時<br>- 1 小時導覽和 3 小時自由活動時間<br>- 下瀑布遊覽不包含在導覽行程中<br><strong>17:00 – 20:40</strong> 返回舊金山", transport: "旅行社提供交通車。", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
                     { date: "3/2 (一)", loc: "舊金山", act: "城市文化巡禮", detail: "上午：聯合廣場逛街、前往唐人街午餐。<br>下午：搭車前往金門大橋北邊 Vista Point 拍照。<br>晚上：順路回程經 Crissy Field、晚餐、自由活動。", transport: "纜車/唐人街： Powell-Mason 纜車 🚋。金門大橋： 從唐人街搭 Uber/Lyft 直達。", attractionKey: "金門大橋 Golden Gate", hotel: "Riu Plaza Fisherman's Wharf" }
                 ]
             },
@@ -802,6 +820,167 @@
             XLSX.utils.book_append_sheet(wb, wsAttr, "Attractions");
 
             XLSX.writeFile(wb, "My_Trip_Backup.xlsx");
+        }
+
+        // Helper to safely fetch image and convert to Base64
+        async function getBase64FromUrl(url) {
+            try {
+                // Try to fetch with CORS enabled
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Status: ${response.status}`);
+                const blob = await response.blob();
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = () => resolve(null); // Fail gracefully
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) {
+                // If fetch fails (likely CORS), return null so we just skip the image
+                console.warn(`Skipping image [${url}]:`, e);
+                return null;
+            }
+        }
+
+        async function exportToPPTX() {
+            // 檢查 PptxGenJS 是否已載入
+            if (typeof PptxGenJS === "undefined") {
+                alert("錯誤：PPT 產生元件尚未載入，請檢查網路連線或重新整理網頁。");
+                return;
+            }
+
+            try {
+                showToast("⏳ 正在製作 PowerPoint，請稍候...");
+                
+                // 1. 初始化
+                let pptx = new PptxGenJS();
+
+                // 2. 設定版面：A4 縱向 (寬 21cm, 高 30cm)
+                pptx.defineLayout({ name:'A4_PORTRAIT', width: 8.27, height: 11.81 });
+                pptx.layout = 'A4_PORTRAIT';
+
+                // 設定作者
+                pptx.author = 'Trip Planner';
+                pptx.company = '2026 美西之旅';
+                
+                const COLOR_PRIMARY = "3a3a3a";
+                const COLOR_ACCENT = "d6b98c";
+                const COLOR_ACCENT_DARK = "c3a36f";
+                const COLOR_BG = "fbf7f2";
+                const COLOR_TEXT_MUTED = "a09a93";
+
+                // 3. 封面頁
+                let slideCover = pptx.addSlide();
+                slideCover.background = { color: COLOR_BG };
+                slideCover.addShape(pptx.ShapeType.rect, { x: 0.5, y: 0.5, w: 7.27, h: 10.81, line: { color: COLOR_ACCENT, width: 2 }, fill: { color: "FFFFFF", transparency: 50 } });
+                slideCover.addText("2026 美西\n舊金山與洛杉磯之旅", { x: 1, y: 4, w: 6.27, h: 2, fontSize: 36, fontFace: "Helvetica", color: COLOR_PRIMARY, bold: true, align: "center" });
+                slideCover.addText("2026年 2月26日 - 3月11日\n13 天 12 夜", { x: 1, y: 6, w: 6.27, h: 1, fontSize: 18, fontFace: "Helvetica", color: COLOR_ACCENT_DARK, align: "center" });
+
+                // 4. 每日行程
+                let dayCount = 1;
+                
+                // 確保 itineraryData 有資料
+                const phases = Object.keys(itineraryData);
+                if (phases.length === 0) {
+                    alert("錯誤：沒有行程資料可供匯出。");
+                    return;
+                }
+
+                for (const phaseKey of phases) {
+                    const phase = itineraryData[phaseKey];
+                    if (!phase.days) continue;
+
+                    for (const day of phase.days) {
+                        let slide = pptx.addSlide();
+                        slide.background = { color: "FFFFFF" };
+
+                        // Header
+                        slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 8.27, h: 1.5, fill: { color: COLOR_BG } });
+                        slide.addShape(pptx.ShapeType.ellipse, { x: 0.5, y: 0.35, w: 0.8, h: 0.8, fill: { color: COLOR_ACCENT } });
+                        slide.addText(`Day ${dayCount}`, { x: 0.5, y: 0.35, w: 0.8, h: 0.8, fontSize: 14, color: "FFFFFF", bold: true, align: "center", valign: "middle" });
+                        slide.addText(day.date, { x: 1.5, y: 0.4, w: 4, h: 0.5, fontSize: 18, color: COLOR_PRIMARY, bold: true });
+                        slide.addText(`📍 ${day.loc}`, { x: 1.5, y: 0.9, w: 4, h: 0.4, fontSize: 12, color: COLOR_TEXT_MUTED });
+
+                        // Image Logic with Placeholder
+                        // 即使發生錯誤，也能保留這個框線 (Placeholder)
+                        if (day.attractionKey && attractionMap && attractionMap[day.attractionKey]) {
+                            // 1. 繪製預留框線 (Placeholder) - 底層
+                            slide.addShape(pptx.ShapeType.rect, { 
+                                x: 5.5, y: 0.25, w: 2.5, h: 1.8, 
+                                line: { color: "CCCCCC", width: 1, dashType: 'dash' }, 
+                                fill: { color: "F9FAFB" } 
+                            });
+                            slide.addText("景點照片", {
+                                x: 5.5, y: 0.25, w: 2.5, h: 1.8,
+                                fontSize: 10, color: "A0A0A0", align: "center", valign: "middle"
+                            });
+
+                            const imgUrl = attractionMap[day.attractionKey].image;
+                            
+                            // 2. 嘗試加入圖片 - 上層 (若成功會覆蓋框線)
+                            if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
+                                try {
+                                    // 嘗試下載並轉為 Base64 (解決 CORS 錯誤導致整份 PPT 失敗的問題)
+                                    const base64Img = await getBase64FromUrl(imgUrl);
+                                    
+                                    if (base64Img) {
+                                        slide.addImage({ 
+                                            data: base64Img, 
+                                            x: 5.5, y: 0.25, w: 2.5, h: 1.8, 
+                                            sizing: { type: 'cover', w: 2.5, h: 1.8 }
+                                        });
+                                    }
+                                } catch (e) {
+                                    // 捕捉 addImage 設定時的錯誤 (雖然較少見)
+                                    console.warn("Image add error:", e);
+                                    // 這裡不需要做任何事，因為底層的 Placeholder 已經畫好了
+                                }
+                            }
+                        }
+
+                        // Content
+                        slide.addText(day.act, { x: 0.5, y: 2.0, w: 7.27, h: 0.8, fontSize: 24, color: COLOR_ACCENT_DARK, bold: true, fontFace: "Helvetica" });
+                        slide.addShape(pptx.ShapeType.line, { x: 0.5, y: 2.7, w: 7.27, h: 0, line: { color: "EEEEEE", width: 1 } });
+
+                        let cleanDetail = day.detail ? day.detail.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "") : "";
+                        slide.addText(cleanDetail, { x: 0.5, y: 3.0, w: 7.27, h: 5.5, fontSize: 14, color: "555555", lineSpacing: 18, valign: "top", shape: pptx.ShapeType.rect });
+
+                        // Footer (Transport & Hotel)
+                        let bottomY = 9.0;
+                        slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: bottomY, w: 7.27, h: 0.8, fill: { color: "F3F4F6" }, r:0.1 });
+                        slide.addText("🚗 交通方式", { x: 0.7, y: bottomY + 0.1, w: 2, h: 0.3, fontSize: 10, color: "9CA3AF", bold: true });
+                        slide.addText(day.transport || "無資料", { x: 0.7, y: bottomY + 0.4, w: 6.8, h: 0.3, fontSize: 11, color: "374151" });
+
+                        slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: bottomY + 1.0, w: 7.27, h: 1.2, fill: { color: "FEF3C7" }, r:0.1 });
+                        slide.addText("🛌 住宿安排", { x: 0.7, y: bottomY + 1.1, w: 2, h: 0.3, fontSize: 10, color: "B45309", bold: true });
+                        slide.addText(day.hotel || "無資料", { x: 0.7, y: bottomY + 1.4, w: 6.8, h: 0.3, fontSize: 12, color: "92400E", bold: true });
+                        
+                        // Address lookup
+                        if (accommodationData) {
+                            // Support both array and map structure just in case
+                            const accArray = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
+                            const hotelInfo = accArray.find(h => h.name === day.hotel);
+                            if (hotelInfo && hotelInfo.address) {
+                                slide.addText(hotelInfo.address, { x: 0.7, y: bottomY + 1.8, w: 6.8, h: 0.3, fontSize: 9, color: "92400E" });
+                            }
+                        }
+
+                        // Page number
+                        slide.addText(`- ${dayCount} -`, { x: 0, y: 11.2, w: '100%', h: 0.5, align: 'center', fontSize: 10, color: "CCCCCC" });
+
+                        dayCount++;
+                    }
+                }
+
+                // 5. 匯出
+                await pptx.writeFile({ fileName: "2026_USA_West_Trip.pptx" });
+                showToast("✅ PowerPoint 下載成功！");
+
+            } catch (error) {
+                console.error("PPT Export Error:", error);
+                alert("匯出失敗：" + error.message + "\n可能是因為網路圖片存取受限，請稍後再試。");
+                showToast("❌ 匯出失敗");
+            }
         }
 
         function handleExcelUpload(input) {
@@ -1199,24 +1378,49 @@
             html += `<div class="absolute left-[19px] top-6 bottom-6 w-0.5 bg-[#efe6d8] timeline-line md:block hidden"></div>`;
 
             phase.days.forEach((day, idx) => {
-              const attraction = day.attractionKey ? attractionMap[day.attractionKey] : null;
+              // 1. Identify all relevant attractions for this day
+              let displayedAttractions = [];
+              const uniqueNames = new Set();
+
+              // A. Explicit Key
+              if (day.attractionKey && attractionMap[day.attractionKey]) {
+                  displayedAttractions.push(attractionMap[day.attractionKey]);
+                  uniqueNames.add(attractionMap[day.attractionKey].name);
+              }
+
+              // B. Found in text
+              const combinedText = (day.act + " " + day.detail);
+              const mentioned = findMentionedAttractions(combinedText);
               
+              mentioned.forEach(attr => {
+                  if (!uniqueNames.has(attr.name)) {
+                      displayedAttractions.push(attr);
+                      uniqueNames.add(attr.name);
+                  }
+              });
+
+              // 2. Generate HTML for attractions
               let attractionHtml = '';
-              if (attraction) {
-                const badgeColor = getAttractionBadgeColor(attraction.type);
-                attractionHtml = `
-                    <div onclick="scrollToSection('highlights')" class="mt-4 bg-white border border-[#efe6d8] rounded-xl p-3 flex items-start gap-3 cursor-pointer hover:shadow-md hover:border-[#d6b98c] transition-all group/card">
-                        <div class="text-2xl bg-[#faf7f2] rounded-lg p-2 group-hover/card:scale-110 transition-transform">${attraction.icon}</div>
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-xs font-bold border px-1.5 rounded ${badgeColor}">重點行程</span>
-                                <h5 class="text-sm font-bold text-[#3a3a3a] group-hover/card:text-[#d6b98c] transition-colors">${attraction.name}</h5>
+              if (displayedAttractions.length > 0) {
+                  attractionHtml += '<div class="mt-4 space-y-2">'; // Container
+                  displayedAttractions.forEach(attraction => {
+                      const badgeColor = getAttractionBadgeColor(attraction.type);
+                      attractionHtml += `
+                        <div onclick="scrollToSection('highlights')" class="bg-white border border-[#efe6d8] rounded-xl p-3 flex items-start gap-3 cursor-pointer hover:shadow-md hover:border-[#d6b98c] transition-all group/card">
+                            <div class="text-2xl bg-[#faf7f2] rounded-lg p-2 group-hover/card:scale-110 transition-transform">${attraction.icon}</div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold border px-1.5 rounded ${badgeColor}">重點行程</span>
+                                    <h5 class="text-sm font-bold text-[#3a3a3a] group-hover/card:text-[#d6b98c] transition-colors">${attraction.name}</h5>
+                                </div>
+                                <p class="text-xs text-[#a09a93] line-clamp-1">${attraction.short_desc}</p>
                             </div>
-                            <p class="text-xs text-[#a09a93] line-clamp-1">${attraction.short_desc}</p>
                         </div>
-                    </div>
-                `;
-              } else if (day.attractionKey) {
+                      `;
+                  });
+                  attractionHtml += '</div>';
+              } else if (day.attractionKey && !attractionMap[day.attractionKey]) {
+                   // Fallback for key that doesn't exist in map
                    attractionHtml = `
                     <div class="mt-4 bg-white border border-[#efe6d8] rounded-xl p-3 flex items-start gap-3">
                          <div class="text-2xl bg-[#faf7f2] rounded-lg p-2">📍</div>
@@ -1290,20 +1494,27 @@
             container.innerHTML = html;
         }
 
-        // --- NEW: Helper to find attractions in text (FIX: Stricter matching) ---
+        // --- NEW: Helper to find attractions in text (FIX: Stricter matching but allows partial Chinese) ---
         function findMentionedAttractions(text) {
             if (!text) return [];
             return attractions.filter(attraction => {
-                // FIX: Simply check if the FULL name exists in text.
-                // This prevents "Gate" (from boarding gate) matching "Golden Gate".
-                // But we still want to catch cases where "Golden Gate" is in "Golden Gate Bridge".
-                // String.includes does exactly this.
                 if (!attraction.name) return false;
                 
-                // Optional: You could add logic here to match "Golden Gate" OR "Golden Gate Bridge" if you had an alias field.
-                // For now, matching the primary name is the safest, least noisy approach.
-                // We trim spaces to be safe.
-                return text.includes(attraction.name.trim());
+                const name = attraction.name.trim();
+                
+                // 1. 完全符合 (Exact match)
+                if (text.includes(name)) return true;
+                
+                // 2. 寬鬆符合 (Loose match)
+                // 處理 "金門大橋 Golden Gate" 這種狀況，只要內文有 "金門大橋" 就算符合
+                // Assumes format like "中文 English"
+                const parts = name.split(' ');
+                // 確保切分後的第一部分長度足夠 (避免只匹配到單字或空格)
+                if (parts.length > 1 && parts[0].length >= 2) {
+                     if (text.includes(parts[0])) return true;
+                }
+                
+                return false;
             });
         }
 
