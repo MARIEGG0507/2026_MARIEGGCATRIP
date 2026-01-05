@@ -213,7 +213,7 @@
                     <h3 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-square-parking text-red-500 mr-2"></i>停車與交通資訊</h3>
                     <ul class="space-y-3 text-slate-600">
                         <li class="flex items-start"><span class="mr-2">•</span> <strong>主要停車場：</strong> 米奇與朋友停車場 (Mickey & Friends) 和 皮克斯夥伴停車場 (Pixar Pals)，兩者車位極多。</li>
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>停車費用：</strong> 標準汽車每日約 $35 USD (可能變動)，需於 App 或現場繳費。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>停車費用：</strong> 標準汽車每日約 $40 USD (1輛)，需於 App 或現場繳費。</li>
                         <li class="flex items-start"><span class="mr-2">•</span> <strong>接駁方式：</strong> 停車後需搭乘免費的**接駁電車或巴士**前往樂園大門。務必記住停車區域/樓層。</li>
                         <li class="flex items-start"><span class="mr-2">•</span> <strong>提早抵達：</strong> 停車和安檢流程需 30-45 分鐘，建議在開園前 1.5 小時完成停車。</li>
                     </ul>
@@ -471,33 +471,44 @@
                 lands: [
                     {
                         id: "galaxy",
-                        name: "星際大戰：銀河邊緣",
+                        name: "Star Wars: Galaxy’s Edge 星際大戰：銀河邊緣",
                         desc: "完全沉浸式的區域，背景設定在邊境星球「巴圖」。這裡的造景細節驚人，讓你彷彿置身電影場景。",
                         tags: ["沉浸式", "電影場景", "熱門"],
                         attractions: [
-                            { name: "抵抗軍的崛起 (Rise of the Resistance)", type: "大型室內遊樂設施", highlight: "必玩之首！長達20分鐘的電影體驗，被俘虜後逃脫的緊張情節。", tags: ["ILL", "刺激"], imageText: "抵抗軍" },
-                            { name: "千年隼號：走私者逃亡", type: "飛行模擬", highlight: "駕駛銀河系最快破銅爛鐵，六人合作操控飛船。", tags: ["Genie+", "互動"], imageText: "千年隼" }
+                            { name: "👍Star Wars: Rise of the Resistance 星際大戰：反抗軍崛起", type: "大型室內遊樂設施", highlight: "必玩之首！長達20分鐘的電影體驗，被俘虜後逃脫的緊張情節。", tags: ["ILL", "刺激"], imageText: "抵抗軍", customImage: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/630/354/75/dam/disney-world/destinations/hollywood-studios/star-wars-galaxys-edge/rise-resistance-16x9.jpg?1703167709482"  },
+                            { name: "👍Millennium Falcon: Smugglers Run 千年鷹號：走私者任務", type: "飛行模擬", highlight: "駕駛銀河系最快破銅爛鐵，六人合作操控飛船，每人扮演不同角色（飛行、射擊、維修），共同完成任務。", tags: ["Genie+", "互動"], imageText: "千年隼", customImage: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/410/205/75/dam/disneyland/attractions/disneyland/millennium-falcon-smugglers-run/smugglers-run-interior-16x9.jpg?1727889744161"  }
                         ]
                     },
                     {
                         id: "tomorrow",
-                        name: "明日世界",
+                        name: "TomorrowLand 明日世界",
                         desc: "展現對未來的想像與太空探索的主題，擁有經典的太空設施。",
                         tags: ["科技", "太空", "經典"],
                         attractions: [
-                            { name: "太空山 (Space Mountain)", type: "室內雲霄飛車", highlight: "全黑室內星空中的高速旅程，加州版配樂經典。", tags: ["Genie+", "刺激"], imageText: "太空山" },
-                            { name: "星際遨遊 (Star Tours)", type: "3D動感電影", highlight: "C-3PO駕駛太空船，場景隨機組合。", tags: ["Genie+", "3D"], imageText: "星際遨遊" }
+                            { name: "Space Mountain 太空山", type: "室內雲霄飛車", highlight: "全黑室內星空中的高速旅程，加州版配樂經典。", tags: ["Genie+", "刺激"], imageText: "太空山", 
+                             customImage:               "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1600/900/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disneyland/space-mountain/space-mountain-00.jpg?1747061483717" },
+                            { name: "Star Tours – The Adventures Continue 星際遨遊", type: "3D動感電影", highlight: "C-3PO駕駛太空船，場景隨機組合。", tags: ["Genie+", "3D"], imageText: "星際遨遊", 
+                             customImage:               "https://myyearwiththemouse.com/wp-content/uploads/2011/05/startours-4.jpg" },
+                            { name: "Buzz Lightyear Astro Blasters 巴斯光年星際歷險記", type: "室內", highlight: "瞄準目標，發射激光，在超乎想像的決戰中阻止扎克！", tags: ["親子", "射擊"], imageText: "巴斯光年",                               customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disneyland/buzz-lightyear-astro-blaster/buzz-lightyear-astro-blasters-00-sq.jpg?1735690732147" },
+                            { name: "Autopia 自動駕駛", type: "賽車", highlight: "踩下油門，然後駛上這條瘋狂的高速公路。", tags: ["親子", "緩慢"], imageText: "自動駕駛",                               customImage:"https://upload.wikimedia.org/wikipedia/commons/8/8a/Autopia_at_Disneyland%2C_Nov_2005_-_DL05_039.jpg" },
+                          { name: "Finding Nemo Submarine Voyage 海底總動員：尼莫潛水艇之旅", type: "水上遊樂設施", highlight: "與尼莫和他的夥伴們一起潛入深海世界。", tags: ["潛水艇", "緩慢"], imageText: "潛水艇",                               customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disneyland/finding-nemo-submarine-voyage/finding-nemo-submarine-voyage-00-sq.jpg?1735690732154" },
+                          { name: "Astro Orbitor 星空太空梭", type: "賽車", highlight: "復古風格的三人座火箭艙，可以透過座艙內的控制桿自行調整飛行高度，在旋轉的同時忽高忽低。", tags: ["景觀", "旋轉"], imageText: "自動駕駛", customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disneyland/astro-orbitor/astro-orbitor-00-sq.jpg?1735690732156" }
                         ]
                     },
                     {
                         id: "fantasy",
-                        name: "幻想世界",
+                        name: "Fantasyland 幻想世界",
                         desc: "迪士尼最核心的童話世界，穿過城堡即達，充滿溫馨回憶。",
                         tags: ["童話", "親子", "核心"],
                         attractions: [
-                            { name: "馬特洪峰雪橇飛車", type: "雲霄飛車", highlight: "【加州獨家】模擬阿爾卑斯山雪橇冒險，會遇到雪怪。", tags: ["Genie+", "獨家"], imageText: "馬特洪峰" },
-                            { name: "小小世界", type: "水上遊船", highlight: "搭船遊覽各國風情，白色幾何外觀精緻。", tags: ["經典", "親子"], imageText: "小小世界" },
-                            { name: "經典暗黑騎乘", type: "軌道車", highlight: "小飛俠、白雪公主、愛麗絲夢遊仙境等經典童話設施。", tags: ["懷舊", "親子"], imageText: "童話騎乘" }
+                            { name: "Peter Pan’s Flight 彼得潘天空之旅", type: "雲霄飛車", highlight: "遊客會登上懸吊在天花板軌道上的「飛天海盜船」，營造出一種在空中翱翔的輕盈感。", tags: ["LLM", "獨家"], imageText: "馬特洪峰", customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disneyland/peter-pans-flight/peter-pan-flight-00-sq.jpg?1762859322148" },
+                            { name: "Snow White’s Enchanted Wish", type: "水上遊船", highlight: "搭船遊覽各國風情，白色幾何外觀精緻。", tags: ["經典", "親子"], imageText: "小小世界", customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/vision-dam/digital/parks-platform/parks-global-assets/disneyland/attractions/snow-whites-enchanted-wish/08SWEW_-4632-1x1.jpg?2021-04-07T21:31:52+00:00" },
+                           { name: "Dumbo the Flying Elephant", type: "軌道車", highlight: "小飛俠、白雪公主、愛麗絲夢遊仙境等經典童話設施。", tags: ["懷舊", "親子"], imageText: "童話騎乘", customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/disneyland/attractions/disneyland/dumbo-the-flying-elephant/dumbo-mom-kids-1x1.jpg?1762859322152" },
+                            { name: "Mr. Toad’s Wild Ride", type: "軌道車", highlight: "小飛俠、白雪公主、愛麗絲夢遊仙境等經典童話設施。", tags: ["懷舊", "親子"], imageText: "童話騎乘", customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disneyland/mr-toads-wild-ride/mr-toads-wild-ride-00-sq.jpg?1762859322154" },
+                          { name: "Matterhorn Bobsleds 馬特洪峰雪橇飛車", type: "雲霄飛車", highlight: "【加州獨家】模擬阿爾卑斯山雪橇冒險，會遇到雪怪。", tags: ["Genie+", "獨家"], imageText: "馬特洪峰", customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disneyland/astro-orbitor/astro-orbitor-00-sq.jpg?1735690732156" },
+                            { name: "Storybook Land Canal Boats", type: "水上遊船", highlight: "搭船遊覽各國風情，白色幾何外觀精緻。", tags: ["經典", "親子"], imageText: "小小世界", customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/disneyland/attractions/disneyland/storybook-land-canal-boats/storybook-land-aladdin-1x1.jpg?1762859322159" },
+                            { name: "Sleeping Beauty Castle Walkthrough", type: "軌道車", highlight: "小飛俠、白雪公主、愛麗絲夢遊仙境等經典童話設施。", tags: ["懷舊", "親子"], imageText: "童話騎乘", customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/disneyland/attractions/disneyland/sleeping-beauty-castle-walkthrough/disneyland-sleeping-beauty-castle-day-1x1.jpg?1762859322161" },
+                          { name: "King Arthur Carrousel", type: "軌道車", highlight: "小飛俠、白雪公主、愛麗絲夢遊仙境等經典童話設施。", tags: ["懷舊", "親子"], imageText: "童話騎乘", customImage:"https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disneyland/king-arthur-carrousel/king-arthur-carrousel-00-sq.jpg?1762859322163" }
                         ]
                     },
                     {
@@ -546,16 +557,39 @@
                 lands: [
                     {
                         id: "cars",
-                        name: "汽車總動員天地",
+                        name: "Cars Land 汽車總動員天地",
                         desc: "【必去推薦】完美還原電影《Cars》水箱溫泉鎮，被譽為最成功的園區設計。",
                         tags: ["必訪", "電影還原", "夜景"],
                         attractions: [
-                            { name: "水箱溫泉鎮賽車手", type: "高速賽車", highlight: "鎮園之寶！戶外紅岩區高速競賽，晚上霓虹燈亮起時最美。", tags: ["ILL", "刺激"], imageText: "賽車手" }
+                            { 
+                                name: "👍Radiator Springs Racers 水箱溫泉鎮賽車手", 
+                                type: "高速賽車", 
+                                highlight: "鎮園之寶！戶外紅岩區高速競賽，晚上霓虹燈亮起時最美。", 
+                                tags: ["ILL", "刺激"], 
+                                imageText: "賽車手",
+                                customImage: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/disneyland/destinations/disney-california-adventure/cars-land/cant-miss-radiator-springs-racers-v3-1x1.jpg?1745935354961" 
+                            },
+                          { 
+                                name: "Luigi’s Rollickin’ Roadsters 路易吉的歡樂跑車", 
+                                type: "旋轉咖啡杯", 
+                                highlight: "繫好安全帶，準備體驗一場活力四射的旅程吧！這些義大利進口車將帶你體驗翻滾、旋轉和騰躍的快感！", 
+                                tags: ["旋轉", "刺激"], 
+                                imageText: "賽車手",
+                                customImage: "https://dvcshop.com/wp-content/uploads/2021/05/Luigis-Rollickin-Roadsters-Ride-Vehicles-scaled-e1622592744777-1024x769.jpg" 
+                            },
+                          { 
+                                name: "Mater’s Junkyard Jamboree 板牙的廢車場狂歡", 
+                                type: "旋轉咖啡杯", 
+                                highlight: "在歡樂的鄉村舞會上，開著拖吊機搖擺、旋轉、飛舞吧！", 
+                                tags: ["旋轉", "刺激"], 
+                                imageText: "賽車手",
+                                customImage: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disney-california-adventure/maters-junkyard-jamboree/maters-junkyard-jamboree-00-sq.jpg?1745935354969" 
+                            }                          
                         ]
                     },
                     {
                         id: "avengers",
-                        name: "復仇者聯盟校園",
+                        name: "Avengers Campus 復仇者聯盟校園(維修中)",
                         desc: "漫威英雄訓練基地，隨時可見英雄在屋頂戰鬥。",
                         tags: ["漫威", "英雄", "現代"],
                         attractions: [
@@ -565,27 +599,33 @@
                     },
                     {
                         id: "pixar",
-                        name: "皮克斯碼頭",
+                        name: "Pixar Pier 皮克斯碼頭",
                         desc: "美式海濱遊樂場風格，集結皮克斯主題設施。",
                         tags: ["皮克斯", "海濱", "歡樂"],
                         attractions: [
-                            { name: "超特攻雲霄飛車", type: "雲霄飛車", highlight: "速度快且有360度翻轉，配合積琪雷射眼特效。", tags: ["Genie+", "刺激"], imageText: "超特攻" },
-                            { name: "皮克斯摩天輪", type: "摩天輪", highlight: "搖晃車廂驚嚇指數高，可滑動擺盪。", tags: ["風景", "驚嚇"], imageText: "皮克斯摩天輪" },
-                            { name: "玩具總動員瘋狂遊戲屋", type: "3D射擊", highlight: "戴眼鏡的射擊遊戲，非常歡樂具競爭性。", tags: ["Genie+", "親子"], imageText: "玩具遊戲屋" }
+                            { name: "👍Incredicoaster 超人特攻隊雲霄飛車", type: "雲霄飛車", highlight: "速度快且有360度翻轉，配合積琪雷射眼特效。", tags: ["Genie+", "刺激"], imageText: "超特攻",
+                                customImage: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/disneyland/destinations/disney-california-adventure/pixar-pier/incredicoaster-guests-1x1.jpg?1757971924525" },
+                            { name: "Inside Out Emotional Whirlwind 內心風暴", type: "飛天吊椅", highlight: "前往總部，與萊莉的繽紛情緒一起開啟一段奇妙之旅。", tags: ["風景", "旋轉"], imageText: "內心風暴",
+                                customImage: "https://touringplans.com/disney-california-adventure/attractions/inside-out-emotional-whirlwind"  },
+                          { name: "Pixar Pal-A-Round – Swinging 皮克斯摩天輪", type: "摩天輪", highlight: "搖晃車廂驚嚇指數高，可滑動擺盪。", tags: ["風景", "驚嚇"], imageText: "皮克斯摩天輪",
+                                customImage: "https://i.ytimg.com/vi/z3swAMJ53qw/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDRNBaioCdmEolP8uOby8d15q-ocw"  },
+                            { name: "Toy Story Midway Mania 玩具總動員瘋狂遊戲屋", type: "3D射擊", highlight: "戴眼鏡的射擊遊戲，非常歡樂具競爭性。", tags: ["Genie+", "親子"], imageText: "玩具遊戲屋",
+                                customImage: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/wdpro-assets/dlr/parks-and-tickets/attractions/disney-california-adventure/toy-story-mania/toy-story-mania-00-sq.jpg?1757971924528" }
                         ]
                     },
                     {
                         id: "sanfran",
-                        name: "舊金山廣場",
+                        name: "San Fransokyo Square  舊金山廣場",
                         desc: "《大英雄天團》風格區域，以美食為主。",
                         tags: ["美食", "大英雄天團"],
                         attractions: [
-                            { name: "杯麵見面會", type: "角色互動", highlight: "可以跟Baymax擁抱合照。", tags: ["拍照"], imageText: "杯麵合照" }
+                            { name: "杯麵見面會", type: "角色互動", highlight: "可以跟Baymax擁抱合照。", tags: ["拍照"], imageText: "杯麵合照", 
+                            customImage:"                       https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/473/267/75/vision-dam/digital/parks-platform/parks-standard-assets/disneyland/san-fransokyo/baymax_still_desktop_3x.png?2023-05-08T18:16:39+00:00"}
                         ]
                     },
                     {
                         id: "grizzly",
-                        name: "灰熊遊樂園",
+                        name: "Grizzly Park 灰熊遊樂園",
                         desc: "以加州國家公園與大自然為主題，綠意盎然。",
                         tags: ["自然", "國家公園"],
                         attractions: [
@@ -601,6 +641,22 @@
                         attractions: [
                             { name: "怪獸電力公司", type: "慢速騎乘", highlight: "跟著毛怪與大眼仔拯救阿布。", tags: ["Genie+", "親子"], imageText: "怪獸電力" },
                             { name: "動畫學院", type: "繪畫教學", highlight: "畫師教畫迪士尼角色，作品可帶回，隱藏版推薦。", tags: ["室內", "創作"], imageText: "動畫學院" }
+                        ]
+                      },
+                    {
+                        id: "Paradise Gardens Park",
+                        name: "Paradise Gardens Park 天堂花園公園",
+                        desc: "在天堂花園公園體驗海洋、天空和復古風格的樂趣！",
+                        tags: ["電影", "復古"],
+                        attractions: [
+                            { name: "The Little Mermaid – Ariel’s Undersea Adventure 小美人魚－愛麗兒的海底冒險", type: "慢速騎乘", highlight: "在以電影配樂為背景的奇妙貝殼慶典中，潛入深藍色的海洋。", tags: ["Genie+", "親子"], imageText: "小美人魚",
+                                customImage: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/vision-dam/digital/parks-platform/parks-global-assets/disneyland/attractions/the-little-mermaid-ariels-undersea-adventure/14542019_MHS_062711_5763a-1x1.jpg?2021-10-15T22:16:19+00:00" },
+                            { name: "👍Goofy's Sky School 高飛的飛行學校", type: "雲霄飛車", highlight: "繫好安全帶，準備參加由世界上最古怪的飛行員教授的奇葩飛行課程吧！", tags: ["Genie+", "刺激"], imageText: "高飛的飛行學校",
+                                customImage: "https://cdn.coaster.cloud/attractions/5K/9U/5K9UKjz1EN8VghYLrxPhK6.jpg?class=large" },
+                            { name: "Jumpin’ Jellyfish 跳躍水母", type: "自由落體", highlight: "登上這些色彩繽紛的飛行器，開啟一段奇妙輕盈的空中之旅，然後再返回地面。", tags: ["自由落體", "刺激"], imageText: "跳躍水母",
+                                customImage: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/disneyland/destinations/disney-california-adventure/jumpin-jellyfish-gradient-1x1.jpg?1749486990174" },
+                            { name: "Golden Zephyr 金色微風", type: "飛天船", highlight: "乘坐靈感源自經典科幻故事的星際纜車，翱翔於雲端！", tags: ["旋轉", "刺激"], imageText: "金色微風",
+                                customImage: "https://cdn1.parksmedia.wdprapps.disney.com/resize/mwImage/1/1920/1080/75/dam/disneyland/destinations/disneyland/paradise-gardens-park/golden-zephyr-1x1.jpg?1749486990176" }
                         ]
                     }
                 ]
@@ -805,8 +861,8 @@
                 const card = document.createElement('div');
                 card.className = 'bg-white rounded-xl shadow-md border border-[color:var(--border-soft)] hover:border-blue-300 transition-colors group overflow-hidden card-hover';
                 
-                // Image Placeholder
-                const imgUrl = getPlaceholderUrl(attr.imageText, 400, 180);
+                // Image Placeholder or Custom Image
+                const imgUrl = attr.customImage || getPlaceholderUrl(attr.imageText, 400, 180);
 
                 // Card Header: Name + Tags
                 let tagsHtml = '';
