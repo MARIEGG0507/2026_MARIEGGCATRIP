@@ -99,6 +99,32 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- Map Section (New) -->
+            <div class="mt-8 bg-white p-6 rounded-2xl shadow-sm border border-[color:var(--border-soft)] card-hover">
+                <h3 class="text-xl font-bold mb-4 flex items-center" style="color: var(--text-primary);">
+                    <i class="fa-solid fa-map-location-dot mr-2 text-[color:var(--accent-main)]"></i> 度假區地圖位置
+                </h3>
+                <p class="text-sm mb-4 text-slate-600">
+                    下方為加州迪士尼度假區的地理位置地圖。若您需要查看官方設施分佈、即時等候時間地圖，由於官方網站限制外部嵌入，請點擊下方按鈕直接前往官網查看。
+                </p>
+                <!-- Google Maps Embed -->
+                <div class="w-full h-96 bg-slate-100 rounded-xl overflow-hidden mb-6 relative">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3314.399587422324!2d-117.92116288479057!3d33.81209178067194!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dcd7d12b3b5e6b%3A0x2ef62f8418225cfa!2sDisneyland%20Park!5e0!3m2!1szh-TW!2stw!4v1629823456789!5m2!1szh-TW!2stw" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+                <div class="text-center">
+                    <a href="https://disneyland.disney.go.com/attractions/disneyland/#/sort=alpha/" target="_blank" class="inline-flex items-center px-6 py-3 rounded-full bg-[color:var(--accent-main)] text-white font-bold hover:bg-orange-700 transition-colors shadow-md">
+                        前往迪士尼官網查看設施地圖 <i class="fa-solid fa-up-right-from-square ml-2"></i>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- EXPLORER VIEW -->
@@ -106,13 +132,7 @@
             <div class="bg-[color:var(--color-bg-card)] rounded-xl p-6 card-hover">
                 <h2 class="text-2xl font-bold mb-4" style="color: var(--color-text-primary);">深入園區探索</h2>
                 
-                <!-- MAP PLACEHOLDER -->
-                <div class="w-full h-48 md:h-64 bg-slate-100 rounded-xl mb-6 overflow-hidden relative group border border-[color:var(--color-border-soft)]">
-                    <img id="explorer-map-img" src="https://placehold.co/1200x400/e2e8f0/475569?text=Disneyland+Map" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="園區地圖">
-                    <div class="absolute bottom-2 left-4 bg-black/60 text-white px-3 py-1 text-sm rounded-full backdrop-blur-sm">
-                        <i class="fa-solid fa-map mr-2"></i>園區地圖
-                    </div>
-                </div>
+                <!-- Map Removed as requested -->
 
                 <!-- Park Toggle -->
                 <div class="flex justify-center mb-6">
@@ -167,13 +187,7 @@
             <div class="bg-[color:var(--color-bg-card)] rounded-xl p-6 card-hover">
                 <h2 class="text-2xl font-bold mb-4" style="color: var(--color-text-primary);">雙樂園必吃美食指南</h2>
                 
-                <!-- MAP PLACEHOLDER -->
-                <div class="w-full h-48 md:h-64 bg-slate-100 rounded-xl mb-6 overflow-hidden relative group border border-[color:var(--color-border-soft)]">
-                    <img id="food-map-img" src="https://placehold.co/1200x400/e2e8f0/475569?text=Disneyland+Map" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="園區地圖">
-                    <div class="absolute bottom-2 left-4 bg-black/60 text-white px-3 py-1 text-sm rounded-full backdrop-blur-sm">
-                        <i class="fa-solid fa-map-location-dot mr-2"></i>美食地圖
-                    </div>
-                </div>
+                <!-- Map Removed as requested -->
 
                 <!-- Park Toggle (Food) -->
                 <div class="flex justify-center mb-6">
@@ -352,11 +366,14 @@
             return `https://placehold.co/${width}x${height}/${bg}/${tc}?text=${safeText}`;
         }
 
-        // --- MAPS DATA (Placeholders) ---
-        const mapImages = {
-            DL: "https://placehold.co/1200x400/dbeafe/1e40af?text=Disneyland+Park+Map+(Schematic)",
-            DCA: "https://placehold.co/1200x400/ffedd5/9a3412?text=California+Adventure+Map+(Schematic)"
-        };
+        // --- HELPER FUNCTION TO GET DOMAIN FROM URL ---
+        function getDomain(url) {
+            try {
+                return new URL(url).hostname.replace('www.', '');
+            } catch (e) {
+                return 'Image Source';
+            }
+        }
 
         // --- ATTRACTION DATA (Unchanged) ---
         const parksData = {
@@ -836,9 +853,6 @@
             currentPark = parkCode;
             currentLandIndex = 0;
             
-            // Map Update
-            document.getElementById('explorer-map-img').src = mapImages[parkCode];
-
             // Toggle Button Styles - Using CSS Variables
             const btnDL = document.getElementById('btn-park-dl');
             const btnDCA = document.getElementById('btn-park-dca');
@@ -903,6 +917,7 @@
                 const card = document.createElement('div');
                 card.className = 'bg-[color:var(--color-bg-card)] rounded-xl card-hover flex flex-col overflow-hidden';
                 const imgUrl = attr.customImage || getPlaceholderUrl(attr.imageText, 400, 180);
+                const imgDomain = getDomain(imgUrl);
                 
                 let tagsHtml = '';
                 if (attr.tags) {
@@ -915,8 +930,11 @@
                 }
 
                 card.innerHTML = `
-                    <div class="relative h-48 overflow-hidden bg-slate-100 shrink-0">
+                    <div class="relative h-48 overflow-hidden bg-slate-100 shrink-0 group">
                         <img src="${imgUrl}" alt="${attr.name} 圖片" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-2 py-1 text-right truncate">
+                            來源: ${imgDomain}
+                        </div>
                     </div>
                     <div class="p-4 flex flex-col flex-grow">
                         <div class="mb-2">
@@ -938,9 +956,6 @@
         function setFoodPark(parkCode) {
             currentFoodPark = parkCode;
             currentFoodLandIndex = 0;
-
-            // Map Update
-            document.getElementById('food-map-img').src = mapImages[parkCode];
 
             const btnDL = document.getElementById('btn-food-park-dl');
             const btnDCA = document.getElementById('btn-food-park-dca');
@@ -995,13 +1010,17 @@
                 const card = document.createElement('div');
                 card.className = 'bg-[color:var(--color-bg-card)] rounded-xl card-hover flex flex-col overflow-hidden';
                 const imgUrl = getPlaceholderUrl(item.imageText, 400, 160);
+                const imgDomain = getDomain(imgUrl);
 
                 const parkBadgeClass = currentFoodPark === 'DL' ? 'bg-[#dbeafe] text-[#1e40af] border-[#bfdbfe]' : 'bg-[#ffedd5] text-[#9a3412] border-[#fed7aa]';
                 const parkName = currentFoodPark === 'DL' ? '迪士尼樂園' : '冒險樂園';
 
                 card.innerHTML = `
-                    <div class="h-40 overflow-hidden bg-slate-100 shrink-0">
+                    <div class="h-40 overflow-hidden bg-slate-100 shrink-0 group">
                         <img src="${imgUrl}" alt="${item.name} 美食圖片" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-2 py-1 text-right truncate">
+                            來源: ${imgDomain}
+                        </div>
                     </div>
                     <div class="p-4 flex flex-col flex-grow">
                         <div class="flex justify-between items-start mb-2">
