@@ -68,7 +68,8 @@
 
             <!-- Park Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="p-6 rounded-xl card-hover" style="background-color: #f0f7ff; border: 1px solid var(--color-border-soft);">
+                <!-- Using inline styles to override Tailwind for the soft earthy bg -->
+                <div class="p-6 rounded-xl border hover:shadow-md transition-shadow card-hover" style="background-color: #f0f7ff; border-color: var(--border-soft);">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm">🏰</div>
                         <div class="ml-4">
@@ -76,10 +77,14 @@
                             <span class="text-sm text-blue-600 font-medium">Disneyland Park</span>
                         </div>
                     </div>
-                    <p class="mb-4" style="color: var(--color-text-secondary);">全球第一座迪士尼，充滿經典童話與華特迪士尼的原創夢想。</p>
+                    <p class="text-slate-700 mb-4">全球第一座迪士尼，充滿經典童話與華特迪士尼的原創夢想。</p>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li class="flex items-start"><i class="fa-solid fa-check text-blue-400 mt-1 mr-2"></i> <span>必訪：星際大戰、睡美人城堡、印第安納瓊斯</span></li>
+                        <li class="flex items-start"><i class="fa-solid fa-check text-blue-400 mt-1 mr-2"></i> <span>氛圍：溫馨、懷舊、夢幻、魔法</span></li>
+                    </ul>
                 </div>
 
-                <div class="p-6 rounded-xl card-hover" style="background-color: #fff7ed; border: 1px solid var(--color-border-soft);">
+                <div class="p-6 rounded-xl border hover:shadow-md transition-shadow card-hover" style="background-color: #fff7ed; border-color: var(--border-soft);">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm">🎡</div>
                         <div class="ml-4">
@@ -87,7 +92,11 @@
                             <span class="text-sm text-orange-600 font-medium">Disney California Adventure</span>
                         </div>
                     </div>
-                    <p class="mb-4" style="color: var(--color-text-secondary);">結合皮克斯與漫威，展現加州地景與電影文化的現代樂園。</p>
+                    <p class="text-slate-700 mb-4">結合皮克斯與漫威，展現加州地景與電影文化的現代樂園。</p>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li class="flex items-start"><i class="fa-solid fa-check text-orange-400 mt-1 mr-2"></i> <span>必訪：汽車總動員、復仇者校園、皮克斯碼頭</span></li>
+                        <li class="flex items-start"><i class="fa-solid fa-check text-orange-400 mt-1 mr-2"></i> <span>氛圍：刺激、現代、美食美酒、電影感</span></li>
+                    </ul>
                 </div>
             </div>
         </div>
