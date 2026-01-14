@@ -213,7 +213,8 @@
                 </div>
             </div>
         </div>
-
+        
+        <!-- TIPS VIEW -->
         <div id="view-tips" class="hidden max-w-4xl mx-auto space-y-8">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold mb-4" style="color: var(--color-text-primary);">遊玩策略與小貼士</h2>
@@ -221,37 +222,53 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Strategy Card 1 -->
                 <div class="bg-[color:var(--color-bg-card)] p-6 rounded-xl card-hover border-l-4 border-yellow-400">
                     <h3 class="text-xl font-bold mb-3" style="color: var(--color-text-primary);"><i class="fa-solid fa-bolt text-yellow-500 mr-2"></i>門票攻略</h3>
                     <ul class="space-y-3" style="color: var(--color-text-secondary);">
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>門票種類：</strong> 單園門票或跨園門票 (Park Hopper)。跨園需在 11:00 後進入第二個園區。</li>
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>Lightning Lane：</strong> Multi Pass (原Genie+) 可預約多項設施，但每項設施限用一次。Single Pass (原ILL) 針對最熱門設施需單獨購買。</li>
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>入園預約：</strong> 購票後務必至官網進行「入園日期預約 (Park Reservation)」，否則無法入園。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>門票種類：</strong> 單園門票：只能選擇一個樂園（迪士尼樂園或 迪士尼加州冒險樂園）<br>跨園門票 (Park Hopper)：可在同一天內遊覽兩個樂園，但須在上午11:00後才能進入第二個園區<br>多日門票：可選擇2日或3日的不同組合。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>快速通關：</strong> Genie+：多設施快速通關 Lightning Lane Multi Pass，每個設施限每天 1 次，可大幅降低排隊時間，一次只能預約一項，預約後依 app 中的 arrival window 時間抵達設施現場使用，通常 arrival window 為一小時，需等待 2 小時冷卻或使用後才能再約；PhotoPass 服務：加州迪士尼在許多拍照點都會安排專業攝影師，請攝影師拍完並出示 PhotoPass 的條碼掃碼即可獲得照片。<br> ILL (付費單項)：針對《星際大戰：反抗軍崛起 (Star Wars: Rise of the Resistance)》、《水箱溫泉鎮賽車手 (Radiator Springs Racers)》等超熱門設施，需額外付費購買。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>預約入園：</strong>登入帳戶後，點選 My Disneyland ➜ My Theme Park Reservations點選 Book Theme Park Reservations ➜新增票券 Link a Ticket or Magic Key pass，輸入票號或掃描條碼皆可加入票券 ➜所有資料皆需輸入和護照一致的內容(重複此步驟即可綁定其他同行旅客) ➜選擇「要預約的日期」與「園區」➜確認人數（系統會詢問你要為哪些人一起預約）➜確認時間與日期，點選「Confirm」➜完成後會收到一封預約確認信</li>
                     </ul>
                 </div>
 
+                <!-- Strategy Card 2 -->
                 <div class="bg-[color:var(--color-bg-card)] p-6 rounded-xl card-hover border-l-4 border-blue-400">
                     <h3 class="text-xl font-bold mb-3" style="color: var(--color-text-primary);"><i class="fa-solid fa-mobile-screen text-blue-500 mr-2"></i>善用官方 App</h3>
                     <ul class="space-y-3" style="color: var(--color-text-secondary);">
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>Mobile Order：</strong> 強烈建議使用 App 點餐，避開用餐尖峰排隊人潮。</li>
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>即時等候時間：</strong> 隨時查看設施等待時間，靈活調整行程。</li>
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>PhotoPass：</strong> 在地圖上尋找攝影師，拍完掃碼即可。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>Mobile Order：</strong> 早上就先在 App 上選好中午要吃的時段和餐點，時間到直接去窗口領取，省去大排長龍。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>即時資訊：</strong>查看設施 Attractions 等候時間：點選 App 下方地圖符號進入園區互動地圖 ➜ 進入地圖後每顆 ★ 即代表不同的 設施，點選相對應 ★ 即可看到現場預估等候時間。園區互動地圖同時也可以查看餐廳地點、表演時間等。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong> </strong> <img src="https://raw.githubusercontent.com/MARIEGG0507/2026_MARIEGGCATRIP/main/image/DisneyAPP1.png" alt="園區互動地圖示意圖" class="ml-2 w-auto h-auto rounded shadow-sm"></li>
                     </ul>
                 </div>
 
+                <!-- Strategy Card 5 -->
                 <div class="bg-[color:var(--color-bg-card)] p-6 rounded-xl card-hover border-l-4 border-red-400">
-                    <h3 class="text-xl font-bold mb-3" style="color: var(--color-text-primary);"><i class="fa-solid fa-square-parking text-red-500 mr-2"></i>停車與交通</h3>
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--color-text-primary);"><i class="fa-solid fa-square-parking text-red-500 mr-2"></i>停車與交通資訊</h3>
                     <ul class="space-y-3" style="color: var(--color-text-secondary);">
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>停車場：</strong> Mickey & Friends 與 Pixar Pals 停車場最方便，轉乘電車直達園區。</li>
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>Toy Story 停車場：</strong> 位於稍遠處，需轉乘巴士，人潮可能較少。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>主要停車場：</strong> 米奇與朋友停車場 (Mickey & Friends) 和 皮克斯夥伴停車場 (Pixar Pals)，兩者車位極多。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>停車費用：</strong> 標準汽車每日約 $40 USD (1輛)，需於 App 或現場繳費。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>接駁方式：</strong> 停車後需搭乘免費的**接駁電車或巴士**前往樂園大門。務必記住停車區域/樓層。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>提早抵達：</strong> 停車和安檢流程需 30-45 分鐘，建議在開園前 1.5 小時完成停車。</li>
                     </ul>
                 </div>
 
+                <!-- Strategy Card 3 -->
                 <div class="bg-[color:var(--color-bg-card)] p-6 rounded-xl card-hover border-l-4 border-green-400">
-                    <h3 class="text-xl font-bold mb-3" style="color: var(--color-text-primary);"><i class="fa-solid fa-stopwatch text-green-500 mr-2"></i>省時技巧</h3>
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--color-text-primary);"><i class="fa-solid fa-stopwatch text-green-500 mr-2"></i>時間管理</h3>
                     <ul class="space-y-3" style="color: var(--color-text-secondary);">
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>提早入園 (Rope Drop)：</strong> 開園前 45 分鐘抵達大門，衝刺第一項熱門設施。</li>
-                        <li class="flex items-start"><span class="mr-2">•</span> <strong>單人通道 (Single Rider)：</strong> 賽車手、太空山、大雷山等皆有單人通道，速度極快。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>提早入園：</strong> 建議比開園時間提早 1.5 小時抵達，完成停車安檢。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>單人通道 (Single Rider)：</strong> 若不介意分開坐，賽車手、超特攻雲霄飛車等設施走單人通道可大幅節省時間。</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy Card 4 -->
+                <div class="bg-[color:var(--color-bg-card)] p-6 rounded-xl card-hover border-l-4 border-purple-400">
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--color-text-primary);"><i class="fa-solid fa-moon text-purple-500 mr-2"></i>夜間亮點</h3>
+                    <ul class="space-y-3" style="color: var(--color-text-secondary);">
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>Cars Land：</strong> 晚上務必去欣賞霓虹燈亮起的瞬間。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>皮克斯碼頭：</strong> 欣賞摩天輪與水面倒影，World of Color 水舞秀也在此。</li>
+                        <li class="flex items-start"><span class="mr-2">•</span> <strong>煙火：</strong> 迪士尼樂園睡美人城堡前是最佳觀賞點。</li>
                     </ul>
                 </div>
             </div>
@@ -661,12 +678,12 @@ name: "迪士尼樂園",
                         tags: ["叢林", "冒險"],
                         attractions: [
                             { 
-                                name: "👍Indiana Jones Adventure 印第安那瓊斯冒險旅程", 
+                                name: "👍Indiana Jones Adventure 印第安納瓊斯冒險旅程", 
                                 type: "吉普車冒險", 
                                 highlight: "闖入禁忌神廟，融合火焰、蛇群與巨石的特效，顛簸刺激。", 
                                 tags: ["Genie+", "刺激", "經典"], 
-                                imageText: "印第安瓊斯",
-                                customImage: "https://static.wikia.nocookie.net/indianajones/images/f/fd/Temple_of_the_Forbidden_Eye_01.jpg/revision/latest/scale-to-width-down/250?cb=20180423202659" 
+                                imageText: "印第安納瓊斯",
+                                customImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlpktAofDujnINCPZ2AyUan0kp-j8BjXpgag&s" 
                             },
                             { 
                                 name: "Jungle Cruise 叢林巡航", 
