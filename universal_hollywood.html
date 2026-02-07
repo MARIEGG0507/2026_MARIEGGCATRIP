@@ -93,6 +93,7 @@
 </head>
 <body class="antialiased selection:bg-yellow-200">
 
+    <!-- Header & Navigation -->
     <header class="sticky top-0 z-50 header-gradient shadow-xl text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col">
@@ -103,6 +104,7 @@
                         </span>
                     </div>
                 </div>
+                <!-- Tabs -->
                 <nav class="flex space-x-2 items-center overflow-x-auto hide-scroll text-sm pt-1">
                     <button id="tab-overview" onclick="switchView('overview')" class="tab-button active py-3 px-3 sm:px-4 transition-colors text-center">
                         <i class="fa-solid fa-map mr-1"></i>樂園總覽
@@ -129,6 +131,7 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-screen">
 
+        <!-- VIEW 1: 樂園總覽 (OVERVIEW) -->
         <div id="view-overview" class="view space-y-16 animate-fade-in">
             <section id="general-overview" class="pt-4">
                 <h1 class="text-4xl font-bold text-gray-900 mb-6 border-b-2 border-amber-500 pb-2">
@@ -158,31 +161,37 @@
                 </div>
             </section>
             
+            <!-- 新增地圖概覽區塊 -->
             <section id="park-map-schematic" class="pt-8">
                 <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b border-sky-500 pb-2">
                     <i class="fa-solid fa-route mr-3 text-sky-500"></i>園區地圖概覽 (Schematic)
                 </h2>
                 <div class="bg-white p-6 md:p-8 rounded-xl card-shadow border border-gray-100 space-y-6">
+                    <!-- Visual Placeholder for Map -->
                     <figure>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Universal_Studios_Hollywood_globe_%28July_2022%29.JPG/800px-Universal_Studios_Hollywood_globe_%28July_2022%29.JPG" alt="Universal Studios Hollywood Globe" class="rounded-lg shadow-md w-full border border-gray-200" style="max-height: 300px; object-fit: cover;">
-                        <figcaption class="img-caption">圖片來源：Wikimedia Commons (Benoît Prieur, CC0)</figcaption>
+                        <img src="https://placehold.co/800x300/1e40af/ffffff?text=Universal+Studios+Map+Overview" alt="園區地圖圖片佔位符" class="rounded-lg shadow-md w-full border border-gray-200">
+                        <figcaption class="img-caption">圖片來源：Universal Studios Hollywood 官方網站</figcaption>
                     </figure>
                     <p class="text-lg font-semibold text-gray-700">
                         環球影城主要分為上下兩區，由四段超長電動手扶梯 (StarWay) 連接。
                     </p>
                     
+                    <!-- Simplified Schematic Block -->
                     <div class="flex flex-col items-center justify-center p-4 bg-gray-50 border border-gray-200 rounded-lg">
                         
+                        <!-- UPPER LOT -->
                         <div class="w-full max-w-sm bg-blue-600 text-white p-3 rounded-lg text-center font-bold shadow-md">
                             上園區 (Upper Lot) - 魔法與電影區
                         </div>
                         
+                        <!-- Connection Arrow -->
                         <div class="my-3 flex flex-col items-center">
                             <i class="fa-solid fa-arrow-down text-3xl text-gray-400"></i>
                             <span class="text-sm text-gray-600 font-medium mt-1">StarWay 電動手扶梯 (約 8 分鐘)</span>
                             <i class="fa-solid fa-arrow-down text-3xl text-gray-400"></i>
                         </div>
                         
+                        <!-- LOWER LOT -->
                         <div class="w-full max-w-sm bg-red-600 text-white p-3 rounded-lg text-center font-bold shadow-md">
                             下園區 (Lower Lot) - 刺激與任天堂區
                         </div>
@@ -195,6 +204,7 @@
             </section>
         </div>
 
+        <!-- VIEW 2: 上園區 (UPPER LOT) -->
         <div id="view-upper" class="view hidden space-y-12 animate-fade-in">
             <div class="pb-2 border-b border-gray-200">
                 <h2 class="text-3xl font-bold text-gray-900 flex items-center">
@@ -203,6 +213,7 @@
                 <p class="text-lg text-gray-700 mt-2">上園區是樂園的入口所在，設施種類最為豐富，適合闔家同樂。</p>
             </div>
 
+            <!-- World 1: Harry Potter -->
             <section>
                 <div class="world-header border-yellow-600">
                     <h3 class="text-2xl font-bold text-gray-900">The Wizarding World of Harry Potter™</h3>
@@ -210,8 +221,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-5 rounded-xl card-shadow border border-yellow-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Hogwarts_%2829353868725%29.jpg/640px-Hogwarts_%2829353868725%29.jpg" alt="霍格華茲城堡圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (HarshLight, CC BY 2.0)</figcaption>
+                            <img src="https://placehold.co/400x180/1a202c/fbbf24?text=Hogwarts+Castle" alt="霍格華茲城堡圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood / Wizarding World</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-house-chimney-window text-yellow-600 mr-2"></i>哈利波特魔法世界</h3>
                         <p class="text-sm text-gray-700 mb-3">**必玩：** 禁忌之旅 (Forbidden Journey) 與鷹馬的飛行。別忘了到奧利凡德選購魔杖，體驗櫥窗互動魔法！</p>
@@ -219,6 +230,7 @@
                 </div>
             </section>
 
+            <!-- World 2: Studio Tour -->
             <section>
                 <div class="world-header border-red-600">
                     <h3 class="text-2xl font-bold text-gray-900">Studio Tour Plaza</h3>
@@ -226,8 +238,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/USH_Studio_Tour_Tram_Cars_2.JPG/640px-USH_Studio_Tour_Tram_Cars_2.JPG" alt="環球影城之旅電車圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (METRO96)</figcaption>
+                            <img src="https://placehold.co/400x180/dc2626/ffffff?text=Studio+Tour+Tram" alt="環球影城之旅電車圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood Official</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-film text-red-600 mr-2"></i>影城之旅 (Studio Tour)</h3>
                         <p class="text-sm text-gray-700 mb-3">60分鐘深入真實好萊塢片場。包含 **King Kong 360 3D** 與 **Fast & Furious Supercharged**。</p>
@@ -235,6 +247,7 @@
                 </div>
             </section>
 
+            <!-- World 3: Illumination & Pets -->
             <section>
                 <div class="world-header border-orange-500">
                     <h3 class="text-2xl font-bold text-gray-900">Illumination's Minion Land & Pets Place</h3>
@@ -242,16 +255,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/The_Secret_Life_of_Pets_Off_the_Leash_%28Universal_Studios_Hollywood%29_1.jpg/640px-The_Secret_Life_of_Pets_Off_the_Leash_%28Universal_Studios_Hollywood%29_1.jpg" alt="寵物當家圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (Jeremy Thompson, CC BY 2.0)</figcaption>
+                            <img src="https://placehold.co/400x180/f97316/ffffff?text=Secret+Life+of+Pets" alt="寵物當家圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood Official</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-paw text-orange-500 mr-2"></i>寵物當家 (Off the Leash)</h3>
                         <p class="text-sm text-gray-700 mb-3">**最新推薦！** 極度可愛的慢速設施，化身為流浪小狗在紐約街頭冒險。排隊動線本身就是一個精緻的公寓場景。</p>
                     </div>
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Despicable_Me_Minion_Mayhem_building_2.jpg/640px-Despicable_Me_Minion_Mayhem_building_2.jpg" alt="小小兵圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons</figcaption>
+                            <img src="https://placehold.co/400x180/facc15/000000?text=Minion+Mayhem" alt="小小兵圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood / Illumination</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-face-grin-squint text-yellow-500 mr-2"></i>小小兵 (Minion Mayhem)</h3>
                         <p class="text-sm text-gray-700 mb-3">變身黃色小兵的 3D 模擬飛車。出口處的 **Super Silly Fun Land** 有戶外遊樂區與噴水池。</p>
@@ -259,6 +272,7 @@
                 </div>
             </section>
 
+            <!-- World 4: Springfield & DreamWorks -->
             <section>
                 <div class="world-header border-yellow-400">
                     <h3 class="text-2xl font-bold text-gray-900">Springfield U.S.A. & DreamWorks</h3>
@@ -266,8 +280,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/USH-_Simpsons_Ride_Enternace.JPG/640px-USH-_Simpsons_Ride_Enternace.JPG" alt="辛普森家庭圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (METRO96)</figcaption>
+                            <img src="https://placehold.co/400x180/fbbf24/1f2937?text=The+Simpsons+Ride" alt="辛普森家庭圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood / FOX</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-tv text-amber-500 mr-2"></i>辛普森 & 功夫熊貓</h3>
                         <p class="text-sm text-gray-700 mb-3">**Simpsons Ride**：虛擬雲霄飛車。<br>**Kung Fu Panda**：夢工廠劇院的 4D 體感冒險。</p>
@@ -275,6 +289,7 @@
                 </div>
             </section>
 
+            <!-- World 5: WaterWorld -->
             <section>
                 <div class="world-header border-cyan-600">
                     <h3 class="text-2xl font-bold text-gray-900">WaterWorld</h3>
@@ -282,8 +297,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Universal_Studio_%28Oct2016%29_Waterworld_%282%29.JPG/640px-Universal_Studio_%28Oct2016%29_Waterworld_%282%29.JPG" alt="水世界特技秀圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (Pierre André Leclercq, CC BY-SA 4.0)</figcaption>
+                            <img src="https://placehold.co/400x180/0284c7/ffffff?text=WaterWorld+Stunt+Show" alt="水世界特技秀圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood Official</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-water text-cyan-600 mr-2"></i>水世界 (WaterWorld)</h3>
                         <p class="text-sm text-gray-700 mb-3">全球評價最高的現場特技秀，飛機衝撞與爆破場面極為震撼。**注意前排全濕區 (Soak Zone)**。</p>
@@ -292,6 +307,7 @@
             </section>
         </div>
 
+        <!-- VIEW 3: 下園區 (LOWER LOT) -->
         <div id="view-lower" class="view hidden space-y-12 animate-fade-in">
             <div class="pb-2 border-b border-gray-200">
                 <h2 class="text-3xl font-bold text-gray-900 flex items-center">
@@ -300,6 +316,7 @@
                 <p class="text-lg text-gray-700 mt-2">搭乘 StarWay 來到下園區，這裡是**超級任天堂世界**與高強度驚險設施的所在地。</p>
             </div>
 
+            <!-- World 1: Super Nintendo World -->
             <section>
                 <div class="world-header border-red-600">
                     <h3 class="text-2xl font-bold text-gray-900">Super Nintendo World™</h3>
@@ -307,8 +324,8 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-5 rounded-xl card-shadow border border-red-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/View_Super_Nintendo_World_%28Universal_Studios_Hollywood%29_July_2023_%285%29.jpg/640px-View_Super_Nintendo_World_%28Universal_Studios_Hollywood%29_July_2023_%285%29.jpg" alt="超級任天堂世界入口圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (Benoît Prieur, CC0)</figcaption>
+                            <img src="https://placehold.co/400x180/ef4444/ffffff?text=Super+Nintendo+World" alt="超級任天堂世界入口圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood / Nintendo</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-mushroom text-red-600 mr-2"></i>超級任天堂世界</h3>
                         <p class="text-sm text-gray-700 mb-3">
@@ -320,6 +337,7 @@
                 </div>
             </section>
 
+            <!-- World 2: Jurassic World -->
             <section>
                 <div class="world-header border-blue-800">
                     <h3 class="text-2xl font-bold text-gray-900">Jurassic World</h3>
@@ -327,8 +345,8 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/USH-_Jurassic_Park_River_Adventure_Ride_1.JPG/640px-USH-_Jurassic_Park_River_Adventure_Ride_1.JPG" alt="侏羅紀世界激流俯衝圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (METRO96)</figcaption>
+                            <img src="https://placehold.co/400x180/1e3a8a/ffffff?text=Jurassic+World+The+Ride" alt="侏羅紀世界激流俯衝圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood / Amblin</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-fire text-orange-600 mr-2"></i>Jurassic World — The Ride</h3>
                         <p class="text-sm text-gray-700 mb-3">沈浸式水上探險，目睹帝王暴龍與滄龍，最後垂直俯衝全身濕透！</p>
@@ -336,23 +354,26 @@
                 </div>
             </section>
 
+            <!-- World 3: Mummy & Transformers -->
             <section>
                 <div class="world-header border-gray-800">
                     <h3 class="text-2xl font-bold text-gray-900">Transformers Metrobase & Mummy</h3>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Mummy -->
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/USH-_The_Mummy_Ride_Warning.JPG/640px-USH-_The_Mummy_Ride_Warning.JPG" alt="神鬼傳奇圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (METRO96)</figcaption>
+                            <img src="https://placehold.co/400x180/374151/ffffff?text=Revenge+of+the+Mummy" alt="神鬼傳奇圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood Official</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-skull text-gray-600 mr-2"></i>Revenge of the Mummy</h3>
                         <p class="text-sm text-gray-700 mb-3">室內黑暗雲霄飛車，速度極快且有倒退橋段，驚嚇指數高。</p>
                     </div>
+                    <!-- Transformers -->
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Transformers-_The_Ride_at_Universal_Studios_Hollywood-Entrance_%28July_2023%29.jpg/640px-Transformers-_The_Ride_at_Universal_Studios_Hollywood-Entrance_%28July_2023%29.jpg" alt="變形金剛圖片" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (Benoît Prieur, CC0)</figcaption>
+                            <img src="https://placehold.co/400x180/1d4ed8/ffffff?text=Transformers+3D+Ride" alt="變形金剛圖片" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood / Hasbro</figcaption>
                         </figure>
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center"><i class="fa-solid fa-robot text-blue-700 mr-2"></i>Transformers™: The Ride-3D</h3>
                         <p class="text-sm text-gray-700 mb-3">與柯博文並肩作戰的 4K 3D 模擬戰鬥，臨場感十足。</p>
@@ -361,6 +382,7 @@
             </section>
         </div>
 
+        <!-- VIEW 4: 美食指南 (FOOD) -->
         <div id="view-food" class="view hidden space-y-16 animate-fade-in">
             <section id="food-content">
                 <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b border-pink-500 pb-2 flex items-center">
@@ -370,8 +392,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white p-5 rounded-xl card-shadow border border-yellow-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Three_Broomsticks_%2828733190293%29.jpg/400px-Three_Broomsticks_%2828733190293%29.jpg" alt="三根掃帚餐廳" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (HarshLight, CC BY 2.0)</figcaption>
+                            <img src="https://placehold.co/400x180/78350f/ffffff?text=Three+Broomsticks" alt="三根掃帚餐廳" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood / Wizarding World</figcaption>
                         </figure>
                         <h3 class="font-bold text-xl text-gray-900">三根掃帚 (Three Broomsticks)</h3>
                         <p class="text-sm text-gray-600 mt-2">📍 **位置**：哈利波特區</p>
@@ -379,8 +401,8 @@
                     </div>
                     <div class="bg-white p-5 rounded-xl card-shadow border border-red-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/View_Super_Nintendo_World_%28Universal_Studios_Hollywood%29_July_2023_%281%29.JPG/640px-View_Super_Nintendo_World_%28Universal_Studios_Hollywood%29_July_2023_%281%29.JPG" alt="奇諾比奧咖啡店" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (Benoît Prieur, CC0)</figcaption>
+                            <img src="https://placehold.co/400x180/dc2626/ffffff?text=Toadstool+Cafe" alt="奇諾比奧咖啡店" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood / Nintendo</figcaption>
                         </figure>
                         <h3 class="font-bold text-xl text-gray-900">奇諾比奧咖啡店 (Toadstool Cafe)</h3>
                         <p class="text-sm text-gray-600 mt-2">📍 **位置**：任天堂世界</p>
@@ -388,8 +410,8 @@
                     </div>
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Krusty_Burger_Springfield_U_S_A.JPG/640px-Krusty_Burger_Springfield_U_S_A.JPG" alt="柯式漢堡" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (Eliedion, CC BY-SA 4.0)</figcaption>
+                            <img src="https://placehold.co/400x180/fbbf24/000000?text=Krusty+Burger" alt="柯式漢堡" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood / FOX</figcaption>
                         </figure>
                         <h3 class="font-bold text-xl text-gray-900">柯式漢堡 (Krusty Burger)</h3>
                         <p class="text-sm text-gray-600 mt-2">📍 **位置**：辛普森家庭區</p>
@@ -397,8 +419,8 @@
                     </div>
                     <div class="bg-white p-5 rounded-xl card-shadow border border-gray-200">
                         <figure>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Mel%27s_Drive-In_%28Universal_Studios_Hollywood%29.jpg/640px-Mel%27s_Drive-In_%28Universal_Studios_Hollywood%29.jpg" alt="Mel's Diner" class="attraction-image">
-                            <figcaption class="img-caption">圖片來源：Wikimedia Commons (Coolcaesar, CC BY-SA 4.0)</figcaption>
+                            <img src="https://placehold.co/400x180/0d9488/ffffff?text=Mel's+Diner" alt="Mel's Diner" class="attraction-image">
+                            <figcaption class="img-caption">圖片來源：Universal Studios Hollywood Official</figcaption>
                         </figure>
                         <h3 class="font-bold text-xl text-gray-900">Mel’s Diner</h3>
                         <p class="text-sm text-gray-600 mt-2">📍 **位置**：上園區入口附近</p>
@@ -408,6 +430,7 @@
             </section>
         </div>
 
+        <!-- VIEW 5: 遊玩策略 (STRATEGY) -->
         <div id="view-strategy" class="view hidden space-y-16 animate-fade-in">
             <section id="strategy-content">
                 <h2 class="text-3xl font-bold text-gray-900 mb-8 border-b border-purple-500 pb-2 flex items-center">
@@ -492,6 +515,7 @@
             </section>
         </div>
 
+        <!-- VIEW 6: 一日行程 (ITINERARY) -->
         <div id="view-itinerary" class="view hidden space-y-10 animate-fade-in">
             <div class="text-center mb-8">
                 <h1 class="text-4xl font-bold text-gray-900 mb-2">2026/3/8 一日遊攻略（逐時版）</h1>
@@ -502,8 +526,10 @@
 
             <div class="bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-200">
                 
+                <!-- Timeline Start -->
                 <div class="space-y-2">
                     
+                    <!-- 08:30 入園 -->
                     <div class="timeline-item timeline-header">
                         <h3 class="text-xl font-bold text-gray-900 flex items-center">
                             ⏰ 08:30–09:00｜抵達與衝刺
@@ -516,6 +542,7 @@
                         </div>
                     </div>
 
+                    <!-- 09:00 下園區 -->
                     <div class="timeline-item">
                         <p class="text-sm font-bold text-amber-600">🏃‍♂️ 09:00–10:30</p>
                         <h3 class="text-lg font-bold text-gray-900">首要目標：超級任天堂世界</h3>
@@ -529,6 +556,7 @@
                         </div>
                     </div>
 
+                    <!-- 10:30 下園區其餘 -->
                     <div class="timeline-item">
                         <p class="text-sm font-bold text-amber-600">🔥 10:30–12:00</p>
                         <h3 class="text-lg font-bold text-gray-900">完成 Lower Lot 三大驚險設施</h3>
@@ -540,6 +568,7 @@
                         </div>
                     </div>
 
+                    <!-- 12:00 午餐 -->
                     <div class="timeline-item">
                         <p class="text-sm font-bold text-amber-600">☕ 12:00–13:00</p>
                         <h3 class="text-lg font-bold text-gray-900">午餐與回到上園區</h3>
@@ -548,6 +577,7 @@
                         </div>
                     </div>
 
+                    <!-- 13:00 上園區遊樂 -->
                     <div class="timeline-item">
                         <p class="text-sm font-bold text-amber-600">🐶 13:00–14:30</p>
                         <h3 class="text-lg font-bold text-gray-900">上園區熱門設施</h3>
@@ -557,6 +587,7 @@
                         </ul>
                     </div>
 
+                    <!-- 14:30 Studio Tour -->
                     <div class="timeline-item timeline-header">
                         <h3 class="text-xl font-bold text-red-600 flex items-center">
                             🎥 14:30–15:30｜Studio Tour (影城導覽)
@@ -566,6 +597,7 @@
                         </div>
                     </div>
 
+                    <!-- 15:30 哈利波特 -->
                     <div class="timeline-item">
                         <p class="text-sm font-bold text-amber-600">🪄 15:30–17:00</p>
                         <h3 class="text-lg font-bold text-gray-900">哈利波特魔法世界</h3>
@@ -577,13 +609,16 @@
                         </ul>
                     </div>
 
+                    <!-- 17:00 結尾 -->
                     <div class="timeline-item">
                         <p class="text-sm font-bold text-amber-600">🌆 17:00–閉園</p>
                         <h3 class="text-lg font-bold text-gray-900">WaterWorld 秀 & 補漏</h3>
                         <p class="text-sm text-gray-700 mt-1">查看 **WaterWorld** 最後一場表演時間（通常在下午）。看完後可補玩 Simpsons 或 Kung Fu Panda，最後在 CityWalk 享用晚餐。</p>
                     </div>
 
-                </div> </div>
+                </div> <!-- End Timeline -->
+
+            </div>
         </div>
 
     </main>
