@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>2026 美西｜舊金山與洛杉磯之旅</title>
+    <title>2026 美西｜舊金山與洛杉磯之旅 (定案版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- 引入 SheetJS (用於匯出備份 Excel) -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     
     <!-- 引入 PptxGenJS (用於匯出 PowerPoint) -->
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
@@ -18,7 +15,7 @@
 
     <style>
         /* ==========================================================================
-           Palette: Earthy Calm
+           Palette: Earthy Calm (版面設計完全保留)
            ========================================================================== */
         :root {
             --color-bg-body: #fbf7f2;
@@ -134,9 +131,7 @@
         .timeline-line { animation: drawLine 1s ease-out forwards; background-color: var(--color-border-soft); }
 
         @media (max-width: 768px) {
-            /* Mobile Typography Adjustments */
             h1 { font-size: 1.8rem !important; line-height: 1.3 !important; }
-            
             nav ul { flex-wrap: nowrap !important; overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start !important; gap: 0.5rem; padding: 0.5rem 1rem; }
             nav ul li { flex-shrink: 0; }
             #itinerary-container { flex-direction: column !important; height: auto !important; }
@@ -148,20 +143,11 @@
 </head>
 <body>
     <div id="toast">訊息提示</div>
-    <!-- 
-      Header 優化說明：
-      1. 手機版 (Default): flex-col 排版。圖片 w-full h-auto (等比例)。文字區塊在下方 bg-[#2c241b]。
-      2. 桌面版 (md): block 排版。高度固定 h-[500px]。圖片 absolute inset-0 (覆蓋)。文字 absolute bottom-0 (疊加)。
-    -->
     <header class="relative border-b border-[#efe6d8] flex flex-col md:block md:h-[500px] overflow-hidden">
-        <!-- 背景圖片區塊 -->
         <div class="relative w-full h-auto md:absolute md:inset-0 md:z-0 md:h-full">
             <img src="https://raw.githubusercontent.com/MARIEGG0507/2026_MARIEGGCATRIP/refs/heads/main/image/Image_herobanner.png" alt="Hero Banner" class="w-full h-auto md:h-full md:object-cover md:object-center block">
-            <!-- 漸層遮罩：僅在桌面版顯示，因為手機版文字不疊加在圖上 -->
             <div class="hidden md:block absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
         </div>
-
-        <!-- 標題內容區塊 -->
         <div class="relative z-10 w-full bg-[#2c241b] md:bg-transparent px-4 py-8 md:py-12 text-center md:absolute md:bottom-0 md:mb-4">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 class="text-2xl sm:text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-3 drop-shadow-lg">美西舊金山與洛杉磯之旅</h1>
@@ -265,12 +251,10 @@
                     <div id="phase-nav-content" class="p-4 md:p-6 space-y-4 md:block"></div>
                 </div>
                 <div class="w-full md:w-2/3 bg-white relative flex flex-col h-full">
-                    <!-- 更新了 class 以支援手機版排列 -->
                     <div id="itinerary-header" class="shrink-0 bg-white/95 backdrop-blur border-b border-[#efe6d8] px-4 md:px-8 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 shadow-sm z-20"></div>
                     <div id="itinerary-details" class="flex-grow p-6 md:p-8 md:overflow-y-auto custom-scroll transition-opacity duration-300">
                         <div id="itinerary-list-content" class="pl-4 border-l-2 border-[#efe6d8] md:border-none"></div>
                     </div>
-                    <!-- Added min-h for mobile map visibility -->
                     <div id="itinerary-map" class="hidden flex-grow z-10 w-full h-full relative bg-[#fbf7f2] min-h-[500px] md:min-h-0"></div>
                 </div>
             </div>
@@ -310,7 +294,6 @@
             </div>
             <div id="attraction-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
-
     </main>
 
     <footer class="bg-[#2c241b] text-white py-16 mt-12">
@@ -321,24 +304,11 @@
             <div class="inline-block px-6 py-4 rounded-2xl border border-[#3e3429] bg-[#251e16]">
                 <p class="text-[10px] text-[#5c4d3c] mb-3 font-bold uppercase tracking-widest">行程管理後台</p>
                 <div class="flex flex-wrap justify-center gap-3">
-                     <button onclick="downloadTemplate()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
-                        <span>⬇️</span> 匯出備份 (Excel)
-                    </button>
-                    <!-- 已移除 Excel 匯入按鈕 -->
-
-                    <button onclick="loadFromGoogleSheet()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
-                        <span>☁️</span> Google 同步
-                    </button>
-                    <button onclick="resetToDefault()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
-                        <span>🔄</span> 重置
-                    </button>
-                    <!-- 新增的一鍵列印按鈕 -->
+                    <!-- 僅保留一鍵列印 -->
                     <button onclick="exportToPPTX()" class="cursor-pointer px-3 py-1.5 rounded-md text-xs font-bold text-[#8c7b66] border border-[#5c4d3c] hover:bg-[#3e3429] hover:text-[#d6b98c] hover:border-[#d6b98c] transition-all flex items-center gap-2">
                         <span>📽️</span> 一鍵列印 (PPT)
                     </button>
                 </div>
-                <p id="upload-status" class="text-[10px] text-[#a09a93] mt-2 hidden"></p>
-                <p id="save-status" class="text-[10px] text-[#d6b98c] mt-1 hidden italic">✨ 已自動儲存您的自訂行程</p>
             </div>
         </div>
     </footer>
@@ -346,28 +316,28 @@
     <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="scroll-to-top-btn"><span class="text-xl">⬆️</span></button>
 
     <script>
-        // --- 1. Global constants & Variables ---
-        const STORAGE_KEY = 'trip_planner_data';
-        const GOOGLE_SHEET_ID = '1KktXemxMf99qn8Qa1Kocom7SoJ0aaVgBZE7flC9qDKU';
+        // --- 1. Global Variables & Constants (Static Mode) ---
         let currentMap = null;
         let isMapMode = false;
         let currentPhaseKey = 'phase1';
 
-        // --- 2. Default Data ---
-        let flightData = {
+        // =========================================================================
+        //  DATA SECTION (洪院長：請在此處修改您的行程資料)
+        // =========================================================================
+
+        const flightData = {
             outbound: [ { leg: "TPE ➜ HKG", date: "2/26 20:15", arr: "22:00", note: "轉機", number: "CX531" }, { leg: "HKG ➜ SFO", date: "2/26 01:00 (+1)", arr: "21:15 (2/26)", note: "需調整時差", number: "CX872" } ],
             inbound: [ { leg: "LAX ➜ HKG", date: "3/09 22:15", arr: "05:05 (3/11)", note: "跨越國際換日線", number: "CX883" }, { leg: "HKG ➜ TPE", date: "3/11 08:00", arr: "09:45 (3/11)", note: "抵達溫暖的家", number: "CX488" } ]
         };
 
-        // Added Lat/Lng for Map Mode
-        let accommodationData = [
+        const accommodationData = [
             { city: "舊金山", name: "Riu Plaza Fisherman's Wharf", checkinDate: "2026-02-26", checkoutDate: "2026-03-03", room: "豪華加大雙人床房（2 張加大床）", highlight: "🍳 含早餐｜🚭 禁菸房", facilities: "私人衛浴、空調、保險箱、冰箱、咖啡機、吹風機", address: "2500 Mason Street, San Francisco, CA 94133, USA", mapLink: "https://www.google.com/maps?q=37.80699906469404,-122.41348274052166", lat: 37.8070, lng: -122.4135 },
             { city: "蒙特雷", name: "隆恩橡木酒店", checkinDate: "2026-03-03", checkoutDate: "2026-03-04", room: "特大雙人床房 × 2 間", highlight: "🚭 禁菸房", facilities: "私人衛浴、空調、隔音、微波爐、冰箱、咖啡機、暖氣", address: "2221 North Fremont Street, Monterey, CA 93940, USA", mapLink: "https://www.google.com/maps?q=36.5970385420236,-121.85806229710579", lat: 36.5970, lng: -121.8581 },
             { city: "莫羅貝", name: "海港屋酒店", checkinDate: "2026-03-04", checkoutDate: "2026-03-05", room: "海景豪華特大床房 × 2 間", highlight: "🌊 海景陽台｜🚭 禁菸房", facilities: "空調、微波爐、咖啡機、暖氣", address: "1095 Main Street, Morro Bay, CA 93442, USA", mapLink: "https://www.google.com/maps?q=35.36818125561934,-120.85015922784805", lat: 35.3682, lng: -120.8502 },
             { city: "洛杉磯", name: "Hollywood Franklin Hotel", checkinDate: "2026-03-05", checkoutDate: "2026-03-09", room: "加大雙人床房（2 張加大床）", highlight: "🚭 禁菸房", facilities: "游泳池、空調、微波爐、咖啡機、保險箱", address: "6141 Franklin Avenue, Hollywood, Los Angeles, CA 90028, USA", mapLink: "https://www.google.com/maps?q=34.10539309099251,-118.32347273826599", lat: 34.1054, lng: -118.3235 }
         ];
 
-        let diningData = [
+        const diningData = [
             { name: "Fog Harbor Fish House", city: "SF", type: "Seafood", desc: "漁人碼頭排隊名店，海鮮品質極佳，必點獲獎的 Clam Chowder (蛤蜊濃湯)、Garlic Roasted Whole Dungeness Crab (蒜香烤大螃蟹)。", icon: "🦀", url: "https://fogharbor.com/", image: "" },
             { name: "Boudin Bakery", city: "SF", type: "Classic", desc: "舊金山酸麵包創始店，蛤蜊濃湯 (Clam Chowder) 是觀光客必嚐經典。", icon: "🥣", url: "https://boudinbakery.com/", image: "" },
             { name: "Hog Island Oyster Co.", city: "SF", type: "Seafood", desc: "位於 Ferry Building 內，提供最新鮮的生蠔與絕美海灣景觀。", icon: "🦪", url: "https://hogislandoysters.com/restaurants/ferry-building/", image: "" },
@@ -381,8 +351,7 @@
             { name: "Shake Shack", city: "LA", type: "FastFood", desc: "精緻漢堡代表，牛肉品質極高，奶昔是一絕。</br>推薦菜色： ShackBurger、Cheese Fries。</br>推薦飲品： Hand-Spun Shakes (經典奶昔)。</br>洛杉磯： 6201 Hollywood Blvd (離好萊塢的飯店 The Hollywood Franklin 極近)。</br>", icon: "🍔", url: "https://shakeshack.com/", image: "" }
         ];
 
-        let attractionMap = {};
-        let attractions = [
+        const attractions = [
             // --- 舊金山 (SF) 景點 ---
             { name: "金門大橋 Golden Gate", city: "SF", type: "Photo", desc: "金門大橋（英語：Golden Gate Bridge）是美國舊金山的地標。它跨越聯接舊金山灣和太平洋的金門海峽，南端連接舊金山的北端，北端接通加州的馬林縣。金門大橋的橋墩跨距長1280.2公尺，建成時曾是世界上跨距最大的懸索橋，寬度27.5公尺，雙向共6條行車線，橋身呈褐紅色，金門大橋擁有世界第四高的橋塔，高達227.4公尺，全橋總長度是2737.4公尺。", short_desc: "橘紅色懸索橋，舊金山最著名的象徵。", icon: "🌉", url: "https://www.goldengatebridge.org/", lat: 37.8199, lng: -122.4783, image: "https://skyhorseauto.com/wp-content/uploads/2025/05/Highway-one-01.png" }, 
             { name: "漁人碼頭與 39 號碼頭 Fisherman's Wharf & Pier 39", city: "SF", type: "Food", desc: "舊金山人氣最旺的觀光區，充滿商店、餐廳和街頭藝人。最著名的莫過於棲息在浮筒上的野生海獅。必嚐酸麵包蛤蜊濃湯。", short_desc: "人氣觀光區，必看野生海獅與享用酸麵包濃湯。", icon: "🦀", url: "https://www.fishermanswharf.org/", lat: 37.8080, lng: -122.4177, image: "https://www.bring-you.info/imgs/2019/10/San_Francisco-12-900x600.jpg" },
@@ -434,7 +403,7 @@
             { name: "好萊塢星光大道 Walk of Fame", city: "LA", type: "History", desc: "尋找鑲嵌在人行道上的粉紅星形獎章，參觀 TCL 中國劇院（明星手腳印）與杜比劇院。建議上午前往避開人潮。", short_desc: "尋找心儀明星的星星與手印。", icon: "⭐", url: "https://www.walkoffame.com/", lat: 34.1016, lng: -118.3267, image: "https://explorehollywood.com/wp-content/uploads/2019/07/Walf_of_Fame_Header_1920x500.jpg" },
         ];
         
-        let itineraryData = {
+        const itineraryData = {
             phase1: {
                 title: "Phase 1: 三藩市漫遊與NBA",
                 icon: "🌉",
@@ -442,11 +411,11 @@
                 dateRange: "2/26 - 3/2",
                 desc: "金門大橋、惡魔島、NBA 賽事",
                 days: [
-                    { date: "2/26 (四)", loc: "舊金山", act: "抵達與時差調適", detail: "21:15 SFO 抵達、前往 Riu Plaza Fisherman's Wharf、休息調適時差。", transport: "Shared Shuttle 或 Uber/Lyft (費用較高但最方便)。", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "上午：08:00 至Pier 33 售票亭（Pre-Paid，或叫will call）兌換門票（網路預約訂票必須在集合時間 30 分鐘前到「Pier 33 售票亭（Pre-Paid，或叫will call）」兌換門票，所以一定要把訂票證明（ORDER CONFIRMATION）印出來或存在手機裡出示，且要帶有照片的身分證件、購票用信用卡，檢查後才能換到登船、登島門票。）<br><strong>08:40梯次</strong> 參觀惡魔島。<br>午餐：漁人碼頭<br>下午：九曲花街 Lombard St、叮叮車 Cable Car、彩繪女士 Painted Ladies，前往藝術宮。<br>晚餐<br>晚上：藝術宮湖畔欣賞夕陽、返回飯店。", transport: "惡魔島：碼頭步行。九曲花街/藝術宮： Powell-Hyde 纜車 🚋。", attractionKey: "惡魔島 Alcatraz", hotel: "Riu Plaza Fisherman's Wharf" }, 
-                    { date: "2/28 (六)", loc: "舊金山", act: "NBA 賽事日", detail: "上午：悠閒早午餐、Ferry Building 散步。<br>下午：前往 Chase Center 周邊用晚餐。<br>午晚餐<br>晚上：17:30 觀賞 NBA 勇士隊 vs 湖人隊。", transport: "Ferry Building： MUNI 巴士。Chase Center： MUNI T-Line 輕軌直達。賽後： MUNI 或 Uber/Lyft 回飯店。", attractionKey: "大通中心 Chase Center", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "3/1 (日)", loc: "舊金山/周邊", act: "優勝美地國家公園", detail: "<strong>06:00 – </strong> Fisherman's Wharf Area（Look for the Pomegranate Café which is located opposite the meet-up point The Gray Line representative will meet you there.）<br><strong>07:30 – 11:30</strong> 乘車前往優勝美地（中途休息 20-30 分）<br><strong>11:30 – 12:00</strong> 抵達國家公園（經南側或西側入口）<br><strong>12:00 – 16:30</strong> 優勝美地谷深度探索（午餐自理）<br>- 在優勝美地國家公園遊覽 4 小時<br>- 1 小時導覽和 3 小時自由活動時間<br>- 下瀑布遊覽不包含在導覽行程中<br><strong>17:00 – 20:40</strong> 返回舊金山", transport: "旅行社提供交通車。", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
-                    { date: "3/2 (一)", loc: "舊金山", act: "城市文化巡禮", detail: "上午：聯合廣場逛街、前往唐人街午餐。<br>下午：搭車前往金門大橋北邊 Vista Point 拍照。<br>晚上：順路回程經 Crissy Field、晚餐、自由活動。", transport: "纜車/唐人街： Powell-Mason 纜車 🚋。金門大橋： 從唐人街搭 Uber/Lyft 直達。", attractionKey: "金門大橋 Golden Gate", hotel: "Riu Plaza Fisherman's Wharf" }
+                    { date: "2/26 (四)", loc: "舊金山", act: "抵達舊金山 (SFO)", detail: "<strong>16:00</strong> 抵達 SFO → 搭乘 UberXL (50m) 直達漁人碼頭飯店。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [物流] 4 個 28 吋大箱必叫 XL。<br>• [住宿] 飯店 Check-in。", transport: "UberXL", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "2/27 (五)", loc: "舊金山", act: "惡魔島與城市精華", detail: "<strong>08:00</strong> 步行至 Pier 33 (須提早 30m 換票)。<br><strong>08:40</strong> 搭船前往惡魔島 (預計 11:25 回程)。<br><strong>12:00</strong> 午餐：Fog Harbor Fish House。<br><strong>13:30</strong> 叮叮車前往九曲花街。<br><strong>15:00</strong> 公車前往彩繪女士 (Painted Ladies)。<br><strong>16:30</strong> 藝術宮 (Palace of Fine Arts)。<br><strong>17:30</strong> 金門大橋 (Battery East) 看夕陽。<br><strong>19:45</strong> 晚餐：In-N-Out Burger。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [門票] 惡魔島需 90 天前預訂。<br>• [交通] 下載 MUNI Mobile App 購買叮叮車票。", transport: "船、叮叮車、公車、Uber", attractionKey: "惡魔島 Alcatraz", hotel: "Riu Plaza Fisherman's Wharf" }, 
+                    { date: "2/28 (六)", loc: "舊金山", act: "渡輪大廈與 NBA", detail: "<strong>10:00</strong> 復古電車 F Line 前往渡輪大廈。<br><strong>10:30</strong> 農夫市集 (週六限定) 採買 Acme Bread、Blue Bottle。<br><strong>下午</strong> 海灣步道散策至 Cupid's Span。<br><strong>16:00</strong> 輕軌 T Line 抵達 Chase Center (提前感受氣氛)。<br><strong>17:30</strong> NBA 球賽。<br><strong>20:30</strong> 晚餐：Gott's Roadside。<br><strong>21:30</strong> 復古電車回飯店。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [球賽] 安檢嚴格，僅限極小包包 (建議不帶)。<br>• [交通] 持當日球票可免費搭乘 MUNI T-Line。", transport: "復古電車 F Line、輕軌 T Line", attractionKey: "大通中心 Chase Center", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "3/1 (日)", loc: "優勝美地", act: "優勝美地遠征", detail: "<strong>06:00</strong> 自駕出發 (單程 4hr)，車內早餐。<br><strong>11:30</strong> 抵達優勝美地谷。<br><strong>下午</strong> 探索優勝美地 (酋長岩、瀑布)。<br><strong>20:40</strong> 返回舊金山飯店。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [導航] 下載離線地圖 (山區無訊號)。<br>• [安全] 檢查是否需攜帶雪鏈 (依季節)。", transport: "自駕", attractionKey: "酋長岩 El Capitan", hotel: "Riu Plaza Fisherman's Wharf" },
+                    { date: "3/2 (一)", loc: "舊金山", act: "聯合廣場與金門大橋北岸", detail: "<strong>08:15</strong> 叮叮車前往聯合廣場 (Union Square)。<br><strong>09:00</strong> Target 採買補給。<br><strong>12:00</strong> 唐人街午餐。<br><strong>14:30</strong> Uber 前往金門大橋北岸 (Vista Point) 拍照。<br><strong>16:15</strong> Crissy Field 漫步看落日。<br><strong>19:00</strong> 晚餐：A16。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [導航] 搜尋 'Golden Gate Bridge Vista Point'。<br>• [購物] Target 位於 Metreon 購物中心。", transport: "叮叮車、Uber", attractionKey: "金門大橋 Golden Gate", hotel: "Riu Plaza Fisherman's Wharf" }
                 ]
             },
             phase2: {
@@ -456,9 +425,9 @@
                 dateRange: "3/3 - 3/5",
                 desc: "絕美海岸自駕、赫氏古堡",
                 days: [
-                    { date: "3/3 (二)", loc: "PCH Day 1 (SF➜Carmel)", act: "一號公路經典海岸線 (200km)", detail: "上午：飯店退房、市區取車。啟程沿著 1 號公路南下。<br>🛒Trader Joe's - Nob Hill (靠近漁人碼頭/市中心)<br>地址： 1095 Hyde St, San Francisco, CA 94109；營業時間：08:00 – 21:00 <br>🛒Target-Capitola (靠近 Santa Cruz)；特色： 位於一號公路旁的大型購物商場區，停車位超多。<br>地址：1750 41st Ave, Capitola, CA 95010；營業時間： 08:00 – 22:00<br>**自駕路況重點：出發前務必確認 Caltrans 路況以防坍方。<br>路線：舊金山 → 半月灣 → 聖塔克魯茲 → 蒙特瑞 → 17-Mile Drive → 卡梅爾小鎮 (約200KM)。<br>晚上：入住隆恩橡木酒店。", transport: "🚗 租車/自駕 (務必在市區取車)。", attractionKey: "卡梅爾小鎮", hotel: "隆恩橡木酒店 (Lone Oak Inn)" },
-                    { date: "3/4 (三)", loc: "PCH Day 2 (Carmel➜Morro Bay)", act: "Big Sur 巨岩海岸奇景與古堡", detail: "上午：📌第一站：羅伯斯角州立自然保護區** 健行賞海獺。**第二站：比克斯比大橋** 拍照。途經：**菲佛海灘** (紫色沙灘，可選擇停留)。**第三站：麥克威瀑布** 觀景台。<br>下午：**第四站：赫氏古堡** (需預約導覽) 參觀。**第五站：象鼻海豹灘** 觀賞海豹群。<br>晚上：抵達並入住 Morro Bay 飯店。", transport: "🚗 自駕 (務必確認 Hwy 1 路況 Caltrans)。", attractionKey: "赫氏古堡 Hearst Castle", hotel: "海港屋酒店 (Harbor House Inn)" }, 
-                    { date: "3/5 (四)", loc: "PCH Day 3 (Morro Bay➜LA)", act: "童話小鎮、西班牙海岸與 66 號公路終點", detail: "上午：飯店退房。在 Pismo Beach 附近享用早餐。**第一站 (內陸)：丹麥村 Solvang** (1.5 小時) 參觀風車、品嚐丹麥甜點。**第二站 (海岸)：聖塔芭芭拉** (2 小時) 登頂法院鐘樓，並在碼頭附近午餐。<br>下午：沿海岸線南下。<br>晚上：抵達洛杉磯，前往 **聖塔莫尼卡碼頭** (Route 66 終點) 賞夕陽與晚餐，入住飯店。", transport: "🚗 自駕 (進入洛杉磯前交通會明顯變慢，請預留緩衝時間)。", attractionKey: "聖塔莫尼卡碼頭 Santa Monica Pier", hotel: "The Hollywood Franklin Hotel near Universal Studios" }
+                    { date: "3/3 (二)", loc: "PCH Day 1 (SF➜Carmel)", act: "一號公路啟程：半月灣與卡梅爾", detail: "<strong>08:30</strong> 退房 & Sixt 取車 (漁人碼頭)。<br><strong>09:30</strong> Trader Joe's (Nob Hill) 補給。<br><strong>10:15</strong> 啟程南下：半月灣 (Half Moon Bay)。<br><strong>11:30</strong> 午餐：Sam's Chowder House。<br><strong>13:00</strong> 聖塔克魯茲 (Santa Cruz) / Pillar Point Harbor。<br><strong>15:00</strong> Target (Capitola) 最後補給。<br><strong>17:15</strong> 17-Mile Drive (孤柏、Pebble Beach)。<br><strong>19:15</strong> 晚餐：Dametra Cafe。<br><strong>21:00</strong> 入住 Lone Oak Lodge。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [取車] Sixt: 350 O'Farrell St (Union Square 附近) 或 漁人碼頭點。<br>• [路線] 導航設定 'Half Moon Bay via Hwy 1' 避免走內陸高速。", transport: "租車自駕", attractionKey: "卡梅爾小鎮", hotel: "隆恩橡木酒店 (Lone Oak Inn)" },
+                    { date: "3/4 (三)", loc: "PCH Day 2 (Carmel➜Morro Bay)", act: "大蘇爾絕景與赫氏古堡", detail: "<strong>09:45</strong> 羅伯斯角 (Point Lobos) 健行。<br><strong>11:20</strong> 比克斯比大橋 (Bixby Bridge)。<br><strong>12:10</strong> 午餐：Nepenthe (海景露台)。<br><strong>14:15</strong> 菲佛海灘 (Pfeiffer Beach) 紫色沙灘。<br><strong>15:50</strong> 麥克威瀑布 (McWay Falls)。<br><strong>17:45</strong> 象鼻海豹灘。<br><strong>19:15</strong> 抵達莫羅貝 (Morro Bay)。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [訊號] Big Sur 全路段無訊號，務必預先下載離線地圖。<br>• [門票] 赫氏古堡需提前預約導覽。", transport: "自駕", attractionKey: "麥克威瀑布 McWay Falls", hotel: "海港屋酒店 (Harbor House Inn)" }, 
+                    { date: "3/5 (四)", loc: "PCH Day 3 (Morro Bay➜LA)", act: "丹麥村、聖塔芭芭拉與馬里布", detail: "<strong>10:15</strong> 丹麥村 (Solvang) 漫步。<br><strong>12:45</strong> 聖塔芭芭拉 (法院鐘樓)。<br><strong>13:30</strong> 午餐：Lure Fish House。<br><strong>15:00</strong> 馬里布海岸 (Malibu Coast) 行駛。<br><strong>17:15</strong> 聖塔莫尼卡碼頭 (日落)。<br><strong>18:30</strong> 晚餐：Cha Cha Chicken。<br><strong>20:30</strong> Gelson's Hollywood 超市補給。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [停車] Solvang 有免費公共停車場。<br>• [交通] 進入 LA 容易塞車，建議預留緩衝時間。", transport: "自駕", attractionKey: "聖塔莫尼卡海灘 Santa Monica Beach", hotel: "The Hollywood Franklin Hotel near Universal Studios" }
                 ]
             },
             phase3: {
@@ -468,15 +437,17 @@
                 dateRange: "3/6 - 3/9",
                 desc: "迪士尼、環球影城、星光大道",
                 days: [
-                    { date: "3/6 (五)", loc: "洛杉磯", act: "魔法童話國度 (迪士尼)", detail: "上午：駕車前往 Anaheim、迪士尼樂園 (Disneyland Park)。<br>下午：迪士尼樂園 (California Adventure) 遊玩。<br>晚上：駕車至 The Hollywood Franklin Hotel 住宿。", transport: "🚗 自駕： Santa Monica ➜ Anaheim ➜ Hollywood。", attractionKey: "迪士尼樂園", hotel: "The Hollywood Franklin Hotel" },
-                    { date: "3/7 (六)", loc: "洛杉磯", act: "好萊塢時尚探索 (還車)", detail: "上午：駕車前往 **格里斐斯天文台 Griffith Observatory** (觀景/拍照)。<br>下午：**好萊塢星光大道** 尋找星星、The Grove 購物。<br>晚上：Uber/Lyft 回飯店。", transport: "🚗 自駕 (需支付 Griffith 停車費或搭接駁車) -> 傍晚還車。還車後： 交通改為 Uber/Lyft。", attractionKey: "格里斐斯天文台 Griffith Observatory", hotel: "The Hollywood Franklin Hotel" },
-                    { date: "3/8 (日)", loc: "洛杉磯", act: "電影特效震撼 (環球影城)", detail: "上午：前往 **好萊塢環球影城** 入園。<br>下午：持續遊玩園區設施。<br>晚上：CityWalk 用餐購物、Uber/Lyft 回飯店。", transport: "🚕 Uber/Lyft (最方便省時)。", attractionKey: "好萊塢環球影城 Universal Studios", hotel: "The Hollywood Franklin Hotel" },
-                    { date: "3/9 (一)", loc: "洛杉磯", act: "輕鬆告別與回程", detail: "上午：飯店退房、Santa Monica 海邊自由活動或購物。<br>下午：Santa Monica 午餐、準備前往 LAX 機場。<br>晚上：抵達 LAX、辦理登機手續、22:15 ✈️ 起飛。", transport: "飯店 ➜ Santa Monica ➜ LAX： Uber/Lyft (務必預留 1.5-2 小時車程)。" }
+                    { date: "3/6 (五)", loc: "洛杉磯", act: "魔法童話國度 (迪士尼)", detail: "<strong>05:00</strong> 飯店出發 (帶著咖啡麵包)。<br><strong>07:00</strong> 抵達停車場 (Mickey & Friends)。<br><strong>08:00</strong> Rope Drop (首衝 Star Wars: Rise of the Resistance)。<br><strong>全天</strong> 迪士尼樂園遊玩。<br><strong>00:45</strong> Shell 加油 (好萊塢)。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [導航] 設定 'Mickey & Friends Parking Structure'。<br>• [攻略] 7:30 前抵達安檢門口。", transport: "自駕", attractionKey: "迪士尼樂園", hotel: "The Hollywood Franklin Hotel" },
+                    { date: "3/7 (六)", loc: "洛杉磯", act: "天文台、The Grove 與星光大道", detail: "<strong>08:30</strong> 前往 Sixt West Hollywood 還車。<br><strong>09:15</strong> Uber 前往格里斐斯天文台 (Griffith Observatory)。<br><strong>09:40</strong> 天文台放空 (10:00 開門)。<br><strong>12:45</strong> The Grove 購物 & 農夫市場午餐。<br><strong>16:15</strong> 星光大道 (Walk of Fame) 巡禮。<br><strong>18:30</strong> 晚餐：Shake Shack。<br><strong>19:30</strong> 散步回飯店。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [還車] Sixt West Hollywood: 8625 Santa Monica Blvd。<br>• [訊號] 天文台山上訊號較差，叫車需耐心等候。", transport: "Uber/Lyft, 步行", attractionKey: "格里斐斯天文台 Griffith Observatory", hotel: "The Hollywood Franklin Hotel" },
+                    { date: "3/8 (日)", loc: "洛杉磯", act: "電影特效震撼 (環球影城)", detail: "<strong>09:00</strong> 搭乘地鐵 B Line 前往環球影城 (Universal Studios)。<br><strong>10:00</strong> 入園 (推薦買 Express)。<br><strong>18:00</strong> CityWalk 晚餐 / Uber 回飯店。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [交通] 地鐵 B Line (Red Line) 至 Universal City 站，轉免費接駁車上山。<br>• [票券] 強烈建議購買 Express Pass 省下排隊時間。", transport: "地鐵 B Line, Uber", attractionKey: "好萊塢環球影城 Universal Studios", hotel: "The Hollywood Franklin Hotel" },
+                    { date: "3/9 (一)", loc: "洛杉磯", act: "聖塔莫尼卡購物與返程", detail: "<strong>09:00</strong> 退房 → UberXL 前往 Venice 寄存行李 (Bounce)。<br><strong>10:30</strong> 聖塔莫尼卡購物 (Santa Monica Place)。<br><strong>13:00</strong> 午餐：Élephante (須預約)。<br><strong>14:45</strong> Circuit 電動小車體驗。<br><strong>15:15</strong> Abbot Kinney 散步 (Aesop, 選物)。<br><strong>18:00</strong> UberXL 前往 LAX 機場 (22:15 起飛)。<br><br><span class=\"text-[#d6b98c] font-bold\">🚗 導航與備註：</span><br>• [行李] 使用 Bounce App 預約 Venice Beach 附近的寄放點。<br>• [機場] 國際線建議提早 3 小時抵達 (LAX 交通極度壅塞)。", transport: "UberXL", attractionKey: "聖塔莫尼卡海灘 Santa Monica Beach" }
                 ]
             }
         };
 
-        // --- Core Functions ---
+        // --- Core Functions (Static Mode) ---
+
+        let attractionMap = {};
         function createAttractionMap() {
             attractionMap = attractions.reduce((map, item) => {
                 map[item.name] = item;
@@ -484,49 +455,34 @@
             }, {});
         }
 
-        // --- NEW: Helper to find attractions in text (FIX: Stricter matching but allows partial Chinese) ---
+        // Helper to find attractions in text
         function findMentionedAttractions(text) {
             if (!text) return [];
             return attractions.filter(attraction => {
                 if (!attraction.name) return false;
-                
                 const name = attraction.name.trim();
-                
-                // 1. 完全符合 (Exact match)
+                // 1. 完全符合
                 if (text.includes(name)) return true;
-                
-                // 2. 寬鬆符合 (Loose match)
-                // 處理 "金門大橋 Golden Gate" 這種狀況，只要內文有 "金門大橋" 就算符合
-                // Assumes format like "中文 English"
+                // 2. 寬鬆符合 (取前半段)
                 const parts = name.split(' ');
-                // 確保切分後的第一部分長度足夠 (避免只匹配到單字或空格)
                 if (parts.length > 1 && parts[0].length >= 2) {
                      if (text.includes(parts[0])) return true;
                 }
-                
                 return false;
             });
         }
 
-        // --- NEW: Helper to sanitize ID for linking ---
         function sanitizeId(name) {
             return 'attr-' + name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '');
         }
 
-        // --- NEW: Jump to Attraction Function ---
         function jumpToAttraction(name) {
-            // 1. Reset filter to ensure element exists in DOM
             filterAttractions('all');
-            
-            // 2. Find and scroll to element with delay to allow render
             setTimeout(() => {
                 const safeId = sanitizeId(name);
                 const el = document.getElementById(safeId);
                 if (el) {
-                    // Scroll
                     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    
-                    // Highlight Effect
                     el.classList.add('ring-4', 'ring-[#d6b98c]', 'shadow-2xl', 'transform', 'scale-[1.02]', 'transition-all', 'duration-500');
                     setTimeout(() => {
                         el.classList.remove('ring-4', 'ring-[#d6b98c]', 'shadow-2xl', 'transform', 'scale-[1.02]');
@@ -547,7 +503,6 @@
             }
         }
 
-        // ... (Keep existing weather functions: weatherIcon, wearAdvice, fetch3DayWeather, loadCurrentLocationWeather) ...
         function weatherIcon(code) {
           if (code === 0) return "☀️";
           if ([1, 2].includes(code)) return "🌤️";
@@ -607,7 +562,7 @@
           );
         }
 
-        // --- Persistence Logic ---
+        // --- PPT Export Logic (Kept) ---
 
         function showToast(message) {
             const toast = document.getElementById("toast");
@@ -616,195 +571,299 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // --- GOOGLE SHEET INTEGRATION ---
-        function normalizeKey(key) {
-            return key.toLowerCase().replace(/[^a-z0-9]/g, '');
-        }
-
-        function parseGoogleVizResponse(json, expectedKey = '') {
-            const cols = json.table.cols;
-            const rows = json.table.rows;
-            if (!rows || rows.length === 0) return [];
-
-            let headers = cols.map(col => col.label ? col.label.trim() : '');
-            
-            const firstHeader = headers.find(h => h.length > 0);
-            
-            let dataStartIndex = 0;
-            // Simplified check: if column A's label is empty or just "A", grab row 0
-            const normExpected = normalizeKey(expectedKey);
-            const hasValidHeaders = headers.some(h => normalizeKey(h).includes(normExpected));
-
-            if (expectedKey && !hasValidHeaders) {
-                 if (rows[0]) {
-                     headers = rows[0].c.map(cell => cell ? (cell.v !== null ? String(cell.v).trim() : "") : "");
-                     dataStartIndex = 1; 
-                 }
-            }
-
-            const headerMap = headers.map(h => normalizeKey(h));
-
-            const result = [];
-            for (let i = dataStartIndex; i < rows.length; i++) {
-                const row = rows[i];
-                if (!row) continue;
-                
-                let obj = {};
-                row.c.forEach((cell, colIndex) => {
-                    if (headerMap[colIndex]) {
-                        obj[headerMap[colIndex]] = cell ? (cell.v !== null ? cell.v : "") : "";
-                    }
-                });
-                result.push(obj);
-            }
-            return result;
-        }
-
-        async function fetchGoogleSheetData(sheetName, checkKey) {
-            // Add cache busting
-            const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}&headers=1&_=${Date.now()}`;
-            
+        async function getBase64FromUrl(url) {
             try {
                 const response = await fetch(url);
-                const text = await response.text();
-                const jsonString = text.substring(47).slice(0, -2);
-                const json = JSON.parse(jsonString);
-                
-                if (json.status === 'error') {
-                    console.error(`Error fetching sheet ${sheetName}:`, json.errors);
-                    return [];
-                }
-                
-                return parseGoogleVizResponse(json, checkKey);
-            } catch (error) {
-                console.error(`Fetch failed for ${sheetName}`, error);
-                return [];
+                if (!response.ok) throw new Error(`Status: ${response.status}`);
+                const blob = await response.blob();
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = () => resolve(null);
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) {
+                console.warn(`Skipping image [${url}]:`, e);
+                return null;
             }
         }
 
-        async function loadFromGoogleSheet(isAutoLoad = false) {
-            const statusEl = document.getElementById('upload-status');
-            statusEl.innerText = "⏳ 正在連線 Google Sheet...";
-            statusEl.classList.remove('hidden');
-            statusEl.className = "text-[10px] text-[#d6b98c] mt-2 animate-pulse";
+        async function exportToPPTX() {
+            if (typeof PptxGenJS === "undefined") {
+                alert("錯誤：PPT 產生元件尚未載入，請檢查網路連線或重新整理網頁。");
+                return;
+            }
 
             try {
-                const [itineraryRaw, flightsRaw, accRaw, diningRaw, attrRaw] = await Promise.all([
-                    fetchGoogleSheetData('Itinerary', 'phase_id'),
-                    fetchGoogleSheetData('Flights', 'leg'),
-                    fetchGoogleSheetData('Accommodation', 'name'), 
-                    fetchGoogleSheetData('Dining', 'type'),
-                    fetchGoogleSheetData('Attractions', 'short_desc')
-                ]);
+                showToast("⏳ 正在製作 PowerPoint，請稍候...");
+                let pptx = new PptxGenJS();
+                pptx.defineLayout({ name:'A4_PORTRAIT', width: 8.27, height: 11.81 });
+                pptx.layout = 'A4_PORTRAIT';
+                pptx.author = 'Trip Planner';
+                pptx.company = '2026 美西之旅';
+                
+                const COLOR_PRIMARY = "3a3a3a";
+                const COLOR_ACCENT = "d6b98c";
+                const COLOR_ACCENT_DARK = "c3a36f";
+                const COLOR_BG = "fbf7f2";
+                const COLOR_TEXT_MUTED = "a09a93";
 
-                if (itineraryRaw.length > 0) {
-                    const newItineraryData = {};
-                    itineraryRaw.forEach(row => {
-                        const pid = row.phaseid || 'phase1';
-                        if (!newItineraryData[pid]) {
-                            newItineraryData[pid] = {
-                                title: row.phasetitle || "My Phase",
-                                icon: "📍",
-                                badgeClass: "bg-[#cfdde6] text-[#475569]",
-                                dateRange: "",
-                                desc: "", // Remove default text
-                                days: []
-                            };
-                            if(pid.includes('1')) { newItineraryData[pid].icon = "🌉"; }
-                            else if(pid.includes('2')) { newItineraryData[pid].icon = "🌊"; newItineraryData[pid].badgeClass = "bg-[#fef3c7] text-[#92400e]"; }
-                            else if(pid.includes('3')) { newItineraryData[pid].icon = "🎡"; newItineraryData[pid].badgeClass = "bg-[#f3e8ff] text-[#6b21a8]"; }
+                let slideCover = pptx.addSlide();
+                slideCover.background = { color: COLOR_BG };
+                slideCover.addShape(pptx.ShapeType.rect, { x: 0.5, y: 0.5, w: 7.27, h: 10.81, line: { color: COLOR_ACCENT, width: 2 }, fill: { color: "FFFFFF", transparency: 50 } });
+                slideCover.addText("2026 美西\n舊金山與洛杉磯之旅", { x: 1, y: 4, w: 6.27, h: 2, fontSize: 36, fontFace: "Helvetica", color: COLOR_PRIMARY, bold: true, align: "center" });
+                slideCover.addText("2026年 2月26日 - 3月11日\n13 天 12 夜", { x: 1, y: 6, w: 6.27, h: 1, fontSize: 18, fontFace: "Helvetica", color: COLOR_ACCENT_DARK, align: "center" });
+
+                let dayCount = 1;
+                const phases = Object.keys(itineraryData);
+
+                for (const phaseKey of phases) {
+                    const phase = itineraryData[phaseKey];
+                    if (!phase.days) continue;
+
+                    for (const day of phase.days) {
+                        let slide = pptx.addSlide();
+                        slide.background = { color: "FFFFFF" };
+
+                        slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 8.27, h: 1.5, fill: { color: COLOR_BG } });
+                        slide.addShape(pptx.ShapeType.ellipse, { x: 0.5, y: 0.35, w: 0.8, h: 0.8, fill: { color: COLOR_ACCENT } });
+                        slide.addText(`Day ${dayCount}`, { x: 0.5, y: 0.35, w: 0.8, h: 0.8, fontSize: 14, color: "FFFFFF", bold: true, align: "center", valign: "middle" });
+                        slide.addText(day.date, { x: 1.5, y: 0.4, w: 4, h: 0.5, fontSize: 18, color: COLOR_PRIMARY, bold: true });
+                        slide.addText(`📍 ${day.loc}`, { x: 1.5, y: 0.9, w: 4, h: 0.4, fontSize: 12, color: COLOR_TEXT_MUTED });
+
+                        if (day.attractionKey && attractionMap && attractionMap[day.attractionKey]) {
+                            slide.addShape(pptx.ShapeType.rect, { 
+                                x: 5.5, y: 0.25, w: 2.5, h: 1.8, 
+                                line: { color: "CCCCCC", width: 1, dashType: 'dash' }, 
+                                fill: { color: "F9FAFB" } 
+                            });
+                            slide.addText("景點照片", {
+                                x: 5.5, y: 0.25, w: 2.5, h: 1.8,
+                                fontSize: 10, color: "A0A0A0", align: "center", valign: "middle"
+                            });
+
+                            const imgUrl = attractionMap[day.attractionKey].image;
+                            if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
+                                try {
+                                    const base64Img = await getBase64FromUrl(imgUrl);
+                                    if (base64Img) {
+                                        slide.addImage({ 
+                                            data: base64Img, 
+                                            x: 5.5, y: 0.25, w: 2.5, h: 1.8, 
+                                            sizing: { type: 'cover', w: 2.5, h: 1.8 }
+                                        });
+                                    }
+                                } catch (e) {
+                                    console.warn("Image add error:", e);
+                                }
+                            }
                         }
-                        newItineraryData[pid].days.push({
-                            date: row.date || "TBD",
-                            loc: row.location || "",
-                            act: row.activity || "",
-                            detail: row.details ? String(row.details).replace(/\n/g, "<br>") : "",
-                            transport: row.transport || "",
-                            hotel: row.hotel || "",
-                            attractionKey: row.attractionkey || ""
-                        });
-                    });
-                    itineraryData = newItineraryData;
+
+                        slide.addText(day.act, { x: 0.5, y: 2.0, w: 7.27, h: 0.8, fontSize: 24, color: COLOR_ACCENT_DARK, bold: true, fontFace: "Helvetica" });
+                        slide.addShape(pptx.ShapeType.line, { x: 0.5, y: 2.7, w: 7.27, h: 0, line: { color: "EEEEEE", width: 1 } });
+
+                        let cleanDetail = day.detail ? day.detail.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "") : "";
+                        slide.addText(cleanDetail, { x: 0.5, y: 3.0, w: 7.27, h: 5.5, fontSize: 14, color: "555555", lineSpacing: 18, valign: "top", shape: pptx.ShapeType.rect });
+
+                        let bottomY = 9.0;
+                        slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: bottomY, w: 7.27, h: 0.8, fill: { color: "F3F4F6" }, r:0.1 });
+                        slide.addText("🚗 交通方式", { x: 0.7, y: bottomY + 0.1, w: 2, h: 0.3, fontSize: 10, color: "9CA3AF", bold: true });
+                        slide.addText(day.transport || "無資料", { x: 0.7, y: bottomY + 0.4, w: 6.8, h: 0.3, fontSize: 11, color: "374151" });
+
+                        slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: bottomY + 1.0, w: 7.27, h: 1.2, fill: { color: "FEF3C7" }, r:0.1 });
+                        slide.addText("🛌 住宿安排", { x: 0.7, y: bottomY + 1.1, w: 2, h: 0.3, fontSize: 10, color: "B45309", bold: true });
+                        slide.addText(day.hotel || "無資料", { x: 0.7, y: bottomY + 1.4, w: 6.8, h: 0.3, fontSize: 12, color: "92400E", bold: true });
+                        
+                        const accArray = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
+                        const hotelInfo = accArray.find(h => h.name === day.hotel);
+                        if (hotelInfo && hotelInfo.address) {
+                            slide.addText(hotelInfo.address, { x: 0.7, y: bottomY + 1.8, w: 6.8, h: 0.3, fontSize: 9, color: "92400E" });
+                        }
+
+                        slide.addText(`- ${dayCount} -`, { x: 0, y: 11.2, w: '100%', h: 0.5, align: 'center', fontSize: 10, color: "CCCCCC" });
+                        dayCount++;
+                    }
                 }
-
-                if (flightsRaw.length > 0) {
-                    const newFlightData = { outbound: [], inbound: [] };
-                    flightsRaw.forEach(row => {
-                        const flight = {
-                            leg: row.leg,
-                            date: row.date, 
-                            arr: row.arrival,
-                            note: row.note,
-                            number: row.number
-                        };
-                        if (row.direction === 'outbound') newFlightData.outbound.push(flight);
-                        else if (row.direction === 'inbound') newFlightData.inbound.push(flight);
-                    });
-                    flightData = newFlightData;
-                }
-
-                if (accRaw.length > 0) {
-                    accommodationData = accRaw.map(r => ({
-                        city: r.city,
-                        name: r.name,
-                        checkinDate: r.checkindate,
-                        checkoutDate: r.checkoutdate,
-                        room: r.room,
-                        highlight: r.highlight,
-                        facilities: r.facilities,
-                        address: r.address,
-                        mapLink: r.maplink,
-                        lat: parseFloat(r.lat),
-                        lng: parseFloat(r.lng)
-                    }));
-                }
-
-                if (diningRaw.length > 0) {
-                    diningData = diningRaw.map(d => ({
-                        ...d,
-                        desc: d.desc ? String(d.desc).replace(/\n/g, "<br>") : ""
-                    }));
-                }
-
-                if (attrRaw.length > 0) {
-                    attractions = attrRaw.map(a => ({
-                        ...a,
-                        short_desc: a.shortdesc || a.short_desc,
-                        lat: parseFloat(a.lat),
-                        lng: parseFloat(a.lng)
-                    }));
-                }
-
-                renderSidebar();
-                const firstKey = Object.keys(itineraryData)[0];
-                if(firstKey) renderItinerary(firstKey);
-                renderFlightTable('outbound');
-                renderAccommodation();
-                createAttractionMap();
-                renderAttractions('all');
-                renderDining('all');
-
-                saveToLocalStorage();
-
-                statusEl.innerText = "✅ Google Sheet 同步成功！";
-                statusEl.className = "text-[10px] text-green-500 mt-2 font-bold";
-                if (isAutoLoad) {
-                    showToast("☁️ 已自動載入最新行程資料");
-                } else {
-                    showToast("☁️ 資料已從 Google Sheet 同步更新！");
-                }
+                await pptx.writeFile({ fileName: "2026_USA_West_Trip.pptx" });
+                showToast("✅ PowerPoint 下載成功！");
 
             } catch (error) {
-                console.error("Sync Error:", error);
-                statusEl.innerText = "❌ 同步失敗";
-                statusEl.className = "text-[10px] text-red-500 mt-2 font-bold";
-                if (!isAutoLoad) {
-                    alert("同步失敗，請檢查：\n1. 試算表權限是否公開 (Anyone with link)\n2. 分頁名稱是否正確 (Itinerary, Flights 等)\n3. 網路連線狀態");
-                }
+                console.error("PPT Export Error:", error);
+                alert("匯出失敗：" + error.message);
             }
         }
 
-        // 3. 動態產生側邊欄
+        // --- Init Logic ---
+
+        function init() {
+            // Leaflet Icon Fix
+            delete L.Icon.Default.prototype._getIconUrl;
+            L.Icon.Default.mergeOptions({
+                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            });
+
+            createAttractionMap(); 
+            renderFlightTable('outbound');
+            renderAccommodation();
+            renderSidebar(); 
+            renderItinerary('phase1'); 
+            renderAttractions('all');
+            renderDining('all');
+            loadCurrentLocationWeather();       
+            fetch3DayWeather(37.7749, -122.4194, "weather-sf", "wear-sf");
+            fetch3DayWeather(34.0522, -118.2437, "weather-la", "wear-la");
+        }
+
+        // --- Rendering Logic (Unchanged from Pro version) ---
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const nav = document.querySelector('nav');
+            const offset = nav ? nav.offsetHeight + 8 : 0;
+            const y = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+
+        function switchFlightTab(type) {
+            document.getElementById('btn-outbound').className = 'tab-inactive text-sm transition-all pb-2 hover:text-[#3a3a3a]';
+            document.getElementById('btn-inbound').className = 'tab-inactive text-sm transition-all pb-2 hover:text-[#3a3a3a]';
+            const activeBtn = document.getElementById(`btn-${type}`);
+            activeBtn.className = 'tab-active text-sm transition-all pb-2';
+            renderFlightTable(type);
+        }
+
+        function renderFlightTable(type) {
+            const data = flightData[type];
+            if (!data) return;
+            const container = document.getElementById('flight-content');
+            let html = '';
+            data.forEach((flight, index) => {
+                html += `
+                    <div class="flex items-start p-4 bg-[#fbf7f2] rounded-xl border border-[#efe6d8] mb-3 last:mb-0 hover:border-[#d6b98c] transition-colors">
+                        <div class="flex-shrink-0 bg-[#d6b98c] text-white rounded-lg w-10 h-10 flex items-center justify-center font-bold mr-4 text-sm shadow-sm">
+                            ${index + 1}
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold text-[#3a3a3a] text-lg">${flight.leg}</span>
+                                <span class="text-xs font-bold text-[#a4855d] bg-[#faf7f2] px-2 py-1 rounded-md border border-[#efe6d8]">CX${(flight.number || '').replace('CX','')}</span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="text-xs font-medium bg-[#fef3c7] text-[#92400e] px-2 py-0.5 rounded-full">${flight.note}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm text-[#6b6b6b] mt-2">
+                                <div class="bg-white p-2 rounded border border-[#efe6d8]">
+                                    <span class="block text-xs text-[#a09a93] uppercase">Departure</span>
+                                    <span class="font-mono font-bold text-[#3a3a3a]">${flight.date}</span>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-[#efe6d8]">
+                                    <span class="block text-xs text-[#a09a93] uppercase">Arrival</span>
+                                    <span class="font-mono font-bold text-[#3a3a3a]">${flight.arr}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `
+                <div class="mt-6 p-4 border border-[#cfdde6] bg-[#f0f9ff] rounded-xl space-y-3">
+                    <h4 class="text-base font-bold text-[#0f766e] flex items-center">
+                        <span class="text-xl mr-2">🛄</span> 國泰航空報到指引
+                    </h4>
+                    <div class="flex items-center justify-between">
+                         <div class="text-sm text-[#115e59]">
+                             <span class="font-bold">線上報到：</span>起飛前 48 小時
+                         </div>
+                         <a href="https://www.cathaypacific.com/mb/?cxsource=TOP-NAV_FLIGHTS_3_1#!/zh_TW/olci/login" target="_blank" class="px-3 py-1 bg-[#0f766e] text-white text-xs font-bold rounded hover:bg-[#115e59] transition-colors">
+                            前往官網
+                        </a>
+                    </div>
+                    <p class="text-xs text-[#991b1b] font-bold bg-[#fef2f2] p-2 rounded border border-[#fecaca]">
+                        * TPE 櫃檯：桃園機場第二航廈 (通常 D/E 區)
+                    </p>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        const toUTCDate = iso => {
+            if(!iso) return new Date();
+            const d = new Date(iso);
+            return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        };
+        
+        function renderAccommodation() {
+            const container = document.getElementById('accommodation-content');
+            const accommodations = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
+            let html = '';
+            const tripStartUTC = toUTCDate("2026-02-26");
+            const cityStyle = {
+                "舊金山": "bg-[#cfdde6] text-[#475569]",
+                "蒙特雷": "bg-[#fef3c7] text-[#92400e]",
+                "莫羅貝": "bg-[#d9e5d8] text-[#166534]",
+                "洛杉磯": "bg-[#f3e8ff] text-[#6b21a8]"
+            };
+
+            accommodations.forEach(hotel => {
+                const checkin = toUTCDate(hotel.checkinDate);
+                const checkout = toUTCDate(hotel.checkoutDate);
+                const nights = Math.max(0, Math.floor((checkout - checkin) / 86400000));
+                const dayIndex = Math.floor((checkin - tripStartUTC) / 86400000) + 1;
+
+                html += `
+                <div class="card-hover rounded-2xl p-6 flex flex-col justify-between group h-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="font-bold text-white bg-[#d6b98c] px-3 py-0.5 rounded text-xs">Day ${dayIndex}</span>
+                        <span class="text-xs font-semibold text-[#6b6b6b] bg-[#faf7f2] px-2 py-0.5 rounded-full border border-[#efe6d8]">${nights} 晚</span>
+                    </div>
+                    <h4 class="text-lg font-bold mb-2 text-[#3a3a3a] group-hover:text-[#d6b98c] transition-colors"> ${hotel.name}</h4>
+                    <div class="mb-3">
+                         <span class="inline-block text-xs font-bold px-2 py-1 rounded-md ${cityStyle[hotel.city] || 'bg-gray-100 text-gray-600'}">
+                            ${hotel.city}
+                        </span>
+                    </div>
+                    <div class="bg-[#faf7f2] p-2 rounded mb-3 border border-[#efe6d8]">
+                        <p class="text-xs text-[#6b6b6b]">
+                            📅 <span class="font-semibold">${(hotel.checkinDate || "").slice(5)}</span> - <span class="font-semibold">${(hotel.checkoutDate || "").slice(5)}</span>
+                        </p>
+                    </div>
+                    <p class="text-sm text-[#6b6b6b] mb-2 font-medium">🛏️ ${hotel.room}</p>
+                    <p class="text-xs text-[#a09a93] mb-4 line-clamp-2">${hotel.highlight}｜${hotel.facilities}</p>
+                    <a href="${hotel.mapLink}" target="_blank"
+                       class="mt-auto w-full text-center py-2 rounded-lg bg-[#faf7f2] text-[#a4855d] text-sm font-bold hover:bg-[#d6b98c] hover:text-white transition-colors flex justify-center items-center gap-1 border border-[#efe6d8]">
+                       📍 Google Maps
+                    </a>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function getAttractionBadgeColor(type) {
+            if (type === 'History') return 'bg-[#fef3c7] text-[#92400e] border-[#fcd34d]';
+            if (type === 'Nature') return 'bg-[#dcfce7] text-[#166534] border-[#86efac]';
+            if (type === 'Fun') return 'bg-[#fce7f3] text-[#9d174d] border-[#fbcfe8]';
+            if (type === 'Food') return 'bg-[#ffedd5] text-[#9a3412] border-[#fdba74]';
+            if (type === 'Photo') return 'bg-[#fee2e2] text-[#991b1b] border-[#fca5a5]';
+            if (type === 'Culture') return 'bg-[#ccfbf1] text-[#115e59] border-[#5eead4]';
+            return 'bg-gray-100 text-gray-600';
+        }
+
+        function activatePhaseNav(activeKey) {
+            document.querySelectorAll('.phase-nav-btn').forEach(el => {
+                el.classList.remove('border-[#d6b98c]', 'shadow-md');
+                el.classList.add('border-transparent');
+            });
+            const activeBtn = document.getElementById(`nav-${activeKey}`);
+            if (activeBtn) {
+                activeBtn.classList.add('border-[#d6b98c]', 'shadow-md');
+                activeBtn.classList.remove('border-transparent');
+            }
+        }
+
         function renderSidebar() {
             const container = document.getElementById('phase-nav-content');
             if(!container) return;
@@ -834,468 +893,7 @@
                 container.innerHTML += html;
             });
         }
-        
-        function downloadTemplate() {
-            const wb = XLSX.utils.book_new();
 
-            const itineraryHeaders = ["phase_id", "phase_title", "date", "location", "activity", "details", "transport", "hotel", "attraction_key"];
-            let itineraryRows = [itineraryHeaders];
-            Object.keys(itineraryData).forEach(key => {
-                const phase = itineraryData[key];
-                phase.days.forEach(day => {
-                    itineraryRows.push([
-                        key, phase.title, day.date, day.loc, day.act,
-                        day.detail.replace(/<div class="h-2"><\/div>/g, "<br>"),
-                        day.transport, day.hotel, day.attractionKey || ""
-                    ]);
-                });
-            });
-            const wsItinerary = XLSX.utils.aoa_to_sheet(itineraryRows);
-            XLSX.utils.book_append_sheet(wb, wsItinerary, "Itinerary");
-
-            const flightHeaders = ["direction", "leg", "date", "arrival", "note", "number"];
-            let flightRows = [flightHeaders];
-            flightData.outbound.forEach(f => flightRows.push(["outbound", f.leg, f.date, f.arr, f.note, f.number]));
-            flightData.inbound.forEach(f => flightRows.push(["inbound", f.leg, f.date, f.arr, f.note, f.number]));
-            const wsFlights = XLSX.utils.aoa_to_sheet(flightRows);
-            XLSX.utils.book_append_sheet(wb, wsFlights, "Flights");
-
-            const accHeaders = ["city", "name", "checkinDate", "checkoutDate", "room", "highlight", "facilities", "address", "mapLink", "lat", "lng"];
-            let accRows = [accHeaders];
-            const accList = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
-            accList.forEach(a => accRows.push([a.city, a.name, a.checkinDate, a.checkoutDate, a.room, a.highlight, a.facilities, a.address, a.mapLink, a.lat, a.lng]));
-            const wsAcc = XLSX.utils.aoa_to_sheet(accRows);
-            XLSX.utils.book_append_sheet(wb, wsAcc, "Accommodation");
-
-            const diningHeaders = ["city", "name", "type", "desc", "icon", "url", "image"];
-            let diningRows = [diningHeaders];
-            diningData.forEach(d => diningRows.push([d.city, d.name, d.type, d.desc.replace(/<\/br>/g, "\n"), d.icon, d.url, d.image || ""]));
-            const wsDining = XLSX.utils.aoa_to_sheet(diningRows);
-            XLSX.utils.book_append_sheet(wb, wsDining, "Dining");
-
-            const attrHeaders = ["city", "name", "type", "desc", "short_desc", "icon", "url", "lat", "lng", "image"];
-            let attrRows = [attrHeaders];
-            attractions.forEach(a => attrRows.push([a.city, a.name, a.type, a.desc, a.short_desc, a.icon, a.url, a.lat, a.lng, a.image || ""]));
-            const wsAttr = XLSX.utils.aoa_to_sheet(attrRows);
-            XLSX.utils.book_append_sheet(wb, wsAttr, "Attractions");
-
-            XLSX.writeFile(wb, "My_Trip_Backup.xlsx");
-        }
-
-        // Helper to safely fetch image and convert to Base64
-        async function getBase64FromUrl(url) {
-            try {
-                // Try to fetch with CORS enabled
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`Status: ${response.status}`);
-                const blob = await response.blob();
-                return new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = () => resolve(null); // Fail gracefully
-                    reader.readAsDataURL(blob);
-                });
-            } catch (e) {
-                // If fetch fails (likely CORS), return null so we just skip the image
-                console.warn(`Skipping image [${url}]:`, e);
-                return null;
-            }
-        }
-
-        async function exportToPPTX() {
-            // 檢查 PptxGenJS 是否已載入
-            if (typeof PptxGenJS === "undefined") {
-                alert("錯誤：PPT 產生元件尚未載入，請檢查網路連線或重新整理網頁。");
-                return;
-            }
-
-            try {
-                showToast("⏳ 正在製作 PowerPoint，請稍候...");
-                
-                // 1. 初始化
-                let pptx = new PptxGenJS();
-
-                // 2. 設定版面：A4 縱向 (寬 21cm, 高 30cm)
-                pptx.defineLayout({ name:'A4_PORTRAIT', width: 8.27, height: 11.81 });
-                pptx.layout = 'A4_PORTRAIT';
-
-                // 設定作者
-                pptx.author = 'Trip Planner';
-                pptx.company = '2026 美西之旅';
-                
-                const COLOR_PRIMARY = "3a3a3a";
-                const COLOR_ACCENT = "d6b98c";
-                const COLOR_ACCENT_DARK = "c3a36f";
-                const COLOR_BG = "fbf7f2";
-                const COLOR_TEXT_MUTED = "a09a93";
-
-                // 3. 封面頁
-                let slideCover = pptx.addSlide();
-                slideCover.background = { color: COLOR_BG };
-                slideCover.addShape(pptx.ShapeType.rect, { x: 0.5, y: 0.5, w: 7.27, h: 10.81, line: { color: COLOR_ACCENT, width: 2 }, fill: { color: "FFFFFF", transparency: 50 } });
-                slideCover.addText("2026 美西\n舊金山與洛杉磯之旅", { x: 1, y: 4, w: 6.27, h: 2, fontSize: 36, fontFace: "Helvetica", color: COLOR_PRIMARY, bold: true, align: "center" });
-                slideCover.addText("2026年 2月26日 - 3月11日\n13 天 12 夜", { x: 1, y: 6, w: 6.27, h: 1, fontSize: 18, fontFace: "Helvetica", color: COLOR_ACCENT_DARK, align: "center" });
-
-                // 4. 每日行程
-                let dayCount = 1;
-                
-                // 確保 itineraryData 有資料
-                const phases = Object.keys(itineraryData);
-                if (phases.length === 0) {
-                    alert("錯誤：沒有行程資料可供匯出。");
-                    return;
-                }
-
-                for (const phaseKey of phases) {
-                    const phase = itineraryData[phaseKey];
-                    if (!phase.days) continue;
-
-                    for (const day of phase.days) {
-                        let slide = pptx.addSlide();
-                        slide.background = { color: "FFFFFF" };
-
-                        // Header
-                        slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 8.27, h: 1.5, fill: { color: COLOR_BG } });
-                        slide.addShape(pptx.ShapeType.ellipse, { x: 0.5, y: 0.35, w: 0.8, h: 0.8, fill: { color: COLOR_ACCENT } });
-                        slide.addText(`Day ${dayCount}`, { x: 0.5, y: 0.35, w: 0.8, h: 0.8, fontSize: 14, color: "FFFFFF", bold: true, align: "center", valign: "middle" });
-                        slide.addText(day.date, { x: 1.5, y: 0.4, w: 4, h: 0.5, fontSize: 18, color: COLOR_PRIMARY, bold: true });
-                        slide.addText(`📍 ${day.loc}`, { x: 1.5, y: 0.9, w: 4, h: 0.4, fontSize: 12, color: COLOR_TEXT_MUTED });
-
-                        // Image Logic with Placeholder
-                        // 即使發生錯誤，也能保留這個框線 (Placeholder)
-                        if (day.attractionKey && attractionMap && attractionMap[day.attractionKey]) {
-                            // 1. 繪製預留框線 (Placeholder) - 底層
-                            slide.addShape(pptx.ShapeType.rect, { 
-                                x: 5.5, y: 0.25, w: 2.5, h: 1.8, 
-                                line: { color: "CCCCCC", width: 1, dashType: 'dash' }, 
-                                fill: { color: "F9FAFB" } 
-                            });
-                            slide.addText("景點照片", {
-                                x: 5.5, y: 0.25, w: 2.5, h: 1.8,
-                                fontSize: 10, color: "A0A0A0", align: "center", valign: "middle"
-                            });
-
-                            const imgUrl = attractionMap[day.attractionKey].image;
-                            
-                            // 2. 嘗試加入圖片 - 上層 (若成功會覆蓋框線)
-                            if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
-                                try {
-                                    // 嘗試下載並轉為 Base64 (解決 CORS 錯誤導致整份 PPT 失敗的問題)
-                                    const base64Img = await getBase64FromUrl(imgUrl);
-                                    
-                                    if (base64Img) {
-                                        slide.addImage({ 
-                                            data: base64Img, 
-                                            x: 5.5, y: 0.25, w: 2.5, h: 1.8, 
-                                            sizing: { type: 'cover', w: 2.5, h: 1.8 }
-                                        });
-                                    }
-                                } catch (e) {
-                                    // 捕捉 addImage 設定時的錯誤 (雖然較少見)
-                                    console.warn("Image add error:", e);
-                                    // 這裡不需要做任何事，因為底層的 Placeholder 已經畫好了
-                                }
-                            }
-                        }
-
-                        // Content
-                        slide.addText(day.act, { x: 0.5, y: 2.0, w: 7.27, h: 0.8, fontSize: 24, color: COLOR_ACCENT_DARK, bold: true, fontFace: "Helvetica" });
-                        slide.addShape(pptx.ShapeType.line, { x: 0.5, y: 2.7, w: 7.27, h: 0, line: { color: "EEEEEE", width: 1 } });
-
-                        let cleanDetail = day.detail ? day.detail.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "") : "";
-                        slide.addText(cleanDetail, { x: 0.5, y: 3.0, w: 7.27, h: 5.5, fontSize: 14, color: "555555", lineSpacing: 18, valign: "top", shape: pptx.ShapeType.rect });
-
-                        // Footer (Transport & Hotel)
-                        let bottomY = 9.0;
-                        slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: bottomY, w: 7.27, h: 0.8, fill: { color: "F3F4F6" }, r:0.1 });
-                        slide.addText("🚗 交通方式", { x: 0.7, y: bottomY + 0.1, w: 2, h: 0.3, fontSize: 10, color: "9CA3AF", bold: true });
-                        slide.addText(day.transport || "無資料", { x: 0.7, y: bottomY + 0.4, w: 6.8, h: 0.3, fontSize: 11, color: "374151" });
-
-                        slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: bottomY + 1.0, w: 7.27, h: 1.2, fill: { color: "FEF3C7" }, r:0.1 });
-                        slide.addText("🛌 住宿安排", { x: 0.7, y: bottomY + 1.1, w: 2, h: 0.3, fontSize: 10, color: "B45309", bold: true });
-                        slide.addText(day.hotel || "無資料", { x: 0.7, y: bottomY + 1.4, w: 6.8, h: 0.3, fontSize: 12, color: "92400E", bold: true });
-                        
-                        // Address lookup
-                        if (accommodationData) {
-                            // Support both array and map structure just in case
-                            const accArray = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
-                            const hotelInfo = accArray.find(h => h.name === day.hotel);
-                            if (hotelInfo && hotelInfo.address) {
-                                slide.addText(hotelInfo.address, { x: 0.7, y: bottomY + 1.8, w: 6.8, h: 0.3, fontSize: 9, color: "92400E" });
-                            }
-                        }
-
-                        // Page number
-                        slide.addText(`- ${dayCount} -`, { x: 0, y: 11.2, w: '100%', h: 0.5, align: 'center', fontSize: 10, color: "CCCCCC" });
-
-                        dayCount++;
-                    }
-                }
-
-                // 5. 匯出
-                await pptx.writeFile({ fileName: "2026_USA_West_Trip.pptx" });
-                showToast("✅ PowerPoint 下載成功！");
-
-            } catch (error) {
-                console.error("PPT Export Error:", error);
-                alert("匯出失敗：" + error.message + "\n可能是因為網路圖片存取受限，請稍後再試。");
-                showToast("❌ 匯出失敗");
-            }
-        }
-
-        // Removed handleExcelUpload function as requested
-
-        function saveToLocalStorage() {
-            const allData = {
-                flightData,
-                accommodationData,
-                diningData,
-                attractions,
-                itineraryData
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
-            const statusEl = document.getElementById('save-status');
-            if(statusEl) statusEl.classList.remove('hidden');
-        }
-
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    if(parsed.flightData) flightData = parsed.flightData;
-                    if(parsed.accommodationData) accommodationData = parsed.accommodationData;
-                    if(parsed.diningData) diningData = parsed.diningData;
-                    if(parsed.attractions) {
-                        attractions = parsed.attractions;
-                        createAttractionMap(); 
-                    }
-                    if(parsed.itineraryData) itineraryData = parsed.itineraryData;
-                    return true;
-                } catch(e) {
-                    console.error("Error loading saved data", e);
-                    return false;
-                }
-            }
-            return false;
-        }
-
-        function resetToDefault() {
-            if(confirm("確定要重置所有資料回到預設值嗎？您自訂的行程將會被清除。")) {
-                localStorage.removeItem(STORAGE_KEY);
-                location.reload();
-            }
-        }
-
-        function init() {
-            delete L.Icon.Default.prototype._getIconUrl;
-            L.Icon.Default.mergeOptions({
-                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-            });
-
-            const hasSavedData = loadFromLocalStorage();
-
-            createAttractionMap(); 
-            renderFlightTable('outbound');
-            renderAccommodation();
-            renderSidebar(); 
-            renderItinerary('phase1'); 
-            renderAttractions('all');
-            renderDining('all');
-            loadCurrentLocationWeather();       
-            fetch3DayWeather(37.7749, -122.4194, "weather-sf", "wear-sf");
-            fetch3DayWeather(34.0522, -118.2437, "weather-la", "wear-la");
-
-            if(hasSavedData) {
-                const statusEl = document.getElementById('save-status');
-                if(statusEl) statusEl.classList.remove('hidden');
-                showToast("👋 歡迎回來！已載入您的自訂行程");
-            } else {
-                // NEW: Auto-load from Google Sheet if no local data
-                loadFromGoogleSheet(true);
-            }
-        }
-
-        function scrollToSection(id) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            const nav = document.querySelector('nav');
-            const offset = nav ? nav.offsetHeight + 8 : 0;
-            const y = el.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top: y, behavior: 'smooth' });
-        }
-
-        function switchFlightTab(type) {
-            document.getElementById('btn-outbound').className = 'tab-inactive text-sm transition-all pb-2 hover:text-[#3a3a3a]';
-            document.getElementById('btn-inbound').className = 'tab-inactive text-sm transition-all pb-2 hover:text-[#3a3a3a]';
-
-            const activeBtn = document.getElementById(`btn-${type}`);
-            activeBtn.className = 'tab-active text-sm transition-all pb-2';
-
-            renderFlightTable(type);
-        }
-
-        function renderFlightTable(type) {
-            const data = flightData[type];
-            if (!data) return;
-
-            const container = document.getElementById('flight-content');
-            let html = '';
-            
-            data.forEach((flight, index) => {
-                html += `
-                    <div class="flex items-start p-4 bg-[#fbf7f2] rounded-xl border border-[#efe6d8] mb-3 last:mb-0 hover:border-[#d6b98c] transition-colors">
-                        <div class="flex-shrink-0 bg-[#d6b98c] text-white rounded-lg w-10 h-10 flex items-center justify-center font-bold mr-4 text-sm shadow-sm">
-                            ${index + 1}
-                        </div>
-                        <div class="flex-grow">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-[#3a3a3a] text-lg">${flight.leg}</span>
-                                <span class="text-xs font-bold text-[#a4855d] bg-[#faf7f2] px-2 py-1 rounded-md border border-[#efe6d8]">CX${(flight.number || '').replace('CX','')}</span>
-                            </div>
-                            <div class="mb-2">
-                                <span class="text-xs font-medium bg-[#fef3c7] text-[#92400e] px-2 py-0.5 rounded-full">${flight.note}</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 text-sm text-[#6b6b6b] mt-2">
-                                <div class="bg-white p-2 rounded border border-[#efe6d8]">
-                                    <span class="block text-xs text-[#a09a93] uppercase">Departure</span>
-                                    <span class="font-mono font-bold text-[#3a3a3a]">${flight.date}</span>
-                                </div>
-                                <div class="bg-white p-2 rounded border border-[#efe6d8]">
-                                    <span class="block text-xs text-[#a09a93] uppercase">Arrival</span>
-                                    <span class="font-mono font-bold text-[#3a3a3a]">${flight.arr}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += `
-                <div class="mt-6 p-4 border border-[#cfdde6] bg-[#f0f9ff] rounded-xl space-y-3">
-                    <h4 class="text-base font-bold text-[#0f766e] flex items-center">
-                        <span class="text-xl mr-2">🛄</span> 國泰航空報到指引
-                    </h4>
-                    <div class="flex items-center justify-between">
-                         <div class="text-sm text-[#115e59]">
-                             <span class="font-bold">線上報到：</span>起飛前 48 小時
-                         </div>
-                         <a href="https://www.cathaypacific.com/mb/?cxsource=TOP-NAV_FLIGHTS_3_1#!/zh_TW/olci/login" target="_blank" class="px-3 py-1 bg-[#0f766e] text-white text-xs font-bold rounded hover:bg-[#115e59] transition-colors">
-                            前往官網
-                        </a>
-                    </div>
-                    <p class="text-xs text-[#991b1b] font-bold bg-[#fef2f2] p-2 rounded border border-[#fecaca]">
-                        * TPE 櫃檯：桃園機場第二航廈 (通常 D/E 區)
-                    </p>
-                </div>
-            `;
-            container.innerHTML = html;
-        }
-
-        // 渲染住宿資訊
-        const toUTCDate = iso => {
-            if(!iso) return new Date();
-            const d = new Date(iso);
-            return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-        };
-        
-        function renderAccommodation() {
-            const container = document.getElementById('accommodation-content');
-            // Support both array (from Excel) and object (legacy)
-            const accommodations = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
-            let html = '';
-
-            const tripStartUTC = toUTCDate("2026-02-26");
-            
-            // Update badges to match earthy theme
-            const cityStyle = {
-                "舊金山": "bg-[#cfdde6] text-[#475569]",
-                "蒙特雷": "bg-[#fef3c7] text-[#92400e]",
-                "莫羅貝": "bg-[#d9e5d8] text-[#166534]",
-                "洛杉磯": "bg-[#f3e8ff] text-[#6b21a8]"
-            };
-
-            accommodations.forEach(hotel => {
-                const checkin = toUTCDate(hotel.checkinDate);
-                const checkout = toUTCDate(hotel.checkoutDate);
-                const nights = Math.max(0, Math.floor((checkout - checkin) / 86400000));
-                const dayIndex = Math.floor((checkin - tripStartUTC) / 86400000) + 1;
-
-                html += `
-                <div class="card-hover rounded-2xl p-6 flex flex-col justify-between group h-full">
-                    <!-- 上方標籤 -->
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="font-bold text-white bg-[#d6b98c] px-3 py-0.5 rounded text-xs">Day ${dayIndex}</span>
-                        <span class="text-xs font-semibold text-[#6b6b6b] bg-[#faf7f2] px-2 py-0.5 rounded-full border border-[#efe6d8]">${nights} 晚</span>
-                    </div>
-
-                    <!-- 飯店名稱 -->
-                    <h4 class="text-lg font-bold mb-2 text-[#3a3a3a] group-hover:text-[#d6b98c] transition-colors"> ${hotel.name}</h4>
-
-                    <!-- 城市 badge -->
-                    <div class="mb-3">
-                         <span class="inline-block text-xs font-bold px-2 py-1 rounded-md ${cityStyle[hotel.city] || 'bg-gray-100 text-gray-600'}">
-                            ${hotel.city}
-                        </span>
-                    </div>
-
-                    <!-- 日期 -->
-                    <div class="bg-[#faf7f2] p-2 rounded mb-3 border border-[#efe6d8]">
-                        <p class="text-xs text-[#6b6b6b]">
-                            📅 <span class="font-semibold">${(hotel.checkinDate || "").slice(5)}</span> - <span class="font-semibold">${(hotel.checkoutDate || "").slice(5)}</span>
-                        </p>
-                    </div>
-
-                    <!-- 房型 -->
-                    <p class="text-sm text-[#6b6b6b] mb-2 font-medium">
-                        🛏️ ${hotel.room}
-                    </p>
-
-                    <!-- 重點 -->
-                    <p class="text-xs text-[#a09a93] mb-4 line-clamp-2">
-                        ${hotel.highlight}｜${hotel.facilities}
-                    </p>
-
-                    <!-- 地圖 -->
-                    <a href="${hotel.mapLink}" target="_blank"
-                       class="mt-auto w-full text-center py-2 rounded-lg bg-[#faf7f2] text-[#a4855d] text-sm font-bold hover:bg-[#d6b98c] hover:text-white transition-colors flex justify-center items-center gap-1 border border-[#efe6d8]">
-                       📍 Google Maps
-                    </a>
-
-                </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        // --- MAP & ITINERARY LOGIC ---
-
-        function getAttractionBadgeColor(type) {
-            if (type === 'History') return 'bg-[#fef3c7] text-[#92400e] border-[#fcd34d]'; // Amber
-            if (type === 'Nature') return 'bg-[#dcfce7] text-[#166534] border-[#86efac]'; // Green
-            if (type === 'Fun') return 'bg-[#fce7f3] text-[#9d174d] border-[#fbcfe8]'; // Pink
-            if (type === 'Food') return 'bg-[#ffedd5] text-[#9a3412] border-[#fdba74]'; // Orange
-            if (type === 'Photo') return 'bg-[#fee2e2] text-[#991b1b] border-[#fca5a5]'; // Red
-            if (type === 'Culture') return 'bg-[#ccfbf1] text-[#115e59] border-[#5eead4]'; // Teal
-            return 'bg-gray-100 text-gray-600';
-        }
-
-        function activatePhaseNav(activeKey) {
-            document.querySelectorAll('.phase-nav-btn').forEach(el => {
-                el.classList.remove('border-[#d6b98c]', 'shadow-md');
-                el.classList.add('border-transparent');
-            });
-            const activeBtn = document.getElementById(`nav-${activeKey}`);
-            if (activeBtn) {
-                activeBtn.classList.add('border-[#d6b98c]', 'shadow-md');
-                activeBtn.classList.remove('border-transparent');
-            }
-        }
-
-        // Main function to switch content based on phase
         function renderItinerary(phaseKey) {
             currentPhaseKey = phaseKey;
             const phase = itineraryData[phaseKey];
@@ -1305,14 +903,10 @@
 
             activatePhaseNav(phaseKey);
 
-            // 1. Render Header (with Map Toggle)
             const mapBtnClass = isMapMode ? 'map-toggle-active' : 'map-toggle-inactive';
             const listBtnClass = !isMapMode ? 'map-toggle-active' : 'map-toggle-inactive';
-
-            // Theme colors
             let theme = { text: 'text-[#a4855d]', bg: 'bg-[#faf7f2]', accent: 'bg-[#d6b98c]', border: 'border-[#efe6d8]' };
             
-            // Header content generation (Flexbox classes already handled in HTML structure above)
             headerContainer.innerHTML = `
                 <div>
                     <h3 class="text-xl font-bold text-[#3a3a3a]">${phase.title}</h3>
@@ -1328,17 +922,14 @@
                 </div>
             `;
 
-            // 2. Render List Content
             renderListContent(phase);
 
-            // 3. Handle View Visibility
             const listContainer = document.getElementById('itinerary-details');
             const mapContainer = document.getElementById('itinerary-map');
 
             if (isMapMode) {
                 listContainer.classList.add('hidden');
                 mapContainer.classList.remove('hidden');
-                // FIX: Use requestAnimationFrame for smoother paint
                 requestAnimationFrame(() => {
                     renderPhaseMap(phase);
                 });
@@ -1350,27 +941,23 @@
 
         function switchViewMode(mode) {
             isMapMode = (mode === 'map');
-            renderItinerary(currentPhaseKey); // Re-render with new state
+            renderItinerary(currentPhaseKey);
         }
 
-        // Render List Logic (Extracted from previous renderItinerary)
         function renderListContent(phase) {
             const container = document.getElementById('itinerary-list-content');
             let html = `<div class="relative space-y-12 py-4">`;
             html += `<div class="absolute left-[19px] top-6 bottom-6 w-0.5 bg-[#efe6d8] timeline-line md:block hidden"></div>`;
 
             phase.days.forEach((day, idx) => {
-              // 1. Identify all relevant attractions for this day
               let displayedAttractions = [];
               const uniqueNames = new Set();
 
-              // A. Explicit Key
               if (day.attractionKey && attractionMap[day.attractionKey]) {
                   displayedAttractions.push(attractionMap[day.attractionKey]);
                   uniqueNames.add(attractionMap[day.attractionKey].name);
               }
 
-              // B. Found in text
               const combinedText = (day.act + " " + day.detail);
               const mentioned = findMentionedAttractions(combinedText);
               
@@ -1381,13 +968,11 @@
                   }
               });
 
-              // 2. Generate HTML for attractions
               let attractionHtml = '';
               if (displayedAttractions.length > 0) {
-                  attractionHtml += '<div class="mt-4 space-y-2">'; // Container
+                  attractionHtml += '<div class="mt-4 space-y-2">'; 
                   displayedAttractions.forEach(attraction => {
                       const badgeColor = getAttractionBadgeColor(attraction.type);
-                      // UPDATED: Now uses jumpToAttraction function
                       attractionHtml += `
                         <div onclick="jumpToAttraction('${attraction.name}')" class="bg-white border border-[#efe6d8] rounded-xl p-3 flex items-start gap-3 cursor-pointer hover:shadow-md hover:border-[#d6b98c] transition-all group/card">
                             <div class="text-2xl bg-[#faf7f2] rounded-lg p-2 group-hover/card:scale-110 transition-transform">${attraction.icon}</div>
@@ -1403,7 +988,6 @@
                   });
                   attractionHtml += '</div>';
               } else if (day.attractionKey && !attractionMap[day.attractionKey]) {
-                   // Fallback for key that doesn't exist in map
                    attractionHtml = `
                     <div class="mt-4 bg-white border border-[#efe6d8] rounded-xl p-3 flex items-start gap-3">
                          <div class="text-2xl bg-[#faf7f2] rounded-lg p-2">📍</div>
@@ -1432,14 +1016,12 @@
 
               html += `
                 <div class="relative flex gap-6 group animate-fade-in" style="animation-delay: ${idx * 100}ms">
-                    <!-- Timeline Marker -->
                     <div class="hidden md:flex flex-col items-center">
                         <div class="w-10 h-10 rounded-full bg-[#fbf7f2] text-[#a4855d] border-4 border-white shadow-md flex items-center justify-center font-bold z-10 text-sm group-hover:scale-110 transition-transform">
                             ${idx + 1}
                         </div>
                     </div>
 
-                    <!-- Content Card -->
                     <div class="flex-1 bg-white rounded-2xl p-6 border border-[#efe6d8] shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-full h-1 bg-[#d6b98c]"></div>
                         
@@ -1477,65 +1059,32 @@
             container.innerHTML = html;
         }
 
-        // --- NEW: Helper to find attractions in text (FIX: Stricter matching but allows partial Chinese) ---
-        function findMentionedAttractions(text) {
-            if (!text) return [];
-            return attractions.filter(attraction => {
-                if (!attraction.name) return false;
-                
-                const name = attraction.name.trim();
-                
-                // 1. 完全符合 (Exact match)
-                if (text.includes(name)) return true;
-                
-                // 2. 寬鬆符合 (Loose match)
-                // 處理 "金門大橋 Golden Gate" 這種狀況，只要內文有 "金門大橋" 就算符合
-                // Assumes format like "中文 English"
-                const parts = name.split(' ');
-                // 確保切分後的第一部分長度足夠 (避免只匹配到單字或空格)
-                if (parts.length > 1 && parts[0].length >= 2) {
-                     if (text.includes(parts[0])) return true;
-                }
-                
-                return false;
-            });
-        }
-
-        // Render Map Logic (Updated to include mentioned attractions)
         function renderPhaseMap(phase) {
-            // 1. Cleanup old map
             if (currentMap) {
                 currentMap.remove();
                 currentMap = null;
             }
 
-            // 2. Initialize Map
-            // FIX: Ensure container has dimensions before init
             const mapContainer = document.getElementById('itinerary-map');
             if(!mapContainer) return;
             
             currentMap = L.map('itinerary-map').setView([37.7749, -122.4194], 10); // Default SF
-
-            // 3. Add Tile Layer (OpenStreetMap - Free)
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                 maxZoom: 19
             }).addTo(currentMap);
             
-            // FIX: Force resize calculation
             setTimeout(() => {
                 currentMap.invalidateSize();
             }, 200);
 
-            // 4. Collect Markers
             let bounds = [];
             let routePoints = [];
-            let addedLocations = new Set(); // Prevent duplicate markers at exact same spot
+            let addedLocations = new Set();
 
             phase.days.forEach((day, idx) => {
                 const combinedText = (day.act + " " + day.detail);
                 
-                // A. Primary Attraction (Key)
                 if (day.attractionKey && attractionMap[day.attractionKey] && attractionMap[day.attractionKey].lat) {
                     const poi = attractionMap[day.attractionKey];
                     const locKey = `${poi.lat},${poi.lng}`;
@@ -1556,15 +1105,12 @@
                     }
                 }
 
-                // B. Secondary Attractions (Found in Text) - NEW
                 const mentionedPois = findMentionedAttractions(combinedText);
                 mentionedPois.forEach(poi => {
-                    // Skip if it's the main key (already added) or invalid coords
                     if (poi.name === day.attractionKey || !poi.lat) return;
                     
                     const locKey = `${poi.lat},${poi.lng}`;
                     if (!addedLocations.has(locKey)) {
-                        // Use a smaller circle marker for secondary spots
                         L.circleMarker([poi.lat, poi.lng], {
                             color: '#6b6b6b',
                             fillColor: '#ffffff',
@@ -1579,13 +1125,10 @@
                             </div>
                         `);
                         bounds.push([poi.lat, poi.lng]);
-                        // Optional: Add to route line? Maybe cluttering, let's keep route clean with main stops
-                        // routePoints.push([poi.lat, poi.lng]); 
                         addedLocations.add(locKey);
                     }
                 });
 
-                // C. Hotel
                 const accList = Array.isArray(accommodationData) ? accommodationData : Object.values(accommodationData);
                 const hotel = accList.find(h => h.name === day.hotel);
                 if (hotel && hotel.lat) {
@@ -1609,7 +1152,6 @@
                 }
             });
 
-            // 5. Draw Route Line (Simple polyline connecting points)
             if (routePoints.length > 1) {
                 L.polyline(routePoints, {
                     color: '#d6b98c',
@@ -1620,13 +1162,11 @@
                 }).addTo(currentMap);
             }
 
-            // 6. Fit Bounds
             if (bounds.length > 0) {
                 currentMap.fitBounds(bounds, { padding: [50, 50] });
             }
         }
 
-        // --- NEW: Toggle Function ---
         function toggleExpand(contentId, arrowId) {
             const content = document.getElementById(contentId);
             const arrow = document.getElementById(arrowId);
@@ -1636,7 +1176,6 @@
             }
         }
 
-        // --- NEW: Dining Logic (Updated for Expandable & Image) ---
         function filterDining(filter) {
             document.querySelectorAll('.dining-filter-btn').forEach(btn => {
                 btn.classList.remove('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
@@ -1662,11 +1201,8 @@
                 else if (item.city === 'PCH') { badgeClass = 'bg-[#fef3c7] text-[#92400e]'; cityLabel = '一號公路'; }
                 else if (item.city === 'LA') { badgeClass = 'bg-[#f3e8ff] text-[#6b21a8]'; cityLabel = '洛杉磯'; }
 
-                // 使用 unique ID for toggling
                 const descId = `dining-desc-${index}`;
                 const arrowId = `dining-arrow-${index}`;
-
-                // Image vs Emoji Logic
                 let headerContent = '';
                 if (item.image) {
                     const domain = getDomainFromUrl(item.image);
@@ -1690,7 +1226,6 @@
                     `;
                 }
 
-                // 注意：外層改為 div，不作為連結，避免點擊衝突
                 html += `
                     <div class="card-hover rounded-2xl p-6 group block relative overflow-hidden h-full flex flex-col justify-between ${item.image ? 'pt-0 px-0' : ''}">
                         ${item.image ? headerContent : `<div class="absolute top-0 right-0 w-24 h-24 bg-[#faf7f2] rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 group-hover:bg-[#d6b98c]/20"></div>`}
@@ -1699,20 +1234,17 @@
                             ${!item.image ? headerContent : ''}
                             <h4 class="text-lg font-bold text-[#3a3a3a] mb-2 relative z-10 group-hover:text-[#d6b98c] transition-colors">${item.name}</h4>
                             
-                            <!-- 隱藏的內容 -->
                             <div id="${descId}" class="expandable-content relative z-10 text-sm text-[#6b6b6b] border-l-2 border-[#d6b98c] pl-3">
                                 ${item.desc.replace(/<\/br>/g, '<br>')}
                             </div>
                         </div>
                         
                         <div class="relative z-10 flex items-center justify-between pt-4 border-t border-[#efe6d8] mt-4 ${item.image ? 'mx-6' : ''}">
-                            <!-- 展開按鈕 -->
                             <button onclick="toggleExpand('${descId}', '${arrowId}')" class="text-xs font-bold text-[#a09a93] hover:text-[#d6b98c] transition-colors flex items-center gap-1 focus:outline-none">
                                 <span>餐點介紹</span>
                                 <svg id="${arrowId}" class="rotate-icon w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                             </button>
 
-                            <!-- 官網連結 -->
                             <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="text-sm font-bold text-[#3a3a3a] hover:text-[#d6b98c] flex items-center gap-1">
                                 <span>官網</span>
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -1724,7 +1256,6 @@
             container.innerHTML = html;
         }
 
-        // --- Attraction Logic (Updated for Expandable & Image) ---
         function filterAttractions(filter) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('bg-[#3a3a3a]', 'text-white', 'shadow-md', 'scale-105');
@@ -1747,15 +1278,11 @@
                 const badgeColor = getAttractionBadgeColor(item.type);
                 const typeLabel = item.type === 'History' ? '歷史' : item.type === 'Nature' ? '自然' : item.type === 'Fun' ? '娛樂' : item.type === 'Food' ? '美食' : item.type === 'Photo' ? '攝影' : item.type === 'Culture' ? '文化' : '其他';
                 const cityLabel = item.city === 'SF' ? '舊金山' : item.city === 'LA' ? '洛杉磯' : item.city === 'Yosemite' ? '優勝美地' : '一號公路';
-
                 const descId = `attr-desc-${index}`;
                 const arrowId = `attr-arrow-${index}`;
-                
-                // UPDATED: Generate unique ID for scrolling
                 const scrollId = sanitizeId(item.name);
-
-                // Image vs Emoji Logic
                 let headerContent = '';
+
                 if (item.image) {
                     const domain = getDomainFromUrl(item.image);
                     headerContent = `
@@ -1781,7 +1308,6 @@
                     `;
                 }
 
-                // UPDATED: Add ID attribute to the card div
                 html += `
                     <div id="${scrollId}" class="card-hover rounded-2xl overflow-hidden group block flex flex-col h-full ${item.image ? 'pt-0' : ''}">
                         ${item.image ? headerContent : '<div class="p-6 pb-0">'}
@@ -1790,19 +1316,16 @@
                             ${!item.image ? headerContent : ''}
                             <h4 class="text-lg font-bold text-[#3a3a3a] mb-2 group-hover:text-[#d6b98c] transition-colors">${item.name}</h4>
                             
-                            <!-- 隱藏的內容 -->
                             <div id="${descId}" class="expandable-content text-sm text-[#6b6b6b] border-l-2 border-[#d6b98c] pl-3">
                                 ${item.desc}
                             </div>
                         </div>
                         
                         <div class="bg-[#faf7f2] px-6 py-3 border-t border-[#efe6d8] flex justify-between items-center mt-auto">
-                            <!-- 展開按鈕 -->
                             <button onclick="toggleExpand('${descId}', '${arrowId}')" class="text-xs font-bold text-[#a09a93] hover:text-[#d6b98c] transition-colors flex items-center gap-1 focus:outline-none">
                                 <span>景點介紹</span>
                                 <svg id="${arrowId}" class="rotate-icon w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                             </button>
-                            <!-- 官網連結 -->
                              <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="text-[#a09a93] group-hover:text-[#d6b98c] group-hover:translate-x-1 transition-all text-xs font-bold flex items-center">
                                 前往官網 ➔
                             </a>
@@ -1814,9 +1337,7 @@
             container.innerHTML = html;
         }
 
-        // Initialize App
         window.addEventListener('DOMContentLoaded', init);
-
     </script>
 </body>
 </html>
