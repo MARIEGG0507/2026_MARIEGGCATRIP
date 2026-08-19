@@ -22,6 +22,8 @@
                 
                 <ul class="flex items-center w-full md:w-auto overflow-x-auto">
                     <li><button onclick="switchView('dashboard')" class="nav-btn px-3 py-3 text-sm font-medium text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-main-text)] transition-colors border-b-2 border-transparent whitespace-nowrap" id="btn-dashboard">總覽分析</button></li>
+                    <li><button onclick="switchView('explorer')" class="nav-btn px-3 py-3 text-sm font-medium text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-main-text)] transition-colors border-b-2 border-transparent whitespace-nowrap" id="btn-explorer">園區探索</button></li>
+                    <li><button onclick="switchView('food')" class="nav-btn px-3 py-3 text-sm font-medium text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-main-text)] transition-colors border-b-2 border-transparent whitespace-nowrap" id="btn-food">必吃美食</button></li>
                     <li><button onclick="switchView('tips')" class="nav-btn px-3 py-3 text-sm font-medium text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-main-text)] transition-colors border-b-2 border-transparent whitespace-nowrap" id="btn-tips">遊玩策略</button></li>
                     <li><button onclick="switchView('itinerary')" class="nav-btn px-3 py-3 text-sm font-medium text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-main-text)] transition-colors border-b-2 border-transparent whitespace-nowrap" id="btn-itinerary">一日行程</button></li>
                 </ul>
@@ -116,102 +118,6 @@
                 </div>
             </div>
         </div>
-
-        <div id="view-explorer" class="hidden space-y-6">
-            <div class="bg-[color:var(--color-bg-card)] rounded-xl p-6 card-hover">
-                <h2 class="text-2xl font-bold mb-4" style="color: var(--color-text-primary);">深入園區探索</h2>
-                
-                <div class="flex justify-center mb-6">
-                    <div class="bg-[color:var(--color-bg-secondary)] p-1 rounded-lg inline-flex border border-[color:var(--color-border-soft)]">
-                        <button onclick="setPark('DL')" id="btn-park-dl" class="px-6 py-2 rounded-md text-sm font-semibold transition-all shadow-sm bg-[color:var(--color-bg-card)] text-[#1e70bf]">
-                            迪士尼樂園 (DL)
-                        </button>
-                        <button onclick="setPark('DCA')" id="btn-park-dca" class="px-6 py-2 rounded-md text-sm font-semibold text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-text-primary)] transition-all">
-                            加州冒險樂園 (DCA)
-                        </button>
-                    </div>
-                </div>
-
-                <div class="relative">
-                    <ul class="scrolling-nav-container custom-scroll" id="land-list" style="display: flex; gap: 0.5rem; overflow-x: auto; list-style: none; padding-left: 0; padding-bottom: 0.5rem;">
-                        <!-- JS renders lands here -->
-                    </ul>
-                    <div class="absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-[color:var(--color-bg-card)] pointer-events-none md:hidden"></div>
-                </div>
-            </div>
-
-            <div id="land-content" class="animate-fade-in grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1">
-                    <div class="bg-[color:var(--color-bg-card)] rounded-xl card-hover p-6 sticky top-24">
-                        <h3 id="land-title" class="text-2xl font-bold mb-2" style="color: var(--color-text-primary);">區域名稱</h3>
-                        <p id="land-desc" class="leading-relaxed mb-4" style="color: var(--color-text-secondary);">區域描述...</p>
-                        <div class="border-t border-[color:var(--color-border-soft)] pt-4">
-                            <span class="text-xs font-semibold uppercase tracking-wider" style="color: var(--color-text-muted);">特色標籤</span>
-                            <div id="land-tags" class="flex flex-wrap gap-2 mt-2">
-                                <!-- Tags here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-2 space-y-4">
-                    <h4 class="text-lg font-semibold ml-1" style="color: var(--color-text-primary);">設施與體驗推薦</h4>
-                    <div id="attraction-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Attractions here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-food" class="hidden space-y-6">
-            <div class="bg-[color:var(--color-bg-card)] rounded-xl p-6 card-hover">
-                <h2 class="text-2xl font-bold mb-4" style="color: var(--color-text-primary);">雙樂園必吃美食指南</h2>
-                
-                <div class="flex justify-center mb-6">
-                    <div class="bg-[color:var(--color-bg-secondary)] p-1 rounded-lg inline-flex border border-[color:var(--color-border-soft)]">
-                        <button onclick="setFoodPark('DL')" id="btn-food-park-dl" class="px-6 py-2 rounded-md text-sm font-semibold transition-all shadow-sm bg-[color:var(--color-bg-card)] text-[#1e70bf]">
-                            迪士尼樂園 (DL)
-                        </button>
-                        <button onclick="setFoodPark('DCA')" id="btn-food-park-dca" class="px-6 py-2 rounded-md text-sm font-semibold text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-text-primary)] transition-all">
-                            加州冒險樂園 (DCA)
-                        </button>
-                    </div>
-                </div>
-
-                <div class="relative">
-                    <ul class="scrolling-nav-container custom-scroll" id="food-land-list" style="display: flex; gap: 0.5rem; overflow-x: auto; list-style: none; padding-left: 0; padding-bottom: 0.5rem;">
-                        <!-- JS renders food lands here -->
-                    </ul>
-                    <div class="absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-[color:var(--color-bg-card)] pointer-events-none md:hidden"></div>
-                </div>
-            </div>
-
-            <div id="food-content-area" class="animate-fade-in grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1">
-                    <div class="bg-[color:var(--color-bg-card)] rounded-xl card-hover p-6 sticky top-24">
-                        <h3 id="food-land-title" class="text-2xl font-bold mb-2" style="color: var(--color-text-primary);">美食區域名稱</h3>
-                        <p id="food-land-desc" class="leading-relaxed mb-4" style="color: var(--color-text-secondary);">
-                            這裡匯集了該區域最受歡迎的經典小吃與特色餐廳。
-                        </p>
-                        <div class="border-t border-[color:var(--color-border-soft)] pt-4">
-                            <span class="text-xs font-semibold uppercase tracking-wider" style="color: var(--color-text-muted);">餐飲特色</span>
-                            <div class="mt-2 flex flex-wrap gap-2">
-                                <span class="px-2 py-1 bg-green-50 text-green-700 text-xs rounded-md border border-green-100">特色小吃</span>
-                                <span class="px-2 py-1 bg-yellow-50 text-yellow-700 text-xs rounded-md border border-yellow-100">主題餐廳</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-2 space-y-4">
-                    <h4 class="text-lg font-semibold ml-1" style="color: var(--color-text-primary);">推薦餐點</h4>
-                    <div id="food-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Food Items here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-        
         <!-- TIPS VIEW -->
         <div id="view-tips" class="hidden max-w-4xl mx-auto space-y-8">
             <div class="text-center mb-8">
