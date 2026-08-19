@@ -21,9 +21,9 @@
                 </div>
                 
                 <ul class="flex items-center w-full md:w-auto overflow-x-auto">
+                    <li><button onclick="switchView('dashboard')" class="nav-btn px-3 py-3 text-sm font-medium text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-main-text)] transition-colors border-b-2 border-transparent whitespace-nowrap" id="btn-dashboard">總覽分析</button></li>
                     <li><button onclick="switchView('tips')" class="nav-btn px-3 py-3 text-sm font-medium text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-main-text)] transition-colors border-b-2 border-transparent whitespace-nowrap" id="btn-tips">遊玩策略</button></li>
                     <li><button onclick="switchView('itinerary')" class="nav-btn px-3 py-3 text-sm font-medium text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-main-text)] transition-colors border-b-2 border-transparent whitespace-nowrap" id="btn-itinerary">一日行程</button></li>
-                    <li><button onclick="switchView('dashboard')" class="nav-btn px-3 py-3 text-sm font-medium text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-main-text)] transition-colors border-b-2 border-transparent whitespace-nowrap" id="btn-dashboard">總覽分析</button></li>
                 </ul>
             </div>
         </div>
@@ -31,8 +31,71 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
 
-        <!-- TIPS VIEW (預設顯示) -->
-        <div id="view-tips" class="max-w-4xl mx-auto space-y-8 animate-fade-in">
+        <!-- DASHBOARD VIEW (預設顯示) -->
+        <div id="view-dashboard" class="space-y-8 animate-fade-in">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <h1 class="text-3xl font-bold mb-4" style="color: var(--color-text-primary);">兩大樂園風格解析</h1>
+                <p class="text-lg" style="color: var(--color-text-secondary);">
+                    加州迪士尼度假區由「迪士尼樂園 (Disneyland Park)」與「迪士尼加州冒險樂園 (Disney California Adventure)」組成。
+                    本區塊透過數據分析幫助您快速理解兩者的差異。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-[color:var(--color-bg-card)] p-6 rounded-2xl card-hover">
+                    <h3 class="text-lg font-semibold mb-2 flex items-center" style="color: var(--color-text-primary);">
+                        <i class="fa-solid fa-chart-radar mr-2" style="color: var(--color-accent-main);"></i> 風格雷達圖
+                    </h3>
+                    <div class="chart-container relative h-64">
+                        <canvas id="vibeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-[color:var(--color-bg-card)] p-6 rounded-2xl card-hover">
+                    <h3 class="text-lg font-semibold mb-2 flex items-center" style="color: var(--color-text-primary);">
+                        <i class="fa-solid fa-chart-pie mr-2" style="color: var(--color-utility-blue);"></i> 設施類型分佈
+                    </h3>
+                    <div class="chart-container relative h-64">
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-6 rounded-xl border hover:shadow-md transition-shadow card-hover" style="background-color: #f0f7ff; border-color: var(--border-soft);">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm">🏰</div>
+                        <div class="ml-4">
+                            <h2 class="text-xl font-bold text-blue-900">迪士尼樂園</h2>
+                            <span class="text-sm text-blue-600 font-medium">Disneyland Park</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 mb-4">全球第一座迪士尼，充滿經典童話與華特迪士尼的原創夢想。</p>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li class="flex items-start"><i class="fa-solid fa-check text-blue-400 mt-1 mr-2"></i> <span>必訪：星際大戰、睡美人城堡、印第安納瓊斯、米奇卡通城</span></li>
+                        <li class="flex items-start"><i class="fa-solid fa-check text-blue-400 mt-1 mr-2"></i> <span>氛圍：溫馨、懷舊、夢幻、魔法</span></li>
+                    </ul>
+                </div>
+
+                <div class="p-6 rounded-xl border hover:shadow-md transition-shadow card-hover" style="background-color: #fff7ed; border-color: var(--border-soft);">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm">🎡</div>
+                        <div class="ml-4">
+                            <h2 class="text-xl font-bold text-orange-900">加州冒險樂園</h2>
+                            <span class="text-sm text-orange-600 font-medium">Disney California Adventure</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 mb-4">結合皮克斯與漫威，展現加州地景與電影文化的現代樂園。</p>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li class="flex items-start"><i class="fa-solid fa-check text-orange-400 mt-1 mr-2"></i> <span>必訪：汽車總動員、復仇者校園、皮克斯碼頭</span></li>
+                        <li class="flex items-start"><i class="fa-solid fa-check text-orange-400 mt-1 mr-2"></i> <span>氛圍：刺激、現代、美食美酒、電影感</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIPS VIEW -->
+        <div id="view-tips" class="hidden max-w-4xl mx-auto space-y-8 animate-fade-in">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold mb-4" style="color: var(--color-text-primary);">遊玩策略與小貼士</h2>
                 <p class="text-lg" style="color: var(--color-text-secondary);">掌握這些技巧，讓您的迪士尼之旅事半功倍。</p>
@@ -191,69 +254,6 @@
             </div> 
         </div>
 
-        <!-- DASHBOARD VIEW -->
-        <div id="view-dashboard" class="hidden space-y-8 animate-fade-in">
-            <div class="text-center max-w-3xl mx-auto mb-10">
-                <h1 class="text-3xl font-bold mb-4" style="color: var(--color-text-primary);">兩大樂園風格解析</h1>
-                <p class="text-lg" style="color: var(--color-text-secondary);">
-                    加州迪士尼度假區由「迪士尼樂園 (Disneyland Park)」與「迪士尼加州冒險樂園 (Disney California Adventure)」組成。
-                    本區塊透過數據分析幫助您快速理解兩者的差異。
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                <div class="bg-[color:var(--color-bg-card)] p-6 rounded-2xl card-hover">
-                    <h3 class="text-lg font-semibold mb-2 flex items-center" style="color: var(--color-text-primary);">
-                        <i class="fa-solid fa-chart-radar mr-2" style="color: var(--color-accent-main);"></i> 風格雷達圖
-                    </h3>
-                    <div class="chart-container relative h-64">
-                        <canvas id="vibeChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="bg-[color:var(--color-bg-card)] p-6 rounded-2xl card-hover">
-                    <h3 class="text-lg font-semibold mb-2 flex items-center" style="color: var(--color-text-primary);">
-                        <i class="fa-solid fa-chart-pie mr-2" style="color: var(--color-utility-blue);"></i> 設施類型分佈
-                    </h3>
-                    <div class="chart-container relative h-64">
-                        <canvas id="typeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="p-6 rounded-xl border hover:shadow-md transition-shadow card-hover" style="background-color: #f0f7ff; border-color: var(--border-soft);">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm">🏰</div>
-                        <div class="ml-4">
-                            <h2 class="text-xl font-bold text-blue-900">迪士尼樂園</h2>
-                            <span class="text-sm text-blue-600 font-medium">Disneyland Park</span>
-                        </div>
-                    </div>
-                    <p class="text-slate-700 mb-4">全球第一座迪士尼，充滿經典童話與華特迪士尼的原創夢想。</p>
-                    <ul class="space-y-2 text-sm text-slate-600">
-                        <li class="flex items-start"><i class="fa-solid fa-check text-blue-400 mt-1 mr-2"></i> <span>必訪：星際大戰、睡美人城堡、印第安納瓊斯、米奇卡通城</span></li>
-                        <li class="flex items-start"><i class="fa-solid fa-check text-blue-400 mt-1 mr-2"></i> <span>氛圍：溫馨、懷舊、夢幻、魔法</span></li>
-                    </ul>
-                </div>
-
-                <div class="p-6 rounded-xl border hover:shadow-md transition-shadow card-hover" style="background-color: #fff7ed; border-color: var(--border-soft);">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm">🎡</div>
-                        <div class="ml-4">
-                            <h2 class="text-xl font-bold text-orange-900">加州冒險樂園</h2>
-                            <span class="text-sm text-orange-600 font-medium">Disney California Adventure</span>
-                        </div>
-                    </div>
-                    <p class="text-slate-700 mb-4">結合皮克斯與漫威，展現加州地景與電影文化的現代樂園。</p>
-                    <ul class="space-y-2 text-sm text-slate-600">
-                        <li class="flex items-start"><i class="fa-solid fa-check text-orange-400 mt-1 mr-2"></i> <span>必訪：汽車總動員、復仇者校園、皮克斯碼頭</span></li>
-                        <li class="flex items-start"><i class="fa-solid fa-check text-orange-400 mt-1 mr-2"></i> <span>氛圍：刺激、現代、美食美酒、電影感</span></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
     </main>
 
     <footer class="bg-slate-800 text-slate-400 py-8 mt-12">
@@ -265,7 +265,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initCharts();
-            switchView('tips'); // Start on Tips view as requested
+            switchView('dashboard'); // 這裡已經幫您改為預設啟動總覽分析！
         });
 
         // --- NAVIGATION LOGIC ---
